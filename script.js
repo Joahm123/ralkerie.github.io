@@ -10,6 +10,7 @@ const starContainer =
 ========================= */
 
 function createStar() {
+
     const star =
         document.createElement("div");
 
@@ -17,9 +18,6 @@ function createStar() {
 
     const size =
         Math.random() * 2 + 1;
-
-    const y =
-        Math.random() * 100;
 
     const duration =
         Math.random() * 8 + 5;
@@ -37,7 +35,7 @@ function createStar() {
         `${Math.random() * 100}vw`;
 
     star.style.top =
-        `${y}vh`;
+        `${Math.random() * 100}vh`;
 
     star.style.animationDuration =
         `${duration}s`;
@@ -49,7 +47,7 @@ function createStar() {
 }
 
 
-/* Create stars */
+/* Lots of stars */
 
 for (let i = 0; i < 220; i++) {
     createStar();
@@ -57,7 +55,7 @@ for (let i = 0; i < 220; i++) {
 
 
 /* =========================
-   METEORS
+   METEOR
 ========================= */
 
 function createMeteor() {
@@ -69,56 +67,61 @@ function createMeteor() {
 
 
     /*
-        LONG METEOR
+        RANDOM X POSITION.
+
+        0 = FAR LEFT
+        50 = CENTER
+        100 = FAR RIGHT
+
+        This covers the ENTIRE
+        top of the screen.
+    */
+
+    const startX =
+        Math.random() * 100;
+
+
+    /*
+        Start just above the screen.
+    */
+
+    const startY =
+        -300;
+
+
+    /*
+        Slightly different
+        meteor lengths.
     */
 
     const length =
-        Math.random() * 220 + 320;
+        320 +
+        Math.random() * 200;
 
     meteor.style.width =
         `${length}px`;
 
 
     /*
-        SPAWN ACROSS THE
-        ENTIRE TOP.
-
-        X can be anywhere from
-        far left to far right.
+        Put meteor at random
+        percentage across screen.
     */
-
-    const startX =
-        Math.random() *
-        (window.innerWidth + 600) -
-        600;
-
-
-    /*
-        Keep the meteor at
-        the TOP of the screen.
-
-        Slight variation makes
-        the spawning look natural.
-    */
-
-    const startY =
-        -500 +
-        Math.random() * 300;
-
-
-    /*
-        Random speed
-    */
-
-    const duration =
-        Math.random() * 1.5 + 1.8;
-
 
     meteor.style.left =
-        `${startX}px`;
+        `${startX}vw`;
 
     meteor.style.top =
         `${startY}px`;
+
+
+    /*
+        Different speeds.
+    */
+
+    const duration =
+        2 +
+        Math.random() * 1.5;
+
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -127,8 +130,14 @@ function createMeteor() {
     meteorContainer.appendChild(meteor);
 
 
+    /*
+        Clean it up.
+    */
+
     setTimeout(() => {
+
         meteor.remove();
+
     }, duration * 1000);
 }
 
@@ -143,19 +152,23 @@ function spawnMeteor() {
 
 
     /*
-        Frequent meteors.
+        Lots of meteors.
     */
 
-    const nextMeteor =
-        Math.random() * 250 + 100;
+    const delay =
+        150 +
+        Math.random() * 300;
+
 
     setTimeout(
         spawnMeteor,
-        nextMeteor
+        delay
     );
 }
 
 
-/* Start */
+/* =========================
+   START
+========================= */
 
 spawnMeteor();
