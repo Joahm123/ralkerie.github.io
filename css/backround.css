@@ -1,5 +1,5 @@
 /* =====================================================
-   SPACE BACKGROUND
+   RALKERIE SPACE BACKGROUND
 ===================================================== */
 
 #background {
@@ -67,4 +67,32 @@
 
             transparent 35%
         );
+}
+
+
+/* =====================================================
+   STARS
+===================================================== */
+
+.star {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 0 5px white,
+
+        0 0 10px
+        rgba(
+            255,
+            180,
+            235,
+            0.9
+        );
+
+    pointer-events: none;
 }
