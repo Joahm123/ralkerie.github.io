@@ -49,6 +49,8 @@ function createStar() {
 }
 
 
+/* Create stars */
+
 for (let i = 0; i < 220; i++) {
     createStar();
 }
@@ -78,27 +80,34 @@ function createMeteor() {
 
 
     /*
-        START MUCH FARTHER
-        OFF THE LEFT.
+        SPAWN ACROSS THE
+        ENTIRE TOP.
 
-        This is the important part.
+        X can be anywhere from
+        far left to far right.
     */
 
     const startX =
-        -length - 1000;
+        Math.random() *
+        (window.innerWidth + 600) -
+        600;
 
 
     /*
-        Keep them near the
-        top of the screen.
+        Keep the meteor at
+        the TOP of the screen.
+
+        Slight variation makes
+        the spawning look natural.
     */
 
     const startY =
-        Math.random() * 300 - 200;
+        -500 +
+        Math.random() * 300;
 
 
     /*
-        Speed
+        Random speed
     */
 
     const duration =
@@ -125,15 +134,20 @@ function createMeteor() {
 
 
 /* =========================
-   SPAWNING
+   SPAWN METEORS
 ========================= */
 
 function spawnMeteor() {
 
     createMeteor();
 
+
+    /*
+        Frequent meteors.
+    */
+
     const nextMeteor =
-        Math.random() * 300 + 120;
+        Math.random() * 250 + 100;
 
     setTimeout(
         spawnMeteor,
@@ -141,5 +155,7 @@ function spawnMeteor() {
     );
 }
 
+
+/* Start */
 
 spawnMeteor();
