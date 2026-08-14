@@ -1,5 +1,5 @@
 /* =====================================================
-   RALKERIE METEORS — OPTIMIZED
+   RALKERIE METEORS — OPTIMIZED + CLICK EXPLOSIONS
 ===================================================== */
 
 (() => {
@@ -47,6 +47,7 @@
         element.className =
             "meteor";
 
+
         const core =
             document.createElement("div");
 
@@ -57,19 +58,25 @@
             core
         );
 
+
         /*
-           Hide until needed.
+           IMPORTANT:
+           Meteors can now receive clicks.
         */
+
+        element.style.pointerEvents =
+            "auto";
 
         element.style.display =
             "none";
+
 
         container.appendChild(
             element
         );
 
 
-        meteors.push({
+        const meteor = {
 
             element,
 
@@ -82,7 +89,61 @@
             speedX: 0,
 
             speedY: 0
-        });
+        };
+
+
+        meteors.push(
+            meteor
+        );
+
+
+        /* =============================================
+           CLICK METEOR
+        ============================================= */
+
+        element.addEventListener(
+            "pointerdown",
+            (event) => {
+
+                event.stopPropagation();
+
+                if (
+                    !meteor.active
+                ) {
+                    return;
+                }
+
+
+                /*
+                   Remember explosion position.
+                */
+
+                const explosionX =
+                    meteor.x;
+
+                const explosionY =
+                    meteor.y;
+
+
+                /*
+                   Remove meteor immediately.
+                */
+
+                despawn(
+                    meteor
+                );
+
+
+                /*
+                   Create explosion.
+                */
+
+                createExplosion(
+                    explosionX,
+                    explosionY
+                );
+            }
+        );
     }
 
 
@@ -108,7 +169,7 @@
 
 
     /* =================================================
-       SPAWN
+       SPAWN METEOR
     ================================================= */
 
     function spawnMeteor() {
@@ -147,7 +208,7 @@
 
 
         /*
-           Always above screen.
+           Spawn above screen.
         */
 
         meteor.y =
@@ -227,17 +288,133 @@
 
 
     /* =================================================
+       EXPLOSION
+    ================================================= */
+
+    function createExplosion(
+        x,
+        y
+    ) {
+
+        const explosion =
+            document.createElement(
+                "div"
+            );
+
+        explosion.className =
+            "meteor-explosion";
+
+
+        explosion.style.left =
+            `${x}px`;
+
+        explosion.style.top =
+            `${y}px`;
+
+
+        /*
+           White flash.
+        */
+
+        const flash =
+            document.createElement(
+                "div"
+            );
+
+        flash.className =
+            "meteor-flash";
+
+
+        explosion.appendChild(
+            flash
+        );
+
+
+        /*
+           Create a small number
+           of particles for performance.
+        */
+
+        const particleCount =
+            16;
+
+
+        for (
+            let i = 0;
+            i < particleCount;
+            i++
+        ) {
+
+            const particle =
+                document.createElement(
+                    "div"
+                );
+
+            particle.className =
+                "meteor-particle";
+
+
+            const angle =
+                Math.random() *
+                Math.PI *
+                2;
+
+
+            const distance =
+                30 +
+                Math.random() * 90;
+
+
+            particle.style.setProperty(
+                "--particle-x",
+                `${Math.cos(angle) * distance}px`
+            );
+
+
+            particle.style.setProperty(
+                "--particle-y",
+                `${Math.sin(angle) * distance}px`
+            );
+
+
+            particle.style.animationDelay =
+                `${Math.random() * 80}ms`;
+
+
+            explosion.appendChild(
+                particle
+            );
+        }
+
+
+        container.appendChild(
+            explosion
+        );
+
+
+        /*
+           Automatically remove the
+           explosion after its animation.
+        */
+
+        setTimeout(
+            () => {
+
+                explosion.remove();
+
+            },
+            700
+        );
+    }
+
+
+    /* =================================================
        ANIMATION
     ================================================= */
 
     function animate(
         time
     ) {
-
-        /*
-           Don't accumulate time
-           while tab is hidden.
-        */
 
         if (
             document.hidden
@@ -260,11 +437,6 @@
                 lastTime
             ) / 1000;
 
-
-        /*
-           Protect against huge
-           jumps after lag.
-        */
 
         if (
             delta > 0.05
@@ -312,8 +484,7 @@
 
 
             /*
-               Remove completely offscreen
-               meteors from active use.
+               Despawn below screen.
             */
 
             if (
@@ -357,11 +528,6 @@
             }
 
 
-            /*
-               Reset timing so meteors
-               don't jump when returning.
-            */
-
             lastTime =
                 performance.now();
 
@@ -388,7 +554,7 @@
 
 
     console.log(
-        "Ralkerie optimized meteors loaded."
+        "Ralkerie meteors loaded — click explosions enabled."
     );
 
 })();
