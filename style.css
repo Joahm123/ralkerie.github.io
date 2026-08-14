@@ -18,7 +18,7 @@ body {
 }
 
 /* =========================
-   SPACE
+   SPACE BACKGROUND
 ========================= */
 
 .background {
@@ -138,9 +138,6 @@ body {
         0 0 20px rgba(255, 70, 195, 0.7),
         0 0 45px rgba(255, 70, 195, 0.45);
 
-    /*
-        ↘ DOWN + RIGHT
-    */
     transform: rotate(46deg);
 
     transform-origin: right center;
@@ -149,7 +146,7 @@ body {
 }
 
 /* =========================
-   SUPER LONG TRAIL
+   SUPER LONG PINK TRAIL
 ========================= */
 
 .meteor::before {
@@ -183,7 +180,7 @@ body {
 }
 
 /* =========================
-   HEAD
+   METEOR HEAD
 ========================= */
 
 .meteor::after {
@@ -212,7 +209,7 @@ body {
 }
 
 /* =========================
-   MOVEMENT
+   FALLING MOVEMENT
 ========================= */
 
 @keyframes meteorFly {
@@ -236,8 +233,8 @@ body {
     to {
         transform:
             translate(
-                calc(100vw + 600px),
-                calc(100vh + 600px)
+                calc(100vw + 900px),
+                calc(100vh + 900px)
             )
             rotate(46deg);
 
