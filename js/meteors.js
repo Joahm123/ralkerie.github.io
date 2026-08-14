@@ -1,5 +1,6 @@
 /* =====================================================
    RALKERIE METEORS
+   DIAGONAL + CLICK POPUP + SONG START TIME
 ===================================================== */
 
 (() => {
@@ -8,8 +9,25 @@
 
 
     /* =================================================
-       ELEMENT
+       SETTINGS
     ================================================= */
+
+    const AUDIO_FILE =
+        "./assets/audio/meteor.mp3";
+
+    const GIF_FILE =
+        "./assets/images/meteor.gif";
+
+    /*
+       How far into the song to start.
+
+       15 = starts at 0:15
+       30 = starts at 0:30
+       45 = starts at 0:45
+    */
+
+    const SONG_START_TIME = 35;
+
 
     const meteorContainer =
         document.getElementById("meteors");
@@ -18,7 +36,7 @@
     if (!meteorContainer) {
 
         console.error(
-            "Ralkerie: #meteors was not found."
+            "Ralkerie: #meteors not found."
         );
 
         return;
@@ -28,17 +46,6 @@
     console.log(
         "Ralkerie meteors loaded."
     );
-
-
-    /* =================================================
-       FILES
-    ================================================= */
-
-    const AUDIO_FILE =
-        "./assets/audio/meteor.mp3";
-
-    const GIF_FILE =
-        "./assets/images/meteor.gif";
 
 
     /* =================================================
@@ -95,7 +102,7 @@
 
 
     /* =================================================
-       POPUP OPEN
+       OPEN POPUP
     ================================================= */
 
     function openPopup() {
@@ -105,8 +112,12 @@
         );
 
 
+        /*
+           Start farther into the song.
+        */
+
         meteorAudio.currentTime =
-            0;
+            SONG_START_TIME;
 
 
         meteorAudio.play()
@@ -121,7 +132,7 @@
 
 
     /* =================================================
-       POPUP CLOSE
+       CLOSE POPUP
     ================================================= */
 
     function closePopup() {
@@ -138,11 +149,19 @@
     }
 
 
+    /* =================================================
+       CLOSE BUTTON
+    ================================================= */
+
     closeButton.addEventListener(
         "click",
         closePopup
     );
 
+
+    /* =================================================
+       CLICK OUTSIDE
+    ================================================= */
 
     popup.addEventListener(
         "click",
@@ -159,6 +178,10 @@
         }
     );
 
+
+    /* =================================================
+       ESCAPE
+    ================================================= */
 
     document.addEventListener(
         "keydown",
@@ -190,19 +213,29 @@
             "meteor";
 
 
-        /* ---------------------------------------------
-           NORMAL POSITION
-        --------------------------------------------- */
+        /*
+           Normal spawn position.
+        */
+
+        const y =
+            15 +
+            Math.random() * 65;
+
 
         meteor.style.left =
             "-100px";
 
 
         meteor.style.top =
-            (
-                15 +
-                Math.random() * 65
-            ) + "vh";
+            `${y}vh`;
+
+
+        meteor.style.opacity =
+            "1";
+
+
+        meteor.style.visibility =
+            "visible";
 
 
         /* ---------------------------------------------
@@ -222,16 +255,11 @@
 
 
         /* ---------------------------------------------
-           ADD TO DOM
+           ADD METEOR
         --------------------------------------------- */
 
         meteorContainer.appendChild(
             meteor
-        );
-
-
-        console.log(
-            "Meteor spawned."
         );
 
 
@@ -251,14 +279,14 @@
 
 
     /* =================================================
-       SPAWN FIRST METEOR
+       FIRST METEOR
     ================================================= */
 
     createMeteor();
 
 
     /* =================================================
-       SPAWN MORE
+       SPAWN LOOP
     ================================================= */
 
     function spawnMeteor() {
@@ -288,6 +316,5 @@
         spawnMeteor,
         3000
     );
-
 
 })();
