@@ -1,9 +1,8 @@
 /* =====================================================
-   RALKERIE SPACE BACKGROUND
+   STAR FIELD — PERFORMANCE OPTIMIZED
 ===================================================== */
 
-#background {
-
+#stars {
     position: fixed;
 
     inset: 0;
@@ -11,88 +10,101 @@
     width: 100vw;
     height: 100vh;
 
+    overflow: hidden;
+
+    pointer-events: none;
+
     z-index: 0;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-
-            #3b1737 0%,
-
-            #210c20 35%,
-
-            #0d050f 70%,
-
-            #020103 100%
-        );
 }
 
 
 /* =====================================================
-   PINK SPACE GLOW
-===================================================== */
-
-#background::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-
-        radial-gradient(
-            circle at 15% 45%,
-
-            rgba(
-                255,
-                40,
-                190,
-                0.18
-            ),
-
-            transparent 35%
-        ),
-
-        radial-gradient(
-            circle at 85% 25%,
-
-            rgba(
-                255,
-                90,
-                220,
-                0.15
-            ),
-
-            transparent 35%
-        );
-}
-
-
-/* =====================================================
-   STARS
+   STAR
 ===================================================== */
 
 .star {
-
     position: absolute;
 
     border-radius: 50%;
 
-    background: white;
+    background: #ffffff;
+
+    /*
+       Small glow only.
+       Large shadows are expensive.
+    */
 
     box-shadow:
+        0 0 4px rgba(255, 255, 255, 0.8);
 
-        0 0 5px white,
+    opacity: 0.7;
 
-        0 0 10px
-        rgba(
-            255,
-            180,
-            235,
-            0.9
-        );
+    /*
+       Browser handles animation
+       instead of JavaScript.
+    */
 
-    pointer-events: none;
+    animation:
+        starMove
+        var(--star-speed)
+        linear
+        infinite,
+
+        starSparkle
+        var(--sparkle-speed)
+        ease-in-out
+        infinite;
+
+    will-change: transform, opacity;
+
+    contain: layout paint;
+}
+
+
+/* =====================================================
+   STAR MOVEMENT
+===================================================== */
+
+@keyframes starMove {
+
+    from {
+        transform:
+            translate3d(0, 0, 0);
+    }
+
+    to {
+        transform:
+            translate3d(110vw, 0, 0);
+    }
+}
+
+
+/* =====================================================
+   STAR SPARKLE
+===================================================== */
+
+@keyframes starSparkle {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   REDUCE ANIMATION WHEN TAB IS NOT ACTIVE
+===================================================== */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .star {
+        animation: none;
+    }
 }
