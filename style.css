@@ -4,8 +4,13 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+body {
     overflow: hidden;
     background: #020207;
     color: white;
@@ -13,14 +18,15 @@ body {
 }
 
 /* =========================
-   SPACE
+   SPACE BACKGROUND
 ========================= */
 
 .background {
     position: fixed;
     inset: 0;
-    overflow: hidden;
-    z-index: -2;
+
+    width: 100vw;
+    height: 100vh;
 
     background:
         radial-gradient(
@@ -29,6 +35,8 @@ body {
             #05050c 50%,
             #010103 100%
         );
+
+    z-index: -3;
 }
 
 /* =========================
@@ -38,16 +46,18 @@ body {
 #stars {
     position: fixed;
     inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
     overflow: hidden;
     pointer-events: none;
+
     z-index: -1;
 }
 
 .star {
     position: absolute;
-
-    width: 2px;
-    height: 2px;
 
     border-radius: 50%;
 
@@ -62,7 +72,7 @@ body {
 
 @keyframes starMove {
     from {
-        transform: translateX(-20px);
+        transform: translateX(-30px);
     }
 
     to {
@@ -81,8 +91,8 @@ body {
     width: 100vw;
     height: 100vh;
 
-    pointer-events: none;
     overflow: hidden;
+    pointer-events: none;
 
     z-index: 0;
 }
@@ -95,9 +105,6 @@ body {
 
     border-radius: 50%;
 
-    /*
-       Bright meteor head
-    */
     background: white;
 
     box-shadow:
@@ -106,28 +113,15 @@ body {
         0 0 35px #ff8bd8,
         0 0 60px #ff4fc3,
         0 0 90px rgba(255, 79, 195, 0.5);
-
-    /*
-       IMPORTANT:
-       The HEAD is on the RIGHT.
-    */
-
-    z-index: 2;
 }
 
-/* =========================
-   METEOR TRAIL
-========================= */
+/* Pink trail */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    /*
-       Trail extends LEFT
-       from the head.
-    */
     width: 330px;
     height: 10px;
 
@@ -149,8 +143,6 @@ body {
 
     filter: blur(2px);
 }
-
-/* Large soft glow */
 
 .meteor::after {
     content: "";
@@ -176,9 +168,7 @@ body {
     filter: blur(10px);
 }
 
-/* =========================
-   METEOR MOVEMENT
-========================= */
+/* Right → Left */
 
 @keyframes meteorFly {
     0% {
@@ -195,7 +185,7 @@ body {
     }
 
     100% {
-        transform: translateX(calc(-100vw - 500px));
+        transform: translateX(calc(-100vw - 600px));
         opacity: 0;
     }
 }
@@ -205,14 +195,15 @@ body {
 ========================= */
 
 main {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
     min-height: 100vh;
 
     display: flex;
     justify-content: center;
     align-items: center;
-
-    position: relative;
-    z-index: 2;
 }
 
 .profile {
