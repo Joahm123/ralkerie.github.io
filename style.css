@@ -139,14 +139,13 @@ body {
         0 0 45px rgba(255, 70, 195, 0.45);
 
     transform: rotate(46deg);
-
     transform-origin: right center;
 
     z-index: 2;
 }
 
 /* =========================
-   SUPER LONG PINK TRAIL
+   SUPER LONG TRAIL
 ========================= */
 
 .meteor::before {
@@ -209,7 +208,7 @@ body {
 }
 
 /* =========================
-   FALLING MOVEMENT
+   METEOR MOVEMENT
 ========================= */
 
 @keyframes meteorFly {
@@ -233,7 +232,7 @@ body {
     to {
         transform:
             translate(
-                calc(100vw + 900px),
+                calc(100vw + 1200px),
                 calc(100vh + 900px)
             )
             rotate(46deg);
