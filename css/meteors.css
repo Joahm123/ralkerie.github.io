@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE METEORS
-   OPTIMIZED + CLICKABLE + PINK/WHITE EXPLOSIONS
+   TERRARIA / PIXEL STYLE
 ===================================================== */
 
 
@@ -27,7 +27,7 @@
 
 
 /* =====================================================
-   METEOR HEAD
+   METEOR
 ===================================================== */
 
 .meteor {
@@ -36,17 +36,12 @@
     left: 0;
     top: 0;
 
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
 
-    border-radius: 50%;
+    border-radius: 0;
 
     background: #ffffff;
-
-    /*
-       IMPORTANT:
-       The meteor itself can be clicked.
-    */
 
     pointer-events: auto;
 
@@ -56,15 +51,20 @@
 
     z-index: 5;
 
+    /*
+       Pixel-style glow
+    */
+
     box-shadow:
-        0 0 7px #ffffff,
-        0 0 14px #ffb5ed,
-        0 0 24px rgba(255, 55, 190, 0.75);
+        0 0 0 2px #ffffff,
+        0 0 6px #ffffff,
+        0 0 12px #ff8cda,
+        0 0 20px #ff38bd;
 }
 
 
 /* =====================================================
-   PINK OUTER TRAIL
+   OUTER PINK TRAIL
 ===================================================== */
 
 .meteor::before {
@@ -72,25 +72,16 @@
 
     position: absolute;
 
-    right: 7px;
+    right: 5px;
     top: 50%;
 
-    width: 700px;
-    height: 20px;
+    width: 620px;
+    height: 16px;
 
     transform:
         translateY(-50%);
 
-    transform-origin:
-        right center;
-
-    border-radius: 999px;
-
-    /*
-       White near meteor,
-       strong pink farther out,
-       fades to transparent.
-    */
+    border-radius: 0;
 
     background:
         linear-gradient(
@@ -98,19 +89,19 @@
 
             #ffffff 0%,
 
-            #fffaff 5%,
+            #ffffff 7%,
 
-            #ffd6f4 12%,
+            #ffd7f4 14%,
 
-            #ff9de0 25%,
+            #ff9ee1 28%,
 
-            #ff70d1 40%,
+            #ff67ce 45%,
 
-            #ff4bc5 58%,
+            #ff3fbd 63%,
 
-            #ff2fba 75%,
+            rgba(255, 40, 185, 0.55) 80%,
 
-            rgba(255, 35, 180, 0.45) 88%,
+            rgba(255, 40, 185, 0.15) 92%,
 
             transparent 100%
         );
@@ -124,22 +115,22 @@
 
 
 /* =====================================================
-   WHITE CENTER OF TRAIL
+   WHITE CENTER TRAIL
 ===================================================== */
 
 .meteor > .meteor-core {
     position: absolute;
 
-    right: 7px;
+    right: 5px;
     top: 50%;
 
-    width: 700px;
-    height: 8px;
+    width: 620px;
+    height: 7px;
 
     transform:
         translateY(-50%);
 
-    border-radius: 999px;
+    border-radius: 0;
 
     background:
         linear-gradient(
@@ -149,13 +140,11 @@
 
             #ffffff 12%,
 
-            rgba(255, 255, 255, 0.98) 30%,
+            rgba(255, 255, 255, 0.95) 30%,
 
-            rgba(255, 255, 255, 0.85) 50%,
+            rgba(255, 255, 255, 0.75) 52%,
 
-            rgba(255, 255, 255, 0.55) 70%,
-
-            rgba(255, 255, 255, 0.18) 88%,
+            rgba(255, 255, 255, 0.45) 72%,
 
             transparent 100%
         );
@@ -167,7 +156,7 @@
 
 
 /* =====================================================
-   METEOR HEAD GLOW
+   PIXEL METEOR HEAD
 ===================================================== */
 
 .meteor::after {
@@ -178,17 +167,18 @@
     left: -5px;
     top: -5px;
 
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
 
-    border-radius: 50%;
+    border-radius: 0;
 
     background: #ffffff;
 
     box-shadow:
+        0 0 0 2px #ffffff,
         0 0 8px #ffffff,
-        0 0 16px #ffb5ed,
-        0 0 28px rgba(255, 45, 185, 0.8);
+        0 0 16px #ff8edc,
+        0 0 25px #ff36bb;
 
     pointer-events: none;
 
@@ -197,7 +187,7 @@
 
 
 /* =====================================================
-   CLICK EXPLOSION
+   EXPLOSION CONTAINER
 ===================================================== */
 
 .meteor-explosion {
@@ -219,61 +209,63 @@
 .meteor-flash {
     position: absolute;
 
-    left: -12px;
-    top: -12px;
+    left: -10px;
+    top: -10px;
 
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 
-    border-radius: 50%;
+    border-radius: 0;
 
     background: #ffffff;
 
     box-shadow:
-        0 0 10px #ffffff,
-        0 0 22px #ffb5ed,
-        0 0 40px #ff38bd;
+        0 0 5px #ffffff,
+        0 0 15px #ffffff,
+        0 0 25px #ff62cc;
 
     pointer-events: none;
 
     animation:
         meteorFlash
-        350ms
-        ease-out
+        300ms
+        steps(5)
         forwards;
 }
 
 
 /* =====================================================
-   FLASH ANIMATION
+   PIXEL FLASH
 ===================================================== */
 
 @keyframes meteorFlash {
 
     0% {
-        transform:
-            scale(0.25);
+        transform: scale(1);
 
         opacity: 1;
     }
 
-    35% {
-        transform:
-            scale(1.8);
+    25% {
+        transform: scale(2);
 
         opacity: 1;
     }
 
-    65% {
-        transform:
-            scale(3);
+    50% {
+        transform: scale(3);
 
-        opacity: 0.65;
+        opacity: 0.8;
+    }
+
+    75% {
+        transform: scale(4);
+
+        opacity: 0.4;
     }
 
     100% {
-        transform:
-            scale(4.5);
+        transform: scale(5);
 
         opacity: 0;
     }
@@ -290,49 +282,29 @@
     left: -3px;
     top: -3px;
 
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 
-    border-radius: 50%;
+    border-radius: 0;
 
-    /*
-       Pink center.
-    */
-
-    background:
-        radial-gradient(
-            circle,
-
-            #ffffff 0%,
-
-            #ffffff 35%,
-
-            #ff9de0 65%,
-
-            #ff3fc2 100%
-        );
+    background: #ffffff;
 
     box-shadow:
-        0 0 4px #ffffff,
-        0 0 9px #ff72d3;
+        0 0 3px #ffffff,
+        0 0 8px #ff62cc;
 
     pointer-events: none;
 
     animation:
         meteorParticle
         600ms
-        cubic-bezier(
-            0.2,
-            0.8,
-            0.3,
-            1
-        )
+        steps(8)
         forwards;
 }
 
 
 /* =====================================================
-   PARTICLE ANIMATION
+   PARTICLE MOVEMENT
 ===================================================== */
 
 @keyframes meteorParticle {
@@ -343,13 +315,8 @@
                 0,
                 0,
                 0
-            )
-            scale(1);
+            );
 
-        opacity: 1;
-    }
-
-    40% {
         opacity: 1;
     }
 
@@ -363,8 +330,7 @@
                 var(--particle-x),
                 var(--particle-y),
                 0
-            )
-            scale(0);
+            );
 
         opacity: 0;
     }
@@ -372,7 +338,7 @@
 
 
 /* =====================================================
-   TOUCH DEVICES
+   TOUCH
 ===================================================== */
 
 @media (pointer: coarse) {
