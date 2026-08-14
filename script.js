@@ -50,11 +50,7 @@ function createStar() {
 }
 
 
-/*
-    Lots of stars
-*/
-
-for (let i = 0; i < 220; i++) {
+for (let i = 220; i > 0; i--) {
     createStar();
 }
 
@@ -72,14 +68,16 @@ function createMeteor() {
 
 
     /*
-        SPAWN AT TOP
-        across the ENTIRE width.
+        START AT THE TOP.
+
+        Spread across the
+        entire width.
     */
 
     const startX =
         Math.random() *
-        (window.innerWidth + 400) -
-        400;
+        (window.innerWidth + 300) -
+        150;
 
     const startY =
         -350;
@@ -90,18 +88,18 @@ function createMeteor() {
     */
 
     const length =
-        Math.random() * 180 + 240;
+        Math.random() * 180 + 260;
 
     meteor.style.width =
         `${length}px`;
 
 
     /*
-        Random speed
+        RANDOM FALL SPEED
     */
 
     const duration =
-        Math.random() * 1.8 + 1.8;
+        Math.random() * 1.5 + 1.8;
 
 
     meteor.style.left =
@@ -119,15 +117,13 @@ function createMeteor() {
 
 
     setTimeout(() => {
-
         meteor.remove();
-
     }, duration * 1000);
 }
 
 
 /* =========================
-   MORE METEORS
+   METEOR SPAWNING
 ========================= */
 
 function spawnMeteor() {
@@ -135,11 +131,11 @@ function spawnMeteor() {
     createMeteor();
 
     /*
-        Frequent spawning.
+        MORE FREQUENT
     */
 
     const nextMeteor =
-        Math.random() * 450 + 200;
+        Math.random() * 350 + 180;
 
     setTimeout(
         spawnMeteor,
@@ -147,7 +143,5 @@ function spawnMeteor() {
     );
 }
 
-
-/* Start */
 
 spawnMeteor();
