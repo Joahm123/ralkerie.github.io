@@ -1,15 +1,24 @@
 /* =====================================================
-   RALKERIE METEORS — OPTIMIZED + CLICK EXPLOSIONS
+   RALKERIE METEORS
+   OPTIMIZED + CLICKABLE + EXPLOSIONS
 ===================================================== */
 
 (() => {
     "use strict";
 
+
+    /* =================================================
+       CONTAINER
+    ================================================= */
+
     const container =
         document.getElementById("meteors");
 
     if (!container) {
-        console.error("Meteor container not found.");
+        console.error(
+            "Meteor container not found."
+        );
+
         return;
     }
 
@@ -20,8 +29,8 @@
 
     const MAX_METEORS = 8;
 
-    const SPAWN_MIN = 900;
-    const SPAWN_MAX = 1600;
+    const SPAWN_MIN = 1000;
+    const SPAWN_MAX = 1800;
 
     const meteors = [];
 
@@ -54,18 +63,20 @@
         core.className =
             "meteor-core";
 
+
         element.appendChild(
             core
         );
 
 
         /*
-           IMPORTANT:
-           Meteors can now receive clicks.
+           Meteor itself receives
+           pointer events.
         */
 
         element.style.pointerEvents =
             "auto";
+
 
         element.style.display =
             "none";
@@ -97,15 +108,18 @@
         );
 
 
-        /* =============================================
-           CLICK METEOR
-        ============================================= */
+        /* =================================================
+           CLICK / POINTER DETECTION
+        ================================================= */
 
         element.addEventListener(
             "pointerdown",
-            (event) => {
+            function (event) {
+
+                event.preventDefault();
 
                 event.stopPropagation();
+
 
                 if (
                     !meteor.active
@@ -115,18 +129,26 @@
 
 
                 /*
-                   Remember explosion position.
+                   Get the actual screen
+                   position of the meteor.
                 */
 
+                const rect =
+                    element.getBoundingClientRect();
+
+
                 const explosionX =
-                    meteor.x;
+                    rect.left +
+                    rect.width / 2;
+
 
                 const explosionY =
-                    meteor.y;
+                    rect.top +
+                    rect.height / 2;
 
 
                 /*
-                   Remove meteor immediately.
+                   Remove meteor.
                 */
 
                 despawn(
@@ -160,6 +182,7 @@
             if (
                 !meteor.active
             ) {
+
                 return meteor;
             }
         }
@@ -174,9 +197,15 @@
 
     function spawnMeteor() {
 
+        /*
+           Don't spawn while the
+           browser tab is hidden.
+        */
+
         if (
             document.hidden
         ) {
+
             return;
         }
 
@@ -184,8 +213,11 @@
         const meteor =
             getMeteor();
 
+
         if (!meteor) {
+
             scheduleSpawn();
+
             return;
         }
 
@@ -195,7 +227,10 @@
 
 
         /*
-           LEFT-BIASED SPAWN.
+           LEFT-BIASED SPAWNING.
+
+           This keeps meteors mostly
+           toward the left/middle.
         */
 
         meteor.x =
@@ -208,13 +243,17 @@
 
 
         /*
-           Spawn above screen.
+           Start above the screen.
         */
 
         meteor.y =
             -150 -
             Math.random() * 350;
 
+
+        /*
+           Meteor speed.
+        */
 
         meteor.speedX =
             850 +
@@ -232,6 +271,15 @@
 
         meteor.element.style.display =
             "block";
+
+
+        /*
+           Reset any previous animation
+           state.
+        */
+
+        meteor.element.style.opacity =
+            "1";
 
 
         meteor.element.style.transform =
@@ -282,6 +330,7 @@
         meteor.active =
             false;
 
+
         meteor.element.style.display =
             "none";
     }
@@ -301,25 +350,40 @@
                 "div"
             );
 
+
         explosion.className =
             "meteor-explosion";
+
+
+        /*
+           Use screen coordinates.
+        */
+
+        explosion.style.position =
+            "fixed";
 
 
         explosion.style.left =
             `${x}px`;
 
+
         explosion.style.top =
             `${y}px`;
 
 
-        /*
-           White flash.
-        */
+        explosion.style.pointerEvents =
+            "none";
+
+
+        /* =================================================
+           WHITE/PINK FLASH
+        ================================================= */
 
         const flash =
             document.createElement(
                 "div"
             );
+
 
         flash.className =
             "meteor-flash";
@@ -330,13 +394,12 @@
         );
 
 
-        /*
-           Create a small number
-           of particles for performance.
-        */
+        /* =================================================
+           PARTICLES
+        ================================================= */
 
         const particleCount =
-            16;
+            18;
 
 
         for (
@@ -350,9 +413,14 @@
                     "div"
                 );
 
+
             particle.className =
                 "meteor-particle";
 
+
+            /*
+               Random explosion direction.
+            */
 
             const angle =
                 Math.random() *
@@ -361,24 +429,55 @@
 
 
             const distance =
-                30 +
-                Math.random() * 90;
+                35 +
+                Math.random() * 100;
+
+
+            const particleX =
+                Math.cos(angle) *
+                distance;
+
+
+            const particleY =
+                Math.sin(angle) *
+                distance;
 
 
             particle.style.setProperty(
                 "--particle-x",
-                `${Math.cos(angle) * distance}px`
+                `${particleX}px`
             );
 
 
             particle.style.setProperty(
                 "--particle-y",
-                `${Math.sin(angle) * distance}px`
+                `${particleY}px`
             );
 
 
+            /*
+               Slightly random particle sizes.
+            */
+
+            const size =
+                3 +
+                Math.random() * 5;
+
+
+            particle.style.width =
+                `${size}px`;
+
+
+            particle.style.height =
+                `${size}px`;
+
+
+            /*
+               Random delay.
+            */
+
             particle.style.animationDelay =
-                `${Math.random() * 80}ms`;
+                `${Math.random() * 70}ms`;
 
 
             explosion.appendChild(
@@ -393,8 +492,7 @@
 
 
         /*
-           Automatically remove the
-           explosion after its animation.
+           Clean explosion from DOM.
         */
 
         setTimeout(
@@ -403,7 +501,7 @@
                 explosion.remove();
 
             },
-            700
+            750
         );
     }
 
@@ -416,6 +514,11 @@
         time
     ) {
 
+        /*
+           Don't process meteors while
+           the tab isn't visible.
+        */
+
         if (
             document.hidden
         ) {
@@ -423,9 +526,11 @@
             lastTime =
                 time;
 
+
             requestAnimationFrame(
                 animate
             );
+
 
             return;
         }
@@ -438,10 +543,17 @@
             ) / 1000;
 
 
+        /*
+           Prevent giant jumps after
+           lag or tab switching.
+        */
+
         if (
             delta > 0.05
         ) {
-            delta = 0.05;
+
+            delta =
+                0.05;
         }
 
 
@@ -454,6 +566,11 @@
             500;
 
 
+        const right =
+            window.innerWidth +
+            700;
+
+
         for (
             const meteor of meteors
         ) {
@@ -461,9 +578,14 @@
             if (
                 !meteor.active
             ) {
+
                 continue;
             }
 
+
+            /*
+               Move meteor.
+            */
 
             meteor.x +=
                 meteor.speedX *
@@ -475,6 +597,10 @@
                 delta;
 
 
+            /*
+               GPU-friendly movement.
+            */
+
             meteor.element.style.transform =
                 `translate3d(
                     ${meteor.x}px,
@@ -484,12 +610,17 @@
 
 
             /*
-               Despawn below screen.
+               DESPAWN OFFSCREEN.
+
+               Meteor must be completely
+               past the screen before removal.
             */
 
             if (
                 meteor.y >
-                bottom
+                bottom ||
+                meteor.x >
+                right
             ) {
 
                 despawn(
@@ -511,7 +642,11 @@
 
     document.addEventListener(
         "visibilitychange",
-        () => {
+        function () {
+
+            /*
+               Stop spawning while hidden.
+            */
 
             if (
                 document.hidden
@@ -521,16 +656,27 @@
                     spawnTimer
                 );
 
+
                 spawnTimer =
                     null;
+
 
                 return;
             }
 
 
+            /*
+               Reset animation clock
+               when returning.
+            */
+
             lastTime =
                 performance.now();
 
+
+            /*
+               Resume spawning.
+            */
 
             if (
                 !spawnTimer
@@ -548,13 +694,14 @@
 
     scheduleSpawn();
 
+
     requestAnimationFrame(
         animate
     );
 
 
     console.log(
-        "Ralkerie meteors loaded — click explosions enabled."
+        "Ralkerie meteors loaded — clickable explosions enabled."
     );
 
 })();
