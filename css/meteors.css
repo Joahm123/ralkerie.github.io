@@ -1,151 +1,255 @@
 /* =====================================================
-   METEOR CONTAINER
+   RALKERIE METEORS
 ===================================================== */
 
-#meteors {
+const meteorContainer =
+    document.getElementById("meteors");
 
-    position: fixed;
+const meteors = [];
 
-    inset: 0;
 
-    width: 100vw;
-    height: 100vh;
+/* =====================================================
+   CREATE METEOR
+===================================================== */
 
-    overflow: visible;
+function createMeteor(x, y) {
 
-    z-index: 5;
+    const element =
+        document.createElement("div");
 
-    pointer-events: none;
+    element.className = "meteor";
+
+
+    const meteor = {
+
+        element,
+
+        x,
+
+        y,
+
+        /* Move RIGHT */
+
+        velocityX:
+            1000 +
+            Math.random() * 400,
+
+        /* Move DOWN */
+
+        velocityY:
+            650 +
+            Math.random() * 300
+    };
+
+
+    element.style.left =
+        `${x}px`;
+
+    element.style.top =
+        `${y}px`;
+
+
+    meteorContainer.appendChild(
+        element
+    );
+
+    meteors.push(meteor);
 }
 
 
 /* =====================================================
-   METEOR
+   INITIAL METEORS
 ===================================================== */
 
-.meteor {
+function createInitialMeteors() {
 
-    position: absolute;
+    const width =
+        window.innerWidth;
 
-    width: 1px;
-    height: 1px;
-
-    pointer-events: none;
-
-    transform:
-        rotate(34deg);
-}
+    const zones = 12;
 
 
-/* =====================================================
-   METEOR HEAD
-===================================================== */
+    for (
+        let i = 0;
+        i < zones;
+        i++
+    ) {
 
-.meteor::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: -9px;
-    top: -9px;
-
-    width: 18px;
-    height: 18px;
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-
-        0 0 8px white,
-
-        0 0 18px white,
-
-        0 0 30px #ffd5f4,
-
-        0 0 45px #ff8bd8,
-
-        0 0 65px #ff35bd;
-}
+        const zoneWidth =
+            width / zones;
 
 
-/* =====================================================
-   METEOR TRAIL
-===================================================== */
+        /*
+           Shift the entire spawn
+           area LEFT.
 
-.meteor::before {
+           -150 means meteors can
+           begin slightly offscreen.
+        */
 
-    content: "";
+        const x =
+            -150 +
+            i * zoneWidth +
+            Math.random() * zoneWidth;
 
-    position: absolute;
 
-    right: 0;
+        /*
+           Spawn above the screen.
+        */
 
-    top: -4px;
+        const y =
+            -100 -
+            Math.random() * 500;
 
-    width: 750px;
 
-    height: 8px;
-
-    border-radius: 999px;
-
-    background:
-
-        linear-gradient(
-            to left,
-
-            white 0%,
-
-            rgba(
-                255,
-                235,
-                252,
-                0.95
-            ) 8%,
-
-            rgba(
-                255,
-                170,
-                235,
-                0.8
-            ) 25%,
-
-            rgba(
-                255,
-                80,
-                205,
-                0.5
-            ) 55%,
-
-            rgba(
-                255,
-                40,
-                190,
-                0.15
-            ) 80%,
-
-            transparent 100%
+        createMeteor(
+            x,
+            y
         );
-
-    box-shadow:
-
-        0 0 8px
-        rgba(
-            255,
-            220,
-            250,
-            0.8
-        ),
-
-        0 0 18px
-        rgba(
-            255,
-            70,
-            205,
-            0.5
-        );
-
-    filter: blur(2px);
+    }
 }
+
+
+/* =====================================================
+   CONTINUOUS SPAWNING
+===================================================== */
+
+function spawnMeteor() {
+
+    const width =
+        window.innerWidth;
+
+
+    /*
+       Spawn across the whole
+       top, but bias the position
+       toward the LEFT.
+
+       The squared random value
+       makes left-side positions
+       more common.
+    */
+
+    const x =
+        -200 +
+        Math.pow(
+            Math.random(),
+            1.35
+        ) *
+        (width + 200);
+
+
+    const y =
+        -100 -
+        Math.random() * 400;
+
+
+    createMeteor(
+        x,
+        y
+    );
+
+
+    /*
+       Less frequent spawning.
+    */
+
+    setTimeout(
+        spawnMeteor,
+
+        550 +
+        Math.random() * 300
+    );
+}
+
+
+/* =====================================================
+   MOVEMENT
+===================================================== */
+
+let meteorLastTime =
+    performance.now();
+
+
+function updateMeteors(time) {
+
+    const delta =
+        (time - meteorLastTime) / 1000;
+
+    meteorLastTime =
+        time;
+
+
+    for (
+        let i = meteors.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const meteor =
+            meteors[i];
+
+
+        meteor.x +=
+            meteor.velocityX *
+            delta;
+
+
+        meteor.y +=
+            meteor.velocityY *
+            delta;
+
+
+        meteor.element.style.left =
+            `${meteor.x}px`;
+
+        meteor.element.style.top =
+            `${meteor.y}px`;
+
+
+        /*
+           Remove meteors after
+           they are completely
+           offscreen.
+        */
+
+        if (
+            meteor.x >
+                window.innerWidth + 1000
+            &&
+            meteor.y >
+                window.innerHeight + 1000
+        ) {
+
+            meteor.element.remove();
+
+            meteors.splice(
+                i,
+                1
+            );
+        }
+    }
+
+
+    requestAnimationFrame(
+        updateMeteors
+    );
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+createInitialMeteors();
+
+
+setTimeout(
+    spawnMeteor,
+    1000
+);
+
+
+requestAnimationFrame(
+    updateMeteors
+);
