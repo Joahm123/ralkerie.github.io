@@ -5,14 +5,15 @@
 
 
 /* =====================================================
-   CONTAINER
+   METEOR CONTAINER
 ===================================================== */
 
 #meteors {
 
     position: fixed;
 
-    inset: 0;
+    left: 0;
+    top: 0;
 
     width: 100vw;
     height: 100vh;
@@ -21,12 +22,18 @@
 
     pointer-events: none;
 
-    z-index: 2;
+    /*
+       Above background.
+       Below popup.
+    */
+
+    z-index: 500;
+
 }
 
 
 /* =====================================================
-   HITBOX
+   INVISIBLE HITBOX
 ===================================================== */
 
 .meteor-hitbox {
@@ -39,24 +46,20 @@
     margin-left: -48px;
     margin-top: -48px;
 
+    background: transparent;
+
     pointer-events: auto;
 
     cursor: pointer;
 
-    background: transparent;
-
-    z-index: 10;
-
-    /*
-       Move the ENTIRE meteor
-       diagonally down-right.
-    */
+    z-index: 501;
 
     animation:
         meteorMove
         5s
         linear
         forwards;
+
 }
 
 
@@ -79,21 +82,27 @@
     transform:
         rotate(35deg);
 
-    z-index: 5;
-
     pointer-events: none;
 
+    z-index: 502;
+
     box-shadow:
+
         0 0 3px #ffffff,
+
         0 0 7px #ffffff,
+
         0 0 12px #ffb3e7,
+
         0 0 20px #ff66cc,
+
         0 0 30px #ff2db5;
+
 }
 
 
 /* =====================================================
-   METEOR PIXEL HEAD
+   PIXEL METEOR HEAD
 ===================================================== */
 
 .meteor::after {
@@ -109,6 +118,7 @@
     height: 18px;
 
     background:
+
         linear-gradient(
             135deg,
 
@@ -125,17 +135,21 @@
         );
 
     clip-path:
+
         polygon(
             50% 0%,
             100% 50%,
             50% 100%,
             0% 50%
         );
+
+    pointer-events: none;
+
 }
 
 
 /* =====================================================
-   METEOR TRAIL
+   PINK TRAIL
 ===================================================== */
 
 .meteor::before {
@@ -156,6 +170,7 @@
         translateY(-50%);
 
     background:
+
         linear-gradient(
             to left,
 
@@ -179,38 +194,45 @@
         );
 
     pointer-events: none;
+
 }
 
 
 /* =====================================================
-   MOVEMENT
+   METEOR MOVEMENT
 ===================================================== */
 
 @keyframes meteorMove {
 
-    from {
+    0% {
 
         transform:
             translate3d(
                 0,
-                -100px,
+                -120px,
                 0
             );
 
         opacity: 0;
+
     }
+
 
     8% {
 
         opacity: 1;
+
     }
+
 
     90% {
 
         opacity: 1;
+
     }
 
-    to {
+
+    100% {
 
         transform:
             translate3d(
@@ -220,7 +242,9 @@
             );
 
         opacity: 0;
+
     }
+
 }
 
 
@@ -260,8 +284,13 @@
 
     transition:
         opacity 0.15s ease;
+
 }
 
+
+/* =====================================================
+   POPUP VISIBLE
+===================================================== */
 
 .meteor-popup.visible {
 
@@ -270,6 +299,7 @@
     visibility: visible;
 
     pointer-events: auto;
+
 }
 
 
@@ -288,6 +318,7 @@
     border: 2px solid #ffffff;
 
     box-shadow:
+
         0 0 25px
         rgba(
             255,
@@ -295,6 +326,7 @@
             190,
             0.4
         );
+
 }
 
 
@@ -310,12 +342,16 @@
 
     max-height: 75vh;
 
+    width: auto;
+    height: auto;
+
     image-rendering: pixelated;
+
 }
 
 
 /* =====================================================
-   CLOSE
+   CLOSE BUTTON
 ===================================================== */
 
 .meteor-popup-close {
@@ -323,11 +359,9 @@
     position: absolute;
 
     top: -16px;
-
     right: -16px;
 
     width: 30px;
-
     height: 30px;
 
     padding: 0;
@@ -340,9 +374,12 @@
 
     font-size: 23px;
 
+    line-height: 24px;
+
     cursor: pointer;
 
-    z-index: 10;
+    z-index: 10000;
+
 }
 
 
@@ -351,5 +388,6 @@
     color: #ff8bdc;
 
     background: #222222;
+
 }
 ```
