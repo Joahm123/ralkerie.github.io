@@ -1,11 +1,11 @@
 /* =====================================================
    RALKERIE METEORS
-   TERRARIA / PIXEL STYLE
+   DIAGONAL PIXEL METEORS
 ===================================================== */
 
 
 /* =====================================================
-   METEOR CONTAINER
+   CONTAINER
 ===================================================== */
 
 #meteors {
@@ -16,13 +16,11 @@
     width: 100vw;
     height: 100vh;
 
-    overflow: visible;
+    overflow: hidden;
 
     pointer-events: none;
 
     z-index: 1;
-
-    contain: layout;
 }
 
 
@@ -33,38 +31,65 @@
 .meteor {
     position: absolute;
 
-    left: 0;
-    top: 0;
-
     width: 14px;
     height: 14px;
 
-    border-radius: 0;
-
     background: #ffffff;
+
+    border-radius: 0;
 
     pointer-events: auto;
 
     cursor: pointer;
 
-    will-change: transform;
-
     z-index: 5;
 
-    /*
-       Pixel-style glow
-    */
+    opacity: 1;
+
+    transform:
+        rotate(-35deg);
+
+    animation:
+        meteorDiagonal
+        4s
+        linear
+        forwards;
 
     box-shadow:
-        0 0 0 2px #ffffff,
-        0 0 6px #ffffff,
-        0 0 12px #ff8cda,
-        0 0 20px #ff38bd;
+        0 0 5px #ffffff,
+        0 0 10px #ffffff,
+        0 0 18px #ff9bdd,
+        0 0 28px #ff3fbd;
 }
 
 
 /* =====================================================
-   OUTER PINK TRAIL
+   BIGGER CLICK HITBOX
+===================================================== */
+
+.meteor {
+    /*
+       The visible meteor stays 14px.
+
+       This invisible area makes it
+       much easier to click.
+    */
+
+    padding: 28px;
+
+    margin:
+        -28px;
+
+    /*
+       Keep the hitbox clickable.
+    */
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   PINK OUTER TRAIL
 ===================================================== */
 
 .meteor::before {
@@ -73,15 +98,15 @@
     position: absolute;
 
     right: 5px;
+
     top: 50%;
 
-    width: 620px;
+    width: 600px;
+
     height: 16px;
 
     transform:
         translateY(-50%);
-
-    border-radius: 0;
 
     background:
         linear-gradient(
@@ -91,22 +116,23 @@
 
             #ffffff 7%,
 
-            #ffd7f4 14%,
+            #ffd8f3 16%,
 
-            #ff9ee1 28%,
+            #ff9bdd 32%,
 
-            #ff67ce 45%,
+            #ff63cb 52%,
 
-            #ff3fbd 63%,
+            #ff3dbd 70%,
 
-            rgba(255, 40, 185, 0.55) 80%,
-
-            rgba(255, 40, 185, 0.15) 92%,
+            rgba(
+                255,
+                61,
+                189,
+                0.35
+            ) 88%,
 
             transparent 100%
         );
-
-    opacity: 0.95;
 
     pointer-events: none;
 
@@ -118,19 +144,21 @@
    WHITE CENTER TRAIL
 ===================================================== */
 
-.meteor > .meteor-core {
+.meteor::after {
+    content: "";
+
     position: absolute;
 
     right: 5px;
+
     top: 50%;
 
-    width: 620px;
+    width: 600px;
+
     height: 7px;
 
     transform:
         translateY(-50%);
-
-    border-radius: 0;
 
     background:
         linear-gradient(
@@ -140,11 +168,26 @@
 
             #ffffff 12%,
 
-            rgba(255, 255, 255, 0.95) 30%,
+            rgba(
+                255,
+                255,
+                255,
+                0.95
+            ) 30%,
 
-            rgba(255, 255, 255, 0.75) 52%,
+            rgba(
+                255,
+                255,
+                255,
+                0.65
+            ) 55%,
 
-            rgba(255, 255, 255, 0.45) 72%,
+            rgba(
+                255,
+                255,
+                255,
+                0.25
+            ) 78%,
 
             transparent 100%
         );
@@ -156,208 +199,229 @@
 
 
 /* =====================================================
-   PIXEL METEOR HEAD
+   DIAGONAL MOVEMENT
 ===================================================== */
 
-.meteor::after {
-    content: "";
+@keyframes meteorDiagonal {
 
-    position: absolute;
+    0% {
 
-    left: -5px;
-    top: -5px;
+        transform:
+            translate3d(
+                -100px,
+                -100px,
+                0
+            )
+            rotate(-35deg);
 
-    width: 24px;
-    height: 24px;
+        opacity: 0;
+    }
 
-    border-radius: 0;
 
-    background: #ffffff;
+    8% {
 
-    box-shadow:
-        0 0 0 2px #ffffff,
-        0 0 8px #ffffff,
-        0 0 16px #ff8edc,
-        0 0 25px #ff36bb;
+        opacity: 1;
+    }
 
-    pointer-events: none;
 
-    z-index: 6;
+    90% {
+
+        opacity: 1;
+    }
+
+
+    100% {
+
+        transform:
+            translate3d(
+                calc(100vw + 500px),
+                calc(100vh + 500px),
+                0
+            )
+            rotate(-35deg);
+
+        opacity: 0;
+    }
 }
 
 
 /* =====================================================
-   EXPLOSION CONTAINER
+   POPUP
 ===================================================== */
 
-.meteor-explosion {
+.meteor-popup {
+
     position: fixed;
 
-    width: 1px;
-    height: 1px;
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.75
+        );
+
+    backdrop-filter:
+        blur(4px);
+
+    opacity: 0;
+
+    visibility: hidden;
 
     pointer-events: none;
 
-    z-index: 100;
+    z-index: 9999;
+
+    transition:
+        opacity 150ms ease;
+}
+
+
+.meteor-popup.visible {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
 }
 
 
 /* =====================================================
-   EXPLOSION FLASH
+   POPUP BOX
 ===================================================== */
 
-.meteor-flash {
+.meteor-popup-box {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    max-width: 90vw;
+
+    max-height: 85vh;
+
+    padding: 8px;
+
+    background: #000000;
+
+    border: 2px solid #ffffff;
+
+    box-shadow:
+        5px 5px 0 #000000,
+        0 0 25px
+        rgba(
+            255,
+            70,
+            190,
+            0.35
+        );
+}
+
+
+/* =====================================================
+   GIF
+===================================================== */
+
+.meteor-popup-gif {
+
+    display: block;
+
+    max-width: 80vw;
+
+    max-height: 75vh;
+
+    width: auto;
+
+    height: auto;
+
+    image-rendering: pixelated;
+}
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
+.meteor-popup-close {
+
     position: absolute;
 
-    left: -10px;
-    top: -10px;
+    top: -16px;
 
-    width: 20px;
-    height: 20px;
+    right: -16px;
+
+    width: 30px;
+
+    height: 30px;
+
+    padding: 0;
+
+    border: 2px solid #ffffff;
 
     border-radius: 0;
 
-    background: #ffffff;
+    background: #000000;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size: 23px;
+
+    line-height: 24px;
+
+    cursor: pointer;
+
+    z-index: 10;
 
     box-shadow:
-        0 0 5px #ffffff,
-        0 0 15px #ffffff,
-        0 0 25px #ff62cc;
+        3px 3px 0 #000000;
+}
 
-    pointer-events: none;
 
-    animation:
-        meteorFlash
-        300ms
-        steps(5)
-        forwards;
+.meteor-popup-close:hover {
+
+    background: #222222;
+
+    color: #ff8bdc;
 }
 
 
 /* =====================================================
-   PIXEL FLASH
+   MOBILE
 ===================================================== */
 
-@keyframes meteorFlash {
+@media (max-width: 700px) {
 
-    0% {
-        transform: scale(1);
+    .meteor-popup-box {
 
-        opacity: 1;
+        max-width: 92vw;
+
+        max-height: 80vh;
     }
 
-    25% {
-        transform: scale(2);
 
-        opacity: 1;
-    }
+    .meteor-popup-gif {
 
-    50% {
-        transform: scale(3);
+        max-width: 86vw;
 
-        opacity: 0.8;
-    }
-
-    75% {
-        transform: scale(4);
-
-        opacity: 0.4;
-    }
-
-    100% {
-        transform: scale(5);
-
-        opacity: 0;
-    }
-}
-
-
-/* =====================================================
-   EXPLOSION PARTICLES
-===================================================== */
-
-.meteor-particle {
-    position: absolute;
-
-    left: -3px;
-    top: -3px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 0;
-
-    background: #ffffff;
-
-    box-shadow:
-        0 0 3px #ffffff,
-        0 0 8px #ff62cc;
-
-    pointer-events: none;
-
-    animation:
-        meteorParticle
-        600ms
-        steps(8)
-        forwards;
-}
-
-
-/* =====================================================
-   PARTICLE MOVEMENT
-===================================================== */
-
-@keyframes meteorParticle {
-
-    0% {
-        transform:
-            translate3d(
-                0,
-                0,
-                0
-            );
-
-        opacity: 1;
-    }
-
-    70% {
-        opacity: 0.7;
-    }
-
-    100% {
-        transform:
-            translate3d(
-                var(--particle-x),
-                var(--particle-y),
-                0
-            );
-
-        opacity: 0;
-    }
-}
-
-
-/* =====================================================
-   TOUCH
-===================================================== */
-
-@media (pointer: coarse) {
-
-    .meteor {
-        cursor: pointer;
-    }
-}
-
-
-/* =====================================================
-   REDUCED MOTION
-===================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .meteor-explosion,
-    .meteor-flash,
-    .meteor-particle {
-        animation: none;
+        max-height: 70vh;
     }
 }
