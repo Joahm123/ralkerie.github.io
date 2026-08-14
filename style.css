@@ -26,7 +26,7 @@ body {
         radial-gradient(
             ellipse at center,
             #0d0d18 0%,
-            #05050c 45%,
+            #05050c 50%,
             #010103 100%
         );
 }
@@ -78,6 +78,9 @@ body {
     position: fixed;
     inset: 0;
 
+    width: 100vw;
+    height: 100vh;
+
     pointer-events: none;
     overflow: hidden;
 
@@ -87,29 +90,29 @@ body {
 .meteor {
     position: absolute;
 
-    /*
-       Bigger meteor head
-    */
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
 
     border-radius: 50%;
 
-    background: #ffe5f6;
+    /*
+       Bright meteor head
+    */
+    background: white;
 
     box-shadow:
-        0 0 10px white,
-        0 0 22px #ffb3e5,
-        0 0 45px #ff65c8,
-        0 0 75px #ff3fba;
+        0 0 8px white,
+        0 0 18px #ffd6f2,
+        0 0 35px #ff8bd8,
+        0 0 60px #ff4fc3,
+        0 0 90px rgba(255, 79, 195, 0.5);
 
     /*
-       Head points RIGHT
+       IMPORTANT:
+       The HEAD is on the RIGHT.
     */
-    transform: rotate(0deg);
 
-    animation:
-        meteorFly linear forwards;
+    z-index: 2;
 }
 
 /* =========================
@@ -122,13 +125,13 @@ body {
     position: absolute;
 
     /*
-       Trail extends BEHIND
-       the meteor toward the right.
+       Trail extends LEFT
+       from the head.
     */
-    width: 300px;
-    height: 9px;
+    width: 330px;
+    height: 10px;
 
-    left: 12px;
+    right: 14px;
     top: 50%;
 
     transform: translateY(-50%);
@@ -136,28 +139,28 @@ body {
     border-radius: 999px;
 
     background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.95),
-        rgba(255, 180, 230, 0.85) 15%,
-        rgba(255, 75, 190, 0.5) 45%,
-        rgba(255, 75, 190, 0.15) 75%,
-        rgba(255, 75, 190, 0)
+        to left,
+        rgba(255, 255, 255, 1),
+        rgba(255, 190, 231, 0.9) 15%,
+        rgba(255, 91, 199, 0.65) 40%,
+        rgba(255, 79, 195, 0.25) 75%,
+        rgba(255, 79, 195, 0)
     );
 
     filter: blur(2px);
 }
 
-/* Soft trail glow */
+/* Large soft glow */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    width: 340px;
-    height: 28px;
+    width: 380px;
+    height: 30px;
 
-    left: 8px;
+    right: 8px;
     top: 50%;
 
     transform: translateY(-50%);
@@ -165,9 +168,9 @@ body {
     border-radius: 999px;
 
     background: linear-gradient(
-        to right,
-        rgba(255, 70, 190, 0.4),
-        rgba(255, 70, 190, 0)
+        to left,
+        rgba(255, 79, 195, 0.45),
+        rgba(255, 79, 195, 0)
     );
 
     filter: blur(10px);
@@ -178,10 +181,8 @@ body {
 ========================= */
 
 @keyframes meteorFly {
-    from {
-        transform:
-            translateX(120vw)
-            translateY(0);
+    0% {
+        transform: translateX(0);
         opacity: 0;
     }
 
@@ -193,10 +194,8 @@ body {
         opacity: 1;
     }
 
-    to {
-        transform:
-            translateX(-500px)
-            translateY(120px);
+    100% {
+        transform: translateX(calc(-100vw - 500px));
         opacity: 0;
     }
 }
@@ -224,11 +223,9 @@ main {
 
     text-align: center;
 
-    background:
-        rgba(5, 5, 12, 0.55);
+    background: rgba(5, 5, 12, 0.55);
 
-    border:
-        1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
     border-radius: 24px;
 
@@ -237,8 +234,7 @@ main {
     box-shadow:
         0 20px 80px rgba(0, 0, 0, 0.7);
 
-    animation:
-        appear 1s ease forwards;
+    animation: appear 1s ease forwards;
 }
 
 .profile h1 {
