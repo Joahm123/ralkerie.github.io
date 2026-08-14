@@ -24,7 +24,6 @@ body {
 .background {
     position: fixed;
     inset: 0;
-
     width: 100vw;
     height: 100vh;
 
@@ -42,7 +41,6 @@ body {
 
 .background::after {
     content: "";
-
     position: absolute;
     inset: 0;
 
@@ -84,7 +82,7 @@ body {
     background: #fff5fc;
 
     box-shadow:
-        0 0 5px #ffffff,
+        0 0 5px white,
         0 0 10px rgba(255, 180, 230, 0.7);
 
     animation: starMove linear infinite;
@@ -121,38 +119,45 @@ body {
     position: absolute;
 
     /*
-       Long + skinny
+        LONG + SKINNY
     */
-    width: 170px;
-    height: 4px;
+    width: 260px;
+    height: 5px;
 
     border-radius: 999px;
 
+    /*
+        Bright head on the RIGHT.
+        Fade toward the LEFT.
+    */
     background: linear-gradient(
         to left,
         #ffffff 0%,
-        #ffd6f2 15%,
-        #ff8bd8 45%,
-        #ff4fc3 75%,
-        rgba(255, 79, 195, 0) 100%
+        #ffd6f2 12%,
+        #ff9de0 30%,
+        #ff65c8 55%,
+        #ff3fba 75%,
+        rgba(255, 63, 186, 0) 100%
     );
 
     box-shadow:
-        0 0 6px #ffb3e5,
-        0 0 14px #ff65c8,
-        0 0 30px rgba(255, 79, 195, 0.7);
+        0 0 7px #ffb3e5,
+        0 0 16px #ff65c8,
+        0 0 35px rgba(255, 79, 195, 0.7);
 
     /*
-       The meteor itself is angled.
+        ↘️ DOWN-RIGHT
     */
-    transform: rotate(-46deg);
+    transform: rotate(46deg);
 
     transform-origin: center;
 
     z-index: 2;
 }
 
-/* Bright head */
+/* =========================
+   METEOR HEAD
+========================= */
 
 .meteor::after {
     content: "";
@@ -160,26 +165,56 @@ body {
     position: absolute;
 
     /*
-       Head is at the RIGHT end.
+        HEAD AT FRONT / RIGHT
     */
-    right: 0;
+    right: -2px;
     top: 50%;
 
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     border-radius: 50%;
 
     background: white;
 
     box-shadow:
-        0 0 6px white,
-        0 0 14px #ffd6f2,
-        0 0 25px #ff8bd8,
-        0 0 40px #ff4fc3;
+        0 0 7px white,
+        0 0 15px #ffd6f2,
+        0 0 28px #ff8bd8,
+        0 0 45px #ff4fc3;
+}
+
+/* =========================
+   EXTRA TRAIL GLOW
+========================= */
+
+.meteor::before {
+    content: "";
+
+    position: absolute;
+
+    width: 360px;
+    height: 18px;
+
+    right: 15px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        to left,
+        rgba(255, 100, 205, 0.35),
+        rgba(255, 79, 195, 0)
+    );
+
+    filter: blur(9px);
+
+    z-index: -1;
 }
 
 /* =========================
@@ -187,10 +222,11 @@ body {
 ========================= */
 
 @keyframes meteorFly {
+
     0% {
         transform:
             translate(0, 0)
-            rotate(-46deg);
+            rotate(46deg);
 
         opacity: 0;
     }
@@ -206,10 +242,10 @@ body {
     100% {
         transform:
             translate(
-                calc(100vw + 400px),
-                calc(-100vh - 400px)
+                calc(100vw + 450px),
+                calc(100vh + 450px)
             )
-            rotate(-46deg);
+            rotate(46deg);
 
         opacity: 0;
     }
@@ -259,28 +295,22 @@ main {
 
 .profile h1 {
     font-size: 60px;
-
     margin-bottom: 10px;
 }
 
 .profile p {
     color: #c9a9c2;
-
     font-size: 18px;
 }
 
 @keyframes appear {
     from {
         opacity: 0;
-
-        transform:
-            translateY(20px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
-
-        transform:
-            translateY(0);
+        transform: translateY(0);
     }
 }
