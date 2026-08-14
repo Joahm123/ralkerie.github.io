@@ -41,12 +41,13 @@ body {
 
 .background::after {
     content: "";
+
     position: absolute;
     inset: 0;
 
     background:
         radial-gradient(
-            ellipse at 20% 55%,
+            ellipse at 25% 55%,
             rgba(255, 70, 190, 0.14),
             transparent 45%
         ),
@@ -110,42 +111,50 @@ body {
     height: 100vh;
 
     overflow: hidden;
+
     pointer-events: none;
 
-    z-index: 0;
+    z-index: 1;
 }
 
 .meteor {
     position: absolute;
 
     width: 380px;
-    height: 10px;
+    height: 11px;
 
     border-radius: 999px;
 
+    /*
+        Pink → white head
+    */
+
     background: linear-gradient(
         to right,
-        rgba(255, 40, 180, 0),
-        rgba(255, 55, 190, 0.08) 15%,
-        rgba(255, 70, 200, 0.25) 40%,
-        rgba(255, 120, 220, 0.55) 70%,
-        rgba(255, 220, 245, 0.95) 92%,
-        white 100%
+        rgba(255, 30, 180, 0),
+        rgba(255, 45, 190, 0.08),
+        rgba(255, 70, 200, 0.25),
+        rgba(255, 120, 220, 0.6),
+        #ffdff5,
+        white
     );
 
     box-shadow:
-        0 0 8px rgba(255, 140, 220, 0.9),
-        0 0 20px rgba(255, 70, 195, 0.7),
-        0 0 45px rgba(255, 70, 195, 0.45);
+        0 0 10px rgba(255, 140, 220, 0.9),
+        0 0 25px rgba(255, 70, 195, 0.75),
+        0 0 50px rgba(255, 70, 195, 0.45);
+
+    /*
+        ↘️ DOWN + RIGHT
+    */
 
     transform: rotate(46deg);
-    transform-origin: right center;
 
-    z-index: 2;
+    transform-origin: right center;
 }
 
 /* =========================
-   SUPER LONG PINK TRAIL
+   HUGE TRAIL
 ========================= */
 
 .meteor::before {
@@ -153,10 +162,10 @@ body {
 
     position: absolute;
 
-    width: 700px;
-    height: 35px;
+    width: 850px;
+    height: 38px;
 
-    right: 10px;
+    right: 0;
     top: 50%;
 
     transform: translateY(-50%);
@@ -165,21 +174,21 @@ body {
 
     background: linear-gradient(
         to right,
-        rgba(255, 40, 180, 0),
-        rgba(255, 45, 185, 0.02) 15%,
-        rgba(255, 60, 195, 0.08) 35%,
-        rgba(255, 80, 205, 0.18) 55%,
-        rgba(255, 110, 215, 0.35) 75%,
-        rgba(255, 160, 230, 0.5) 100%
+        rgba(255, 0, 170, 0),
+        rgba(255, 30, 180, 0.02),
+        rgba(255, 50, 190, 0.08),
+        rgba(255, 70, 200, 0.18),
+        rgba(255, 100, 215, 0.35),
+        rgba(255, 160, 235, 0.55)
     );
 
-    filter: blur(14px);
+    filter: blur(16px);
 
     z-index: -1;
 }
 
 /* =========================
-   METEOR HEAD
+   BRIGHT HEAD
 ========================= */
 
 .meteor::after {
@@ -187,11 +196,11 @@ body {
 
     position: absolute;
 
-    right: -6px;
+    right: -7px;
     top: 50%;
 
-    width: 21px;
-    height: 21px;
+    width: 22px;
+    height: 22px;
 
     transform: translateY(-50%);
 
@@ -201,18 +210,19 @@ body {
 
     box-shadow:
         0 0 8px white,
-        0 0 18px #ffd6f2,
-        0 0 35px #ff8bd8,
-        0 0 60px #ff4fc3,
-        0 0 90px rgba(255, 79, 195, 0.6);
+        0 0 20px #ffd6f2,
+        0 0 40px #ff8bd8,
+        0 0 65px #ff4fc3,
+        0 0 100px rgba(255, 79, 195, 0.6);
 }
 
 /* =========================
-   MOVEMENT
+   METEOR MOVEMENT
 ========================= */
 
 @keyframes meteorFly {
-    from {
+
+    0% {
         transform:
             translate(0, 0)
             rotate(46deg);
@@ -220,19 +230,19 @@ body {
         opacity: 0;
     }
 
-    8% {
+    5% {
         opacity: 1;
     }
 
-    85% {
+    90% {
         opacity: 1;
     }
 
-    to {
+    100% {
         transform:
             translate(
-                calc(100vw + 1000px),
-                calc(100vh + 1000px)
+                110vw,
+                110vh
             )
             rotate(46deg);
 
@@ -246,25 +256,27 @@ body {
 
 main {
     position: relative;
+
     z-index: 2;
 
     width: 100%;
     min-height: 100vh;
 
     display: flex;
+
     justify-content: center;
     align-items: center;
 }
 
 .profile {
     position: relative;
-    z-index: 2;
 
     padding: 50px 70px;
 
     text-align: center;
 
-    background: rgba(12, 4, 14, 0.58);
+    background:
+        rgba(12, 4, 14, 0.58);
 
     border:
         1px solid rgba(255, 180, 230, 0.15);
