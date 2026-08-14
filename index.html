@@ -1,642 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ralkerie</title>
 
-<style>
+    <meta charset="UTF-8">
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
+    <title>Ralkerie</title>
 
-body {
-    background: #050208;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-}
 
+    <!-- =================================================
+         CSS
+    ================================================== -->
 
-/* =====================================================
-   BACKGROUND
-===================================================== */
+    <link
+        rel="stylesheet"
+        href="css/main.css"
+    >
 
-#background {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
+    <link
+        rel="stylesheet"
+        href="css/background.css"
+    >
 
-    background:
-        radial-gradient(
-            ellipse at center,
-            #3b1737 0%,
-            #210c20 35%,
-            #0d050f 70%,
-            #020103 100%
-        );
-}
+    <link
+        rel="stylesheet"
+        href="css/meteors.css"
+    >
 
+    <link
+        rel="stylesheet"
+        href="css/waveform.css"
+    >
 
-/* =====================================================
-   STARS
-===================================================== */
-
-#stars {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    z-index: 1;
-
-    pointer-events: none;
-}
-
-.star {
-    position: absolute;
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 5px white,
-        0 0 10px rgba(255, 180, 235, 0.9);
-}
-
-
-/* =====================================================
-   METEORS
-===================================================== */
-
-#meteors {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: visible;
-
-    z-index: 2;
-
-    pointer-events: none;
-}
-
-.meteor {
-    position: absolute;
-
-    width: 1px;
-    height: 1px;
-
-    pointer-events: none;
-
-    transform: rotate(34deg);
-}
-
-
-/* =====================================================
-   METEOR HEAD
-===================================================== */
-
-.meteor::after {
-    content: "";
-
-    position: absolute;
-
-    left: -9px;
-    top: -9px;
-
-    width: 18px;
-    height: 18px;
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 8px white,
-        0 0 18px white,
-        0 0 30px #ffd5f4,
-        0 0 45px #ff8bd8,
-        0 0 65px #ff35bd;
-}
-
-
-/* =====================================================
-   PINK + WHITE TRAIL
-===================================================== */
-
-.meteor::before {
-    content: "";
-
-    position: absolute;
-
-    right: 0;
-    top: -4px;
-
-    width: 750px;
-    height: 8px;
-
-    border-radius: 999px;
-
-    background:
-        linear-gradient(
-            to left,
-            white 0%,
-            rgba(255, 235, 252, 0.95) 8%,
-            rgba(255, 170, 235, 0.8) 25%,
-            rgba(255, 80, 205, 0.5) 55%,
-            rgba(255, 40, 190, 0.15) 80%,
-            transparent 100%
-        );
-
-    box-shadow:
-        0 0 8px rgba(255, 220, 250, 0.8),
-        0 0 18px rgba(255, 70, 205, 0.5);
-
-    filter: blur(2px);
-}
-
-
-/* =====================================================
-   TITLE
-===================================================== */
-
-#content {
-    position: fixed;
-    inset: 0;
-
-    z-index: 10;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    pointer-events: none;
-}
-
-#card {
-    padding: 45px 70px;
-
-    min-width: 320px;
-
-    text-align: center;
-
-    background: rgba(8, 3, 12, 0.8);
-
-    border: 1px solid rgba(255, 180, 235, 0.22);
-
-    border-radius: 24px;
-
-    box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.8),
-        0 0 60px rgba(255, 50, 190, 0.12);
-
-    backdrop-filter: blur(18px);
-}
-
-#card h1 {
-    font-size: clamp(48px, 7vw, 90px);
-
-    letter-spacing: 3px;
-
-    color: white;
-}
-
-#card p {
-    margin-top: 12px;
-
-    color: rgba(255, 210, 240, 0.75);
-
-    font-size: 18px;
-
-    letter-spacing: 2px;
-}
-
-</style>
 </head>
 
 
 <body>
 
-<div id="background"></div>
 
-<div id="stars"></div>
+    <!-- =================================================
+         SPACE BACKGROUND
+    ================================================== -->
 
-<div id="meteors"></div>
+    <div id="background"></div>
 
+    <div id="stars"></div>
 
-<div id="content">
+    <div id="meteors"></div>
 
-    <div id="card">
 
-        <h1>Ralkerie</h1>
+    <!-- =================================================
+         CENTER
+    ================================================== -->
 
-        <p>Coming soon...</p>
+    <main id="main">
 
-    </div>
+        <div id="waveform"></div>
 
-</div>
+        <section id="profile">
 
+            <h1>Ralkerie</h1>
 
-<script>
+            <p>Coming soon...</p>
 
-/* =====================================================
-   STARS
-===================================================== */
+        </section>
 
-const starContainer =
-    document.getElementById("stars");
+    </main>
 
-const stars = [];
 
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
 
-for (let i = 0; i < 220; i++) {
+    <script src="js/stars.js"></script>
 
-    const element =
-        document.createElement("div");
+    <script src="js/meteors.js"></script>
 
-    element.className =
-        "star";
+    <script src="js/waveform.js"></script>
 
-
-    const size =
-        1 + Math.random() * 2;
-
-
-    element.style.width =
-        size + "px";
-
-    element.style.height =
-        size + "px";
-
-
-    const star = {
-
-        element,
-
-        x:
-            Math.random() *
-            window.innerWidth,
-
-        y:
-            Math.random() *
-            window.innerHeight,
-
-        speed:
-            25 +
-            Math.random() * 60
-    };
-
-
-    element.style.left =
-        star.x + "px";
-
-    element.style.top =
-        star.y + "px";
-
-
-    starContainer.appendChild(
-        element
-    );
-
-    stars.push(star);
-}
-
-
-let starLastTime =
-    performance.now();
-
-
-function updateStars(time) {
-
-    const delta =
-        (time - starLastTime) / 1000;
-
-    starLastTime =
-        time;
-
-
-    for (const star of stars) {
-
-        star.x +=
-            star.speed * delta;
-
-
-        if (
-            star.x >
-            window.innerWidth + 10
-        ) {
-
-            star.x = -10;
-
-            star.y =
-                Math.random() *
-                window.innerHeight;
-        }
-
-
-        star.element.style.left =
-            star.x + "px";
-
-        star.element.style.top =
-            star.y + "px";
-    }
-
-
-    requestAnimationFrame(
-        updateStars
-    );
-}
-
-
-requestAnimationFrame(
-    updateStars
-);
-
-
-/* =====================================================
-   METEORS
-===================================================== */
-
-const meteorContainer =
-    document.getElementById("meteors");
-
-const meteors = [];
-
-
-/* =====================================================
-   CREATE METEOR
-===================================================== */
-
-function createMeteor(x, y) {
-
-    const element =
-        document.createElement("div");
-
-    element.className =
-        "meteor";
-
-
-    const meteor = {
-
-        element,
-
-        x,
-
-        y,
-
-        velocityX:
-            1050 +
-            Math.random() * 450,
-
-        velocityY:
-            700 +
-            Math.random() * 300
-    };
-
-
-    element.style.left =
-        x + "px";
-
-    element.style.top =
-        y + "px";
-
-
-    meteorContainer.appendChild(
-        element
-    );
-
-    meteors.push(
-        meteor
-    );
-}
-
-
-/* =====================================================
-   INITIAL METEOR SPREAD
-===================================================== */
-
-function createInitialMeteorSpread() {
-
-    const width =
-        window.innerWidth;
-
-
-    /*
-       Still covers the entire top,
-       but we shift the distribution
-       15% toward the LEFT.
-
-       This gives more activity on
-       the left side without losing
-       right-side coverage.
-    */
-
-    const sections = 16;
-
-    const leftShift =
-        width * 0.15;
-
-
-    for (
-        let i = 0;
-        i < sections;
-        i++
-    ) {
-
-        const sectionWidth =
-            width / sections;
-
-
-        let x =
-            i * sectionWidth +
-            Math.random() *
-            sectionWidth -
-            leftShift;
-
-
-        /*
-           Keep it inside the
-           left edge.
-        */
-
-        x =
-            Math.max(
-                0,
-                x
-            );
-
-
-        const y =
-            -50 -
-            Math.random() * 500;
-
-
-        createMeteor(
-            x,
-            y
-        );
-    }
-}
-
-
-/* =====================================================
-   CONTINUOUS SPAWN
-===================================================== */
-
-function spawnMeteor() {
-
-    const width =
-        window.innerWidth;
-
-
-    /*
-       Bias random spawning
-       toward the LEFT.
-
-       Squaring random makes
-       smaller X values much
-       more common.
-    */
-
-    const random =
-        Math.random();
-
-    const x =
-        (
-            random *
-            random
-        ) *
-        width;
-
-
-    const y =
-        -50 -
-        Math.random() * 350;
-
-
-    createMeteor(
-        x,
-        y
-    );
-
-
-    /*
-       LESS METEORS
-
-       One every ~450-700ms.
-    */
-
-    setTimeout(
-        spawnMeteor,
-
-        450 +
-        Math.random() * 250
-    );
-}
-
-
-/* =====================================================
-   METEOR PHYSICS
-===================================================== */
-
-let meteorLastTime =
-    performance.now();
-
-
-function updateMeteors(time) {
-
-    const delta =
-        (time - meteorLastTime) / 1000;
-
-    meteorLastTime =
-        time;
-
-
-    for (
-        let i = meteors.length - 1;
-        i >= 0;
-        i--
-    ) {
-
-        const meteor =
-            meteors[i];
-
-
-        meteor.x +=
-            meteor.velocityX *
-            delta;
-
-
-        meteor.y +=
-            meteor.velocityY *
-            delta;
-
-
-        meteor.element.style.left =
-            meteor.x + "px";
-
-        meteor.element.style.top =
-            meteor.y + "px";
-
-
-        if (
-            meteor.x >
-                window.innerWidth + 900
-            &&
-            meteor.y >
-                window.innerHeight + 900
-        ) {
-
-            meteor.element.remove();
-
-            meteors.splice(
-                i,
-                1
-            );
-        }
-    }
-
-
-    requestAnimationFrame(
-        updateMeteors
-    );
-}
-
-
-/* =====================================================
-   START
-===================================================== */
-
-createInitialMeteorSpread();
-
-
-setTimeout(
-    spawnMeteor,
-    1200
-);
-
-
-requestAnimationFrame(
-    updateMeteors
-);
-
-</script>
+    <script src="js/main.js"></script>
 
 </body>
+
 </html>
