@@ -12,18 +12,22 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* Background */
+/* =========================
+   BACKGROUND
+========================= */
 
 .background {
     position: fixed;
     inset: 0;
     overflow: hidden;
-    z-index: -1;
+    z-index: -2;
     background:
         radial-gradient(circle at 50% 50%, #11111a 0%, #050507 65%);
 }
 
-/* Moving glowing orbs */
+/* =========================
+   GLOWING ORBS
+========================= */
 
 .orb {
     position: absolute;
@@ -102,14 +106,16 @@ body {
     }
 }
 
-/* Subtle grid */
+/* =========================
+   MOVING GRID
+========================= */
 
 .grid {
     position: absolute;
     inset: -100%;
     background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
     background-size: 60px 60px;
     transform: perspective(500px) rotateX(60deg);
     animation: gridMove 12s linear infinite;
@@ -125,25 +131,85 @@ body {
     }
 }
 
-/* Profile */
+/* =========================
+   METEORS
+========================= */
+
+#meteors {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.meteor {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ff9de2;
+
+    box-shadow:
+        0 0 6px #ff9de2,
+        0 0 14px #ff5dcc,
+        0 0 30px #ff5dcc;
+}
+
+.meteor::after {
+    content: "";
+    position: absolute;
+
+    width: 120px;
+    height: 2px;
+
+    right: 2px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: linear-gradient(
+        to left,
+        rgba(255, 93, 204, 0),
+        rgba(255, 157, 226, 0.8)
+    );
+
+    filter: blur(1px);
+}
+
+/* =========================
+   PROFILE
+========================= */
 
 main {
     min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
+    position: relative;
+    z-index: 2;
 }
 
 .profile {
+    position: relative;
+    z-index: 2;
+
     padding: 50px 70px;
+
     text-align: center;
 
     background: rgba(10, 10, 15, 0.55);
+
     border: 1px solid rgba(255, 255, 255, 0.1);
+
     border-radius: 24px;
 
     backdrop-filter: blur(20px);
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+
+    box-shadow:
+        0 20px 80px rgba(0, 0, 0, 0.5);
 
     animation: appear 1s ease forwards;
 }
