@@ -1,28 +1,18 @@
 ```javascript
 /* =====================================================
    RALKERIE METEORS
-   METEORS + LARGE HITBOX + AUDIO
 ===================================================== */
 
 (() => {
 
     "use strict";
 
-
-    /* =================================================
-       PREVENT DUPLICATE SCRIPT
-    ================================================= */
-
-    if (window.ralkerieMeteorsLoaded) {
-
-        console.warn(
-            "Ralkerie meteors already loaded."
-        );
-
+    /* Prevent duplicate copies */
+    if (window.ralkerieMeteorSystem) {
         return;
     }
 
-    window.ralkerieMeteorsLoaded = true;
+    window.ralkerieMeteorSystem = true;
 
 
     /* =================================================
@@ -42,14 +32,14 @@
        CONTAINER
     ================================================= */
 
-    const meteorContainer =
+    const container =
         document.getElementById("meteors");
 
 
-    if (!meteorContainer) {
+    if (!container) {
 
         console.error(
-            "Ralkerie: #meteors does not exist."
+            "Ralkerie: #meteors element not found."
         );
 
         return;
@@ -57,7 +47,7 @@
 
 
     console.log(
-        "Ralkerie meteors loaded."
+        "Ralkerie meteor system loaded."
     );
 
 
@@ -65,11 +55,10 @@
        AUDIO
     ================================================= */
 
-    const meteorAudio =
+    const audio =
         new Audio(AUDIO_FILE);
 
-    meteorAudio.preload =
-        "auto";
+    audio.preload = "auto";
 
 
     /* =================================================
@@ -115,125 +104,65 @@
 
 
     /* =================================================
-       PLAY AUDIO
+       OPEN METEOR
     ================================================= */
 
-    function playMeteorAudio() {
-
-        /*
-           Reset the audio first.
-        */
-
-        meteorAudio.pause();
-
-        /*
-           Start at 35 seconds.
-        */
-
-        try {
-
-            meteorAudio.currentTime =
-                SONG_START_TIME;
-
-        } catch {
-
-            meteorAudio.currentTime =
-                0;
-        }
-
-
-        const promise =
-            meteorAudio.play();
-
-
-        if (promise) {
-
-            promise.catch(
-                (error) => {
-
-                    console.error(
-                        "Meteor audio failed:",
-                        error
-                    );
-
-                }
-            );
-
-        }
-    }
-
-
-    /* =================================================
-       OPEN POPUP
-    ================================================= */
-
-    function openPopup() {
+    function openMeteor() {
 
         popup.classList.add(
             "visible"
         );
 
 
-        if (
-            meteorAudio.readyState >= 1
-        ) {
+        audio.currentTime =
+            SONG_START_TIME;
 
-            playMeteorAudio();
 
-        } else {
+        audio.play()
+            .catch(
+                error => {
 
-            meteorAudio.addEventListener(
-                "loadedmetadata",
-                playMeteorAudio,
-                {
-                    once: true
+                    console.error(
+                        "Meteor audio error:",
+                        error
+                    );
+
                 }
             );
-
-        }
     }
 
 
     /* =================================================
-       CLOSE POPUP
+       CLOSE METEOR
     ================================================= */
 
-    function closePopup() {
+    function closeMeteor() {
 
         popup.classList.remove(
             "visible"
         );
 
-        meteorAudio.pause();
+        audio.pause();
 
-        meteorAudio.currentTime =
-            0;
+        audio.currentTime = 0;
     }
 
 
-    /* =================================================
-       CLOSE BUTTON
-    ================================================= */
-
     closeButton.addEventListener(
         "click",
-        closePopup
+        closeMeteor
     );
 
 
-    /* =================================================
-       CLICK OUTSIDE
-    ================================================= */
-
     popup.addEventListener(
         "click",
-        (event) => {
+        event => {
 
             if (
                 event.target === popup
             ) {
 
-                closePopup();
+                closeMeteor();
 
             }
 
@@ -241,19 +170,15 @@
     );
 
 
-    /* =================================================
-       ESCAPE
-    ================================================= */
-
     document.addEventListener(
         "keydown",
-        (event) => {
+        event => {
 
             if (
                 event.key === "Escape"
             ) {
 
-                closePopup();
+                closeMeteor();
 
             }
 
@@ -274,65 +199,53 @@
             "meteor-hitbox";
 
 
-        const meteor =
+        const head =
             document.createElement("div");
 
-        meteor.className =
+        head.className =
             "meteor";
 
 
-        /* ---------------------------------------------
-           POSITION
-        --------------------------------------------- */
+        /*
+           Spawn slightly inside
+           the right side.
+        */
 
-        const spawnY =
-            15 +
+        const x =
+            180;
+
+        const y =
+            10 +
             Math.random() * 65;
 
 
-        /*
-           Spawn farther right.
-        */
-
         hitbox.style.left =
-            "180px";
+            `${x}px`;
 
         hitbox.style.top =
-            `${spawnY}vh`;
+            `${y}vh`;
 
-
-        /* ---------------------------------------------
-           METEOR INSIDE HITBOX
-        --------------------------------------------- */
 
         hitbox.appendChild(
-            meteor
+            head
         );
 
 
-        /* ---------------------------------------------
-           CLICK
-        --------------------------------------------- */
-
         hitbox.addEventListener(
             "click",
-            (event) => {
+            event => {
 
                 event.preventDefault();
 
                 event.stopPropagation();
 
-                openPopup();
+                openMeteor();
 
             }
         );
 
 
-        /* ---------------------------------------------
-           ADD
-        --------------------------------------------- */
-
-        meteorContainer.appendChild(
+        container.appendChild(
             hitbox
         );
 
@@ -342,9 +255,9 @@
         );
 
 
-        /* ---------------------------------------------
-           CLEANUP
-        --------------------------------------------- */
+        /*
+           Remove after animation.
+        */
 
         setTimeout(
             () => {
@@ -352,46 +265,36 @@
                 hitbox.remove();
 
             },
-            6000
+            5000
         );
     }
 
 
     /* =================================================
-       SPAWN
+       SPAWN FIRST METEOR
     ================================================= */
 
     createMeteor();
 
 
-    function spawnMeteor() {
+    /* =================================================
+       CONTINUOUS SPAWN
+    ================================================= */
 
-        if (
-            !document.hidden
-        ) {
+    setInterval(
+        () => {
 
-            createMeteor();
+            if (
+                !document.hidden
+            ) {
 
-        }
+                createMeteor();
 
+            }
 
-        const delay =
-            3000 +
-            Math.random() * 4000;
-
-
-        setTimeout(
-            spawnMeteor,
-            delay
-        );
-    }
-
-
-    setTimeout(
-        spawnMeteor,
-        3000
+        },
+        3500
     );
-
 
 })();
 ```
