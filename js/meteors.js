@@ -1,8 +1,9 @@
 ```javascript
-(() => {
+(function () {
+
     "use strict";
 
-    const container = document.getElementById("meteors");
+    var container = document.getElementById("meteors");
 
     if (!container) {
         console.error("Ralkerie: #meteors not found.");
@@ -11,65 +12,93 @@
 
     console.log("Ralkerie meteors loaded.");
 
+
     /* =====================================================
        AUDIO
     ===================================================== */
 
-    const audio = new Audio(
+    var audio = new Audio(
         "./assets/audio/Rune%20of%20September.mp3"
     );
 
     audio.preload = "auto";
 
+
     /* =====================================================
        POPUP
     ===================================================== */
 
-    const popup = document.createElement("div");
+    var popup = document.createElement("div");
 
     popup.className = "meteor-popup";
 
-    popup.innerHTML = `
-        <div class="meteor-popup-box">
-            <button class="meteor-popup-close">×</button>
-            <img
-                class="meteor-popup-gif"
-                src="./assets/images/meteor.gif"
-                alt="Meteor"
-            >
-        </div>
-    `;
+    var popupBox = document.createElement("div");
+
+    popupBox.className = "meteor-popup-box";
+
+
+    var closeButton = document.createElement("button");
+
+    closeButton.className =
+        "meteor-popup-close";
+
+    closeButton.type = "button";
+
+    closeButton.textContent = "×";
+
+
+    var gif = document.createElement("img");
+
+    gif.className =
+        "meteor-popup-gif";
+
+    gif.src =
+        "./assets/images/meteor.gif";
+
+    gif.alt = "Meteor";
+
+
+    popupBox.appendChild(closeButton);
+
+    popupBox.appendChild(gif);
+
+    popup.appendChild(popupBox);
 
     document.body.appendChild(popup);
 
-    const closeButton =
-        popup.querySelector(".meteor-popup-close");
-
 
     /* =====================================================
-       CLICK METEOR
+       OPEN METEOR
     ===================================================== */
 
-    function meteorClicked() {
+    function openMeteor() {
 
         popup.classList.add("visible");
 
         audio.currentTime = 35;
 
-        audio.play().catch((error) => {
-            console.error(
-                "Meteor audio error:",
-                error
-            );
-        });
+        var playResult = audio.play();
+
+        if (playResult) {
+
+            playResult.catch(function (error) {
+
+                console.error(
+                    "Meteor audio error:",
+                    error
+                );
+
+            });
+
+        }
     }
 
 
     /* =====================================================
-       CLOSE POPUP
+       CLOSE METEOR
     ===================================================== */
 
-    function closePopup() {
+    function closeMeteor() {
 
         popup.classList.remove("visible");
 
@@ -78,17 +107,31 @@
         audio.currentTime = 0;
     }
 
+
     closeButton.addEventListener(
         "click",
-        closePopup
+        closeMeteor
     );
+
 
     popup.addEventListener(
         "click",
-        (event) => {
+        function (event) {
 
             if (event.target === popup) {
-                closePopup();
+                closeMeteor();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+                closeMeteor();
             }
 
         }
@@ -101,36 +144,44 @@
 
     function createMeteor() {
 
-        const hitbox =
+        var hitbox =
             document.createElement("div");
 
         hitbox.className =
             "meteor-hitbox";
 
 
-        const meteor =
+        var meteor =
             document.createElement("div");
 
         meteor.className =
             "meteor";
 
 
-        /* Start farther to the right */
+        /* Spawn position */
 
         hitbox.style.left = "180px";
 
         hitbox.style.top =
-            `${10 + Math.random() * 70}vh`;
+            (10 + Math.random() * 70) + "vh";
 
 
-        hitbox.appendChild(meteor);
+        /* Put meteor inside hitbox */
 
+        hitbox.appendChild(
+            meteor
+        );
+
+
+        /* Click */
 
         hitbox.addEventListener(
             "click",
-            meteorClicked
+            openMeteor
         );
 
+
+        /* Add to page */
 
         container.appendChild(
             hitbox
@@ -142,9 +193,15 @@
         );
 
 
+        /* Remove after animation */
+
         setTimeout(
-            () => {
-                hitbox.remove();
+            function () {
+
+                if (hitbox.parentNode) {
+                    hitbox.remove();
+                }
+
             },
             5500
         );
@@ -152,18 +209,18 @@
 
 
     /* =====================================================
-       FIRST METEOR
+       START
     ===================================================== */
 
     createMeteor();
 
 
     /* =====================================================
-       SPAWN LOOP
+       SPAWN MORE
     ===================================================== */
 
     setInterval(
-        () => {
+        function () {
 
             if (!document.hidden) {
                 createMeteor();
