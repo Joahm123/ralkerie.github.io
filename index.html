@@ -1,26 +1,517 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ralkerie</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ralkerie</title>
+
+<style>
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: #050208;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================
+   SPACE BACKGROUND
+========================================= */
+
+#background {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 45%,
+            #351431 0%,
+            #1d0b1d 35%,
+            #0c050d 70%,
+            #020103 100%
+        );
+}
+
+#background::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 15% 40%,
+            rgba(255, 40, 190, 0.18),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 85% 25%,
+            rgba(255, 90, 210, 0.14),
+            transparent 35%
+        );
+}
+
+
+/* =========================================
+   STARS
+========================================= */
+
+#stars {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    z-index: 1;
+
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 5px white,
+        0 0 10px rgba(255, 180, 235, 0.9);
+
+    animation:
+        twinkle ease-in-out infinite;
+}
+
+@keyframes twinkle {
+
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
+}
+
+
+/* =========================================
+   METEOR CONTAINER
+========================================= */
+
+#meteors {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: visible;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   METEOR
+========================================= */
+
+.meteor {
+    position: absolute;
+
+    height: 11px;
+
+    border-radius: 999px;
+
+    transform-origin: right center;
+
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 30, 180, 0.05) 25%,
+        rgba(255, 70, 205, 0.25) 55%,
+        rgba(255, 150, 235, 0.7) 85%,
+        white 100%
+    );
+
+    box-shadow:
+        0 0 12px rgba(255, 130, 225, 1),
+        0 0 30px rgba(255, 60, 200, 0.85),
+        0 0 60px rgba(255, 40, 190, 0.5);
+
+    animation-name: meteor;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+
+/* =========================================
+   PINK TRAIL
+========================================= */
+
+.meteor::before {
+    content: "";
+
+    position: absolute;
+
+    width: 1000px;
+    height: 35px;
+
+    right: 0;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 20, 180, 0.02) 20%,
+        rgba(255, 50, 195, 0.12) 50%,
+        rgba(255, 100, 220, 0.3) 80%,
+        rgba(255, 170, 240, 0.6) 100%
+    );
+
+    filter: blur(15px);
+}
+
+
+/* =========================================
+   METEOR HEAD
+========================================= */
+
+.meteor::after {
+    content: "";
+
+    position: absolute;
+
+    width: 24px;
+    height: 24px;
+
+    right: -8px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 10px white,
+        0 0 25px #ffd6f5,
+        0 0 45px #ff8bd8,
+        0 0 75px #ff35bd,
+        0 0 110px rgba(255, 40, 190, 0.8);
+}
+
+
+/* =========================================
+   METEOR MOVEMENT
+
+   Starts ABOVE the screen.
+   Travels DOWN + RIGHT.
+   Ends FAR outside the screen.
+========================================= */
+
+@keyframes meteor {
+
+    0% {
+        transform:
+            translate(0, 0)
+            rotate(46deg);
+
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(
+                calc(100vw + 1000px),
+                calc(100vh + 1000px)
+            )
+            rotate(46deg);
+
+        opacity: 0;
+    }
+}
+
+
+/* =========================================
+   TITLE LAYER
+========================================= */
+
+#content {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   TITLE BACKGROUND
+========================================= */
+
+#card {
+    padding: 45px 70px;
+
+    min-width: 300px;
+
+    text-align: center;
+
+    background: rgba(8, 3, 12, 0.78);
+
+    border: 1px solid rgba(255, 180, 235, 0.22);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 20px 80px rgba(0, 0, 0, 0.8),
+        0 0 70px rgba(255, 50, 190, 0.12);
+
+    backdrop-filter: blur(18px);
+}
+
+#card h1 {
+    font-size: clamp(48px, 7vw, 90px);
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    color: white;
+
+    text-shadow:
+        0 0 15px rgba(255, 160, 230, 0.4),
+        0 0 40px rgba(255, 60, 190, 0.2);
+}
+
+#card p {
+    margin-top: 12px;
+
+    color: rgba(255, 210, 240, 0.75);
+
+    font-size: 18px;
+
+    letter-spacing: 2px;
+}
+
+</style>
 </head>
+
 
 <body>
 
-    <div id="background"></div>
-    <div id="stars"></div>
-    <div id="meteors"></div>
+<!-- BACKGROUND -->
+<div id="background"></div>
 
-    <div id="content">
-        <div id="card">
-            <h1>Ralkerie</h1>
-            <p>Coming soon...</p>
-        </div>
+<!-- STARS -->
+<div id="stars"></div>
+
+<!-- METEORS -->
+<div id="meteors"></div>
+
+<!-- TITLE -->
+<div id="content">
+    <div id="card">
+        <h1>Ralkerie</h1>
+        <p>Coming soon...</p>
     </div>
+</div>
 
-    <script src="script.js"></script>
+
+<script>
+
+/* =========================================
+   STARS
+========================================= */
+
+const stars = document.getElementById("stars");
+
+for (let i = 0; i < 250; i++) {
+
+    const star = document.createElement("div");
+
+    star.className = "star";
+
+    const size = 1 + Math.random() * 2;
+
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+
+    star.style.left =
+        Math.random() * 100 + "vw";
+
+    star.style.top =
+        Math.random() * 100 + "vh";
+
+    star.style.animationDuration =
+        2 + Math.random() * 4 + "s";
+
+    star.style.animationDelay =
+        Math.random() * -5 + "s";
+
+    stars.appendChild(star);
+}
+
+
+/* =========================================
+   METEORS
+========================================= */
+
+const meteorContainer =
+    document.getElementById("meteors");
+
+
+function createMeteor() {
+
+    const meteor =
+        document.createElement("div");
+
+    meteor.className = "meteor";
+
+
+    /*
+        LONG + SKINNY
+    */
+
+    meteor.style.width =
+        450 + Math.random() * 350 + "px";
+
+
+    /*
+        =====================================
+        INVISIBLE SPAWN BOX
+
+        LEFT:  500px outside
+        RIGHT: 500px outside
+
+        BUT SPAWN IS ONLY FROM THE TOP.
+
+        X can be ANYWHERE across:
+
+        -500px → screen width + 500px
+    */
+
+    const x =
+        -500 +
+        Math.random() *
+        (window.innerWidth + 1000);
+
+
+    /*
+        Far above screen.
+
+        Nothing spawns in the middle.
+    */
+
+    const y =
+        -700 -
+        Math.random() * 500;
+
+
+    meteor.style.left = x + "px";
+    meteor.style.top = y + "px";
+
+
+    /*
+        SPEED
+    */
+
+    const duration =
+        1.2 + Math.random() * 0.7;
+
+    meteor.style.animationDuration =
+        duration + "s";
+
+
+    meteorContainer.appendChild(meteor);
+
+
+    /*
+        DESPAWN AFTER IT IS
+        COMPLETELY OFFSCREEN
+    */
+
+    setTimeout(() => {
+
+        meteor.remove();
+
+    }, duration * 1000 + 1000);
+}
+
+
+/* =========================================
+   SPAWN FOREVER
+========================================= */
+
+function spawnMeteor() {
+
+    createMeteor();
+
+    setTimeout(
+        spawnMeteor,
+        150 + Math.random() * 200
+    );
+}
+
+
+spawnMeteor();
+
+</script>
 
 </body>
 </html>
