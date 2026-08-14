@@ -4,13 +4,12 @@
 
 #meteors {
     position: fixed;
-
     inset: 0;
 
     width: 100vw;
     height: 100vh;
 
-    overflow: hidden;
+    overflow: visible;
 
     pointer-events: none;
 
@@ -52,7 +51,7 @@
 
 
 /* =========================================
-   SUPER LONG PINK TRAIL
+   LONG PINK TRAIL
 ========================================= */
 
 .meteor::before {
@@ -116,19 +115,14 @@
 
 
 /* =========================================
-   METEOR MOVEMENT
-
-   START:
-   Far above screen.
-
-   END:
-   Far below/right.
-
-   So the meteor is already moving
-   before you ever see it.
+   METEOR PATH
 ========================================= */
 
 @keyframes meteorFly {
+
+    /*
+        Meteor is above the viewport.
+    */
 
     0% {
         transform:
@@ -139,21 +133,39 @@
     }
 
 
-    12% {
+    /*
+        It becomes visible before
+        entering the screen.
+    */
+
+    8% {
         opacity: 1;
     }
 
+
+    /*
+        Glide through the entire screen.
+    */
 
     85% {
         opacity: 1;
     }
 
 
+    /*
+        Continue FAR past the bottom
+        and right side.
+
+        This guarantees it has left
+        the surrounding box before
+        being removed.
+    */
+
     100% {
         transform:
             translate(
-                70vw,
-                150vh
+                calc(100vw + 500px),
+                calc(100vh + 500px)
             )
             rotate(46deg);
 
