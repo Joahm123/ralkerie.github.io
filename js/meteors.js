@@ -27,7 +27,8 @@ function createMeteor(x, y) {
         x,
         y,
 
-        // FAST + DIAGONALLY DOWN RIGHT
+        /* FAST + DIAGONALLY DOWN RIGHT */
+
         velocityX:
             900 +
             Math.random() * 400,
@@ -49,7 +50,9 @@ function createMeteor(x, y) {
         element
     );
 
-    meteors.push(meteor);
+    meteors.push(
+        meteor
+    );
 }
 
 
@@ -62,14 +65,6 @@ function createInitialMeteors() {
     const width =
         window.innerWidth;
 
-
-    /*
-       Spread across the entire
-       top of the screen.
-
-       Slightly biased LEFT.
-    */
-
     const amount = 10;
 
 
@@ -79,14 +74,24 @@ function createInitialMeteors() {
         i++
     ) {
 
+        /*
+           Spread across the
+           entire top.
+
+           Slightly biased LEFT.
+        */
+
         const x =
             -300 +
-            Math.random() *
+            Math.pow(
+                Math.random(),
+                1.25
+            ) *
             (width + 300);
 
 
         /*
-           ABOVE THE SCREEN
+           Start above screen.
         */
 
         const y =
@@ -114,7 +119,7 @@ function spawnMeteor() {
 
     /*
        Spawn across the whole
-       top, with a slight
+       top with a slight
        left-side bias.
     */
 
@@ -151,16 +156,23 @@ function spawnMeteor() {
    ANIMATION
 ===================================================== */
 
-let lastTime =
+/*
+   IMPORTANT:
+   This is called meteorLastTime
+   instead of lastTime because
+   stars.js already uses lastTime.
+*/
+
+let meteorLastTime =
     performance.now();
 
 
 function updateMeteors(time) {
 
     const delta =
-        (time - lastTime) / 1000;
+        (time - meteorLastTime) / 1000;
 
-    lastTime =
+    meteorLastTime =
         time;
 
 
@@ -200,12 +212,8 @@ function updateMeteors(time) {
 
 
         /*
-           Remove once completely
-           past the bottom/right.
-
-           Keep the meteor alive
-           while it can still be
-           visible.
+           Despawn once below
+           the screen.
         */
 
         if (
