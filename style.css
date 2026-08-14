@@ -18,13 +18,12 @@ body {
 }
 
 /* =========================
-   SPACE
+   SPACE BACKGROUND
 ========================= */
 
 .background {
     position: fixed;
     inset: 0;
-
     width: 100vw;
     height: 100vh;
 
@@ -120,33 +119,34 @@ body {
     position: absolute;
 
     /*
-        LONG + VERY SKINNY
+        THICKER + LONGER BODY
     */
-    width: 300px;
-    height: 5px;
+    width: 380px;
+    height: 9px;
 
     border-radius: 999px;
 
     /*
-        TRAIL FADES TOWARD LEFT
-        HEAD IS ON RIGHT
+        Long pink trail fading
+        into space.
     */
     background: linear-gradient(
         to right,
-        rgba(255, 79, 195, 0),
-        rgba(255, 79, 195, 0.18) 25%,
-        rgba(255, 105, 205, 0.5) 55%,
-        rgba(255, 190, 235, 0.9) 85%,
+        rgba(255, 55, 185, 0),
+        rgba(255, 55, 185, 0.08) 15%,
+        rgba(255, 70, 195, 0.25) 40%,
+        rgba(255, 120, 215, 0.55) 70%,
+        rgba(255, 220, 245, 0.95) 92%,
         white 100%
     );
 
     box-shadow:
-        0 0 7px rgba(255, 120, 210, 0.8),
-        0 0 18px rgba(255, 79, 195, 0.6),
-        0 0 35px rgba(255, 79, 195, 0.35);
+        0 0 8px rgba(255, 140, 220, 0.9),
+        0 0 20px rgba(255, 70, 195, 0.7),
+        0 0 45px rgba(255, 70, 195, 0.45);
 
     /*
-        DOWN + RIGHT
+        TOP → DOWN + RIGHT
     */
     transform: rotate(46deg);
 
@@ -156,39 +156,7 @@ body {
 }
 
 /* =========================
-   BRIGHT METEOR HEAD
-========================= */
-
-.meteor::after {
-    content: "";
-
-    position: absolute;
-
-    /*
-        HEAD AT FRONT
-    */
-    right: -4px;
-    top: 50%;
-
-    width: 13px;
-    height: 13px;
-
-    transform: translateY(-50%);
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 7px white,
-        0 0 16px #ffd6f2,
-        0 0 30px #ff8bd8,
-        0 0 50px #ff4fc3,
-        0 0 75px rgba(255, 79, 195, 0.5);
-}
-
-/* =========================
-   BIG PINK GLOW TRAIL
+   SUPER LONG GLOW
 ========================= */
 
 .meteor::before {
@@ -196,8 +164,11 @@ body {
 
     position: absolute;
 
-    width: 350px;
-    height: 20px;
+    /*
+        MASSIVE TRAIL
+    */
+    width: 650px;
+    height: 32px;
 
     right: 10px;
     top: 50%;
@@ -208,19 +179,50 @@ body {
 
     background: linear-gradient(
         to right,
-        rgba(255, 79, 195, 0),
-        rgba(255, 79, 195, 0.08),
-        rgba(255, 79, 195, 0.25),
-        rgba(255, 105, 205, 0.4)
+        rgba(255, 40, 180, 0),
+        rgba(255, 50, 190, 0.03) 15%,
+        rgba(255, 60, 195, 0.10) 35%,
+        rgba(255, 80, 205, 0.25) 60%,
+        rgba(255, 120, 220, 0.45) 85%,
+        rgba(255, 170, 235, 0.5)
     );
 
-    filter: blur(9px);
+    filter: blur(14px);
 
     z-index: -1;
 }
 
 /* =========================
-   FALLING MOVEMENT
+   BRIGHT HEAD
+========================= */
+
+.meteor::after {
+    content: "";
+
+    position: absolute;
+
+    right: -5px;
+    top: 50%;
+
+    width: 20px;
+    height: 20px;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 8px white,
+        0 0 18px #ffd6f2,
+        0 0 35px #ff8bd8,
+        0 0 60px #ff4fc3,
+        0 0 90px rgba(255, 79, 195, 0.6);
+}
+
+/* =========================
+   METEOR MOVEMENT
 ========================= */
 
 @keyframes meteorFly {
@@ -244,8 +246,8 @@ body {
     to {
         transform:
             translate(
-                calc(100vw + 500px),
-                calc(100vh + 500px)
+                calc(100vw + 600px),
+                calc(100vh + 600px)
             )
             rotate(46deg);
 
