@@ -7,14 +7,6 @@
 
     "use strict";
 
-    /* Prevent duplicate copies */
-    if (window.ralkerieMeteorSystem) {
-        return;
-    }
-
-    window.ralkerieMeteorSystem = true;
-
-
     /* =================================================
        SETTINGS
     ================================================= */
@@ -29,7 +21,7 @@
 
 
     /* =================================================
-       CONTAINER
+       GET CONTAINER
     ================================================= */
 
     const container =
@@ -39,7 +31,7 @@
     if (!container) {
 
         console.error(
-            "Ralkerie: #meteors element not found."
+            "RALKERIE METEORS: #meteors was not found."
         );
 
         return;
@@ -47,7 +39,7 @@
 
 
     console.log(
-        "Ralkerie meteor system loaded."
+        "RALKERIE METEORS: system started."
     );
 
 
@@ -104,7 +96,7 @@
 
 
     /* =================================================
-       OPEN METEOR
+       OPEN POPUP
     ================================================= */
 
     function openMeteor() {
@@ -114,26 +106,77 @@
         );
 
 
-        audio.currentTime =
-            SONG_START_TIME;
+        /*
+           Wait until the audio knows
+           its duration before seeking.
+        */
 
+        const startAudio = () => {
 
-        audio.play()
-            .catch(
-                error => {
+            try {
 
-                    console.error(
-                        "Meteor audio error:",
-                        error
-                    );
+                if (
+                    Number.isFinite(
+                        audio.duration
+                    ) &&
+                    audio.duration > SONG_START_TIME
+                ) {
+
+                    audio.currentTime =
+                        SONG_START_TIME;
+
+                } else {
+
+                    audio.currentTime = 0;
 
                 }
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not seek audio:",
+                    error
+                );
+
+            }
+
+
+            audio.play()
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Meteor audio error:",
+                            error
+                        );
+
+                    }
+                );
+        };
+
+
+        if (
+            audio.readyState >= 1
+        ) {
+
+            startAudio();
+
+        } else {
+
+            audio.addEventListener(
+                "loadedmetadata",
+                startAudio,
+                {
+                    once: true
+                }
             );
+
+        }
     }
 
 
     /* =================================================
-       CLOSE METEOR
+       CLOSE POPUP
     ================================================= */
 
     function closeMeteor() {
@@ -193,43 +236,54 @@
     function createMeteor() {
 
         const hitbox =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         hitbox.className =
             "meteor-hitbox";
 
 
         const head =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         head.className =
             "meteor";
 
 
-        /*
-           Spawn slightly inside
-           the right side.
-        */
+        /* ---------------------------------------------
+           START POSITION
+        --------------------------------------------- */
 
-        const x =
+        const spawnX =
             180;
 
-        const y =
+        const spawnY =
             10 +
-            Math.random() * 65;
+            Math.random() * 70;
 
 
         hitbox.style.left =
-            `${x}px`;
+            `${spawnX}px`;
 
         hitbox.style.top =
-            `${y}vh`;
+            `${spawnY}vh`;
 
+
+        /* ---------------------------------------------
+           PUT HEAD INSIDE HITBOX
+        --------------------------------------------- */
 
         hitbox.appendChild(
             head
         );
 
+
+        /* ---------------------------------------------
+           CLICK
+        --------------------------------------------- */
 
         hitbox.addEventListener(
             "click",
@@ -245,40 +299,50 @@
         );
 
 
+        /* ---------------------------------------------
+           ADD METEOR
+        --------------------------------------------- */
+
         container.appendChild(
             hitbox
         );
 
 
         console.log(
-            "Meteor spawned"
+            "RALKERIE METEORS: meteor spawned."
         );
 
 
-        /*
-           Remove after animation.
-        */
+        /* ---------------------------------------------
+           CLEANUP
+        --------------------------------------------- */
 
         setTimeout(
             () => {
 
-                hitbox.remove();
+                if (
+                    hitbox.parentNode
+                ) {
+
+                    hitbox.remove();
+
+                }
 
             },
-            5000
+            5500
         );
     }
 
 
     /* =================================================
-       SPAWN FIRST METEOR
+       FIRST METEOR
     ================================================= */
 
     createMeteor();
 
 
     /* =================================================
-       CONTINUOUS SPAWN
+       SPAWN MORE
     ================================================= */
 
     setInterval(
@@ -295,6 +359,7 @@
         },
         3500
     );
+
 
 })();
 ```
