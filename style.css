@@ -1,132 +1,10 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
-}
-
-body {
-    overflow: hidden;
-    background: #050208;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-
-/* =========================
-   BACKGROUND
-========================= */
-
-.background {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            #211021 0%,
-            #120812 40%,
-            #070309 75%,
-            #020104 100%
-        );
-
-    z-index: 0;
-}
-
-.background::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background:
-        radial-gradient(
-            circle at 25% 40%,
-            rgba(255, 70, 190, 0.12),
-            transparent 40%
-        ),
-        radial-gradient(
-            circle at 75% 20%,
-            rgba(255, 100, 210, 0.08),
-            transparent 40%
-        );
-}
-
-
-/* =========================
-   STARS
-========================= */
-
-#stars {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    pointer-events: none;
-
-    z-index: 1;
-}
-
-.star {
-    position: absolute;
-
-    width: 2px;
-    height: 2px;
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 4px white,
-        0 0 8px rgba(255, 180, 235, 0.8);
-
-    animation:
-        starMove linear infinite,
-        starTwinkle ease-in-out infinite;
-}
-
-@keyframes starMove {
-    from {
-        transform: translateX(-30px);
-    }
-
-    to {
-        transform: translateX(110vw);
-    }
-}
-
-@keyframes starTwinkle {
-    0% {
-        opacity: 0.25;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.25;
-    }
-}
-
-
-/* =========================
-   METEORS
-========================= */
+/* =========================================
+   METEOR CONTAINER
+========================================= */
 
 #meteors {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -139,49 +17,57 @@ body {
     z-index: 2;
 }
 
+
+/* =========================================
+   METEOR
+========================================= */
+
 .meteor {
     position: absolute;
 
-    height: 9px;
+    height: 10px;
 
     border-radius: 999px;
 
     background: linear-gradient(
         to right,
         transparent 0%,
-        rgba(255, 40, 190, 0.08) 30%,
-        rgba(255, 100, 220, 0.4) 70%,
-        #ffdff7 92%,
+        rgba(255, 30, 180, 0.05) 25%,
+        rgba(255, 70, 200, 0.2) 55%,
+        rgba(255, 130, 225, 0.65) 85%,
         white 100%
     );
 
     box-shadow:
-        0 0 10px rgba(255, 100, 210, 0.9),
-        0 0 25px rgba(255, 50, 190, 0.7),
-        0 0 50px rgba(255, 40, 190, 0.35);
+        0 0 12px rgba(255, 130, 225, 0.9),
+        0 0 30px rgba(255, 60, 200, 0.8),
+        0 0 60px rgba(255, 40, 190, 0.5);
 
-    transform: rotate(46deg);
+    transform:
+        rotate(46deg);
 
-    transform-origin: right center;
+    transform-origin:
+        right center;
 }
 
 
-/* =========================
-   METEOR TRAIL
-========================= */
+/* =========================================
+   SUPER LONG PINK TRAIL
+========================================= */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    width: 850px;
-    height: 30px;
+    width: 1000px;
+    height: 38px;
 
     right: 0;
     top: 50%;
 
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%);
 
     border-radius: 999px;
 
@@ -189,47 +75,58 @@ body {
         to right,
         transparent,
         rgba(255, 20, 180, 0.03),
-        rgba(255, 50, 195, 0.12),
-        rgba(255, 90, 215, 0.3),
-        rgba(255, 150, 235, 0.5)
+        rgba(255, 40, 190, 0.1),
+        rgba(255, 70, 205, 0.25),
+        rgba(255, 130, 230, 0.55)
     );
 
-    filter: blur(14px);
+    filter: blur(16px);
 }
 
 
-/* =========================
+/* =========================================
    METEOR HEAD
-========================= */
+========================================= */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    width: 20px;
-    height: 20px;
-
-    right: -6px;
+    right: -8px;
     top: 50%;
 
-    transform: translateY(-50%);
+    width: 23px;
+    height: 23px;
+
+    transform:
+        translateY(-50%);
 
     border-radius: 50%;
 
     background: white;
 
     box-shadow:
-        0 0 8px white,
-        0 0 18px #ffd6f5,
-        0 0 35px #ff8bd8,
-        0 0 60px #ff45bd;
+        0 0 10px white,
+        0 0 25px #ffd6f5,
+        0 0 45px #ff8bd8,
+        0 0 75px #ff35bd,
+        0 0 110px rgba(255, 40, 190, 0.7);
 }
 
 
-/* =========================
+/* =========================================
    METEOR MOVEMENT
-========================= */
+
+   START:
+   Far above screen.
+
+   END:
+   Far below/right.
+
+   So the meteor is already moving
+   before you ever see it.
+========================================= */
 
 @keyframes meteorFly {
 
@@ -241,65 +138,25 @@ body {
         opacity: 0;
     }
 
-    8% {
+
+    12% {
         opacity: 1;
     }
 
-    90% {
+
+    85% {
         opacity: 1;
     }
+
 
     100% {
         transform:
-            translate(55vw, 125vh)
+            translate(
+                70vw,
+                150vh
+            )
             rotate(46deg);
 
         opacity: 0;
     }
-}
-
-
-/* =========================
-   PROFILE
-========================= */
-
-main {
-    position: relative;
-
-    z-index: 3;
-
-    width: 100%;
-    height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile {
-    padding: 50px 70px;
-
-    text-align: center;
-
-    background: rgba(12, 4, 14, 0.55);
-
-    border: 1px solid rgba(255, 180, 230, 0.15);
-
-    border-radius: 24px;
-
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.7),
-        0 0 60px rgba(255, 60, 190, 0.08);
-}
-
-.profile h1 {
-    font-size: 60px;
-    margin-bottom: 10px;
-}
-
-.profile p {
-    color: #c9a9c2;
-    font-size: 18px;
 }
