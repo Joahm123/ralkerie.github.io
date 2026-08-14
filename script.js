@@ -10,6 +10,7 @@ const starContainer =
 ========================= */
 
 function createStar() {
+
     const star =
         document.createElement("div");
 
@@ -49,6 +50,8 @@ function createStar() {
 }
 
 
+/* Lots of stars */
+
 for (let i = 0; i < 220; i++) {
     createStar();
 }
@@ -67,7 +70,7 @@ function createMeteor() {
 
 
     /*
-        Long meteor
+        LONG METEOR
     */
 
     const length =
@@ -78,29 +81,23 @@ function createMeteor() {
 
 
     /*
-        SPAWN ACROSS THE
-        ENTIRE TOP.
+        START WAY OFF THE
+        LEFT SIDE.
 
-        Start from LEFT side
-        and spread toward RIGHT.
+        Random vertical position
+        along the TOP portion.
     */
 
     const startX =
-        Math.random() *
-        window.innerWidth;
+        -length - 500;
 
-
-    /*
-        Start slightly above
-        the top of the screen.
-    */
 
     const startY =
-        -100;
+        Math.random() * 350 - 250;
 
 
     /*
-        Speed
+        Random speed.
     */
 
     const duration =
@@ -112,6 +109,7 @@ function createMeteor() {
 
     meteor.style.top =
         `${startY}px`;
+
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -127,15 +125,21 @@ function createMeteor() {
 
 
 /* =========================
-   SPAWN MORE METEORS
+   SPAWNING
 ========================= */
 
 function spawnMeteor() {
 
     createMeteor();
 
+
+    /*
+        More frequent meteors.
+    */
+
     const nextMeteor =
-        Math.random() * 250 + 100;
+        Math.random() * 300 + 120;
+
 
     setTimeout(
         spawnMeteor,
