@@ -38,6 +38,7 @@ body {
 
 #background {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -59,6 +60,7 @@ body {
     content: "";
 
     position: absolute;
+
     inset: 0;
 
     background:
@@ -67,6 +69,7 @@ body {
             rgba(255, 40, 190, 0.18),
             transparent 35%
         ),
+
         radial-gradient(
             circle at 85% 25%,
             rgba(255, 90, 220, 0.15),
@@ -81,6 +84,7 @@ body {
 
 #stars {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -109,11 +113,12 @@ body {
 
 
 /* =====================================================
-   METEORS
+   METEOR LAYER
 ===================================================== */
 
 #meteors {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -126,91 +131,38 @@ body {
     pointer-events: none;
 }
 
+
+/* =====================================================
+   METEOR
+
+   IMPORTANT:
+
+   This element is ONLY the meteor HEAD position.
+
+   Its X/Y is therefore EXACTLY where the meteor
+   spawns.
+
+   No giant rotated rectangle shifting the spawn point.
+===================================================== */
+
 .meteor {
     position: absolute;
 
-    /*
-       THINNER
-    */
+    width: 1px;
+    height: 1px;
 
-    height: 6px;
+    transform:
+        rotate(46deg);
 
-    border-radius: 999px;
-
-    transform: rotate(46deg);
-
-    transform-origin: right center;
-
-    /*
-       WHITE + PINK METEOR
-       No black.
-    */
-
-    background: linear-gradient(
-        to right,
-        rgba(255, 90, 210, 0),
-        rgba(255, 100, 220, 0.25),
-        rgba(255, 180, 240, 0.8),
-        white
-    );
-
-    box-shadow:
-        0 0 8px white,
-        0 0 18px rgba(255, 120, 225, 0.95),
-        0 0 35px rgba(255, 50, 200, 0.8);
-}
-
-
-/* =====================================================
-   PINK + WHITE TRAIL
-===================================================== */
-
-.meteor::before {
-    content: "";
-
-    position: absolute;
-
-    right: 0;
-    top: 50%;
-
-    /*
-       LONG TRAIL
-    */
-
-    width: 1100px;
-
-    /*
-       THIN TRAIL
-    */
-
-    height: 18px;
-
-    transform: translateY(-50%);
-
-    border-radius: 999px;
-
-    /*
-       ONLY PINK + WHITE
-       No dark/black colors.
-    */
-
-    background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0),
-        rgba(255, 120, 225, 0.08),
-        rgba(255, 100, 220, 0.22),
-        rgba(255, 160, 235, 0.55),
-        rgba(255, 220, 250, 0.9)
-    );
-
-    filter: blur(8px);
+    transform-origin:
+        center center;
 
     pointer-events: none;
 }
 
 
 /* =====================================================
-   BRIGHT METEOR HEAD
+   METEOR HEAD
 ===================================================== */
 
 .meteor::after {
@@ -218,13 +170,11 @@ body {
 
     position: absolute;
 
-    right: -6px;
-    top: 50%;
+    left: -9px;
+    top: -9px;
 
-    width: 16px;
-    height: 16px;
-
-    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
 
     border-radius: 50%;
 
@@ -233,8 +183,53 @@ body {
     box-shadow:
         0 0 8px white,
         0 0 18px white,
-        0 0 30px #ffb8e9,
-        0 0 50px #ff4ac5;
+        0 0 30px #ffd5f4,
+        0 0 45px #ff8bd8,
+        0 0 65px #ff35bd;
+}
+
+
+/* =====================================================
+   METEOR TRAIL
+
+   WHITE + PINK ONLY
+
+   Trail extends BEHIND the head.
+===================================================== */
+
+.meteor::before {
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+    top: -5px;
+
+    width: 750px;
+    height: 10px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            to left,
+
+            rgba(255, 255, 255, 0.95),
+
+            rgba(255, 220, 250, 0.8),
+
+            rgba(255, 150, 235, 0.65),
+
+            rgba(255, 70, 205, 0.35),
+
+            rgba(255, 40, 190, 0)
+        );
+
+    box-shadow:
+        0 0 8px rgba(255, 190, 240, 0.8),
+        0 0 18px rgba(255, 80, 210, 0.45);
+
+    filter: blur(2px);
 }
 
 
@@ -244,6 +239,7 @@ body {
 
 #content {
     position: fixed;
+
     inset: 0;
 
     z-index: 10;
@@ -268,9 +264,11 @@ body {
 
     text-align: center;
 
-    background: rgba(8, 3, 12, 0.8);
+    background:
+        rgba(8, 3, 12, 0.8);
 
-    border: 1px solid rgba(255, 180, 235, 0.22);
+    border:
+        1px solid rgba(255, 180, 235, 0.22);
 
     border-radius: 24px;
 
@@ -282,7 +280,8 @@ body {
 }
 
 #card h1 {
-    font-size: clamp(48px, 7vw, 90px);
+    font-size:
+        clamp(48px, 7vw, 90px);
 
     letter-spacing: 3px;
 
@@ -296,7 +295,8 @@ body {
 #card p {
     margin-top: 12px;
 
-    color: rgba(255, 210, 240, 0.75);
+    color:
+        rgba(255, 210, 240, 0.75);
 
     font-size: 18px;
 
@@ -350,6 +350,7 @@ body {
 
 <script>
 
+
 /* =====================================================
    STARS
 ===================================================== */
@@ -370,7 +371,8 @@ for (let i = 0; i < 200; i++) {
 
 
     const size =
-        1 + Math.random() * 2;
+        1 +
+        Math.random() * 2;
 
 
     element.style.width =
@@ -394,7 +396,7 @@ for (let i = 0; i < 200; i++) {
 
         speed:
             20 +
-            Math.random() * 50
+            Math.random() * 60
     };
 
 
@@ -433,16 +435,12 @@ function updateStars(time) {
 
     for (const star of stars) {
 
-        /*
-           MOVE RIGHT
-        */
-
         star.x +=
             star.speed * delta;
 
 
         /*
-           LOOP BACK TO LEFT
+           LOOP FROM LEFT
         */
 
         if (
@@ -487,6 +485,10 @@ const meteorContainer =
 const meteors = [];
 
 
+/* =====================================================
+   CREATE METEOR
+===================================================== */
+
 function createMeteor() {
 
     const element =
@@ -497,50 +499,46 @@ function createMeteor() {
 
 
     /*
-       LONG + SKINNY
-    */
+       =================================================
+       THIS IS THE IMPORTANT FIX.
 
-    element.style.width =
-        (
-            450 +
-            Math.random() * 350
-        ) + "px";
+       The meteor HEAD spawns at:
 
+       X = 0 → 100% SCREEN WIDTH
 
-    /*
-       SPAWN ACROSS ENTIRE TOP
+       Y = slightly ABOVE screen
 
-       X:
-       0 → entire screen width
+       The trail is attached BEHIND it.
 
-       Y:
-       above screen
+       Therefore the visible meteor head cannot
+       magically spawn on the right.
+       =================================================
     */
 
     const x =
         Math.random() *
         window.innerWidth;
 
+
     const y =
-        -100 -
-        Math.random() * 500;
+        -50 -
+        Math.random() * 300;
 
 
     /*
+       =================================================
        FAST MOVEMENT
-
-       RIGHT
-       +
-       DOWN
+       =================================================
     */
 
     const velocityX =
-        700 +
-        Math.random() * 350;
+        850 +
+        Math.random() * 400;
+
 
     const velocityY =
-        950 +
-        Math.random() * 400;
+        1100 +
+        Math.random() * 450;
 
 
     const meteor = {
@@ -558,6 +556,10 @@ function createMeteor() {
             velocityY
     };
 
+
+    /*
+       EXACT INITIAL POSITION
+    */
 
     element.style.left =
         x + "px";
@@ -578,7 +580,7 @@ function createMeteor() {
 
 
 /* =====================================================
-   METEOR MOVEMENT
+   MOVE METEORS
 ===================================================== */
 
 let meteorLastTime =
@@ -605,7 +607,7 @@ function updateMeteors(time) {
 
 
         /*
-           MOVE RIGHT
+           RIGHT
         */
 
         meteor.x +=
@@ -614,13 +616,17 @@ function updateMeteors(time) {
 
 
         /*
-           MOVE DOWN
+           DOWN
         */
 
         meteor.y +=
             meteor.velocityY *
             delta;
 
+
+        /*
+           EXACT POSITION
+        */
 
         meteor.element.style.left =
             meteor.x + "px";
@@ -630,15 +636,15 @@ function updateMeteors(time) {
 
 
         /*
-           DESPAWN FAR OFFSCREEN
+           DESPAWN WELL OFFSCREEN
         */
 
         if (
             meteor.x >
-                window.innerWidth + 700
+                window.innerWidth + 900
             &&
             meteor.y >
-                window.innerHeight + 700
+                window.innerHeight + 900
         ) {
 
             meteor.element.remove();
@@ -675,12 +681,13 @@ function spawnMeteor() {
         spawnMeteor,
 
         100 +
-        Math.random() * 150
+        Math.random() * 160
     );
 }
 
 
 spawnMeteor();
+
 
 </script>
 
