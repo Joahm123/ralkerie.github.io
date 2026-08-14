@@ -1,5 +1,5 @@
 /* =====================================================
-   METEORS
+   RALKERIE METEORS
 ===================================================== */
 
 const meteorContainer =
@@ -9,7 +9,7 @@ const meteors = [];
 
 
 /* =====================================================
-   CREATE
+   CREATE METEOR
 ===================================================== */
 
 function createMeteor(x, y) {
@@ -29,26 +29,35 @@ function createMeteor(x, y) {
 
         y,
 
+        /*
+           FAST RIGHT
+        */
+
         velocityX:
-            1050 +
-            Math.random() * 450,
+            1000 +
+            Math.random() * 400,
+
+        /*
+           DOWN
+        */
 
         velocityY:
-            700 +
+            650 +
             Math.random() * 300
     };
 
 
     element.style.left =
-        x + "px";
+        `${x}px`;
 
     element.style.top =
-        y + "px";
+        `${y}px`;
 
 
     meteorContainer.appendChild(
         element
     );
+
 
     meteors.push(
         meteor
@@ -57,43 +66,56 @@ function createMeteor(x, y) {
 
 
 /* =====================================================
-   INITIAL SPREAD
+   INITIAL METEORS
 ===================================================== */
 
-function createInitialMeteorSpread() {
+function createInitialMeteors() {
 
     const width =
         window.innerWidth;
 
-    const sections = 16;
+
+    /*
+       Spread them across
+       the ENTIRE top.
+
+       12 separate zones.
+    */
+
+    const zones = 12;
 
 
     for (
         let i = 0;
-        i < sections;
+        i < zones;
         i++
     ) {
 
-        const sectionWidth =
-            width / sections;
+        const zoneWidth =
+            width / zones;
 
 
-        let x =
-            i * sectionWidth +
+        /*
+           Random position
+           inside each zone.
+
+           This guarantees
+           the entire width
+           gets covered.
+        */
+
+        const x =
+            i * zoneWidth +
             Math.random() *
-            sectionWidth -
-            width * 0.15;
+            zoneWidth;
 
 
-        x =
-            Math.max(
-                0,
-                x
-            );
-
+        /*
+           Above the screen.
+        */
 
         const y =
-            -50 -
+            -100 -
             Math.random() * 500;
 
 
@@ -106,28 +128,24 @@ function createInitialMeteorSpread() {
 
 
 /* =====================================================
-   CONTINUOUS SPAWN
+   CONTINUOUS SPAWNING
 ===================================================== */
 
 function spawnMeteor() {
 
-    const width =
+    /*
+       Anywhere across
+       the ENTIRE top.
+    */
+
+    const x =
+        Math.random() *
         window.innerWidth;
 
 
-    const random =
-        Math.random();
-
-
-    const x =
-        random *
-        random *
-        width;
-
-
     const y =
-        -50 -
-        Math.random() * 350;
+        -100 -
+        Math.random() * 400;
 
 
     createMeteor(
@@ -136,11 +154,15 @@ function spawnMeteor() {
     );
 
 
+    /*
+       Less frequent spawning.
+    */
+
     setTimeout(
         spawnMeteor,
 
-        450 +
-        Math.random() * 250
+        550 +
+        Math.random() * 300
     );
 }
 
@@ -149,16 +171,16 @@ function spawnMeteor() {
    MOVEMENT
 ===================================================== */
 
-let lastMeteorTime =
+let meteorLastTime =
     performance.now();
 
 
 function updateMeteors(time) {
 
     const delta =
-        (time - lastMeteorTime) / 1000;
+        (time - meteorLastTime) / 1000;
 
-    lastMeteorTime =
+    meteorLastTime =
         time;
 
 
@@ -176,24 +198,30 @@ function updateMeteors(time) {
             meteor.velocityX *
             delta;
 
+
         meteor.y +=
             meteor.velocityY *
             delta;
 
 
         meteor.element.style.left =
-            meteor.x + "px";
+            `${meteor.x}px`;
 
         meteor.element.style.top =
-            meteor.y + "px";
+            `${meteor.y}px`;
 
+
+        /*
+           Delete once it is
+           completely offscreen.
+        */
 
         if (
             meteor.x >
-                window.innerWidth + 900
+                window.innerWidth + 1000
             &&
             meteor.y >
-                window.innerHeight + 900
+                window.innerHeight + 1000
         ) {
 
             meteor.element.remove();
@@ -216,12 +244,12 @@ function updateMeteors(time) {
    START
 ===================================================== */
 
-createInitialMeteorSpread();
+createInitialMeteors();
 
 
 setTimeout(
     spawnMeteor,
-    1200
+    1000
 );
 
 
