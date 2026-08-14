@@ -2,9 +2,9 @@ const meteorContainer = document.getElementById("meteors");
 const starContainer = document.getElementById("stars");
 
 
-/* =========================
-   STARS
-========================= */
+/* =========================================
+   MOVING STARS
+========================================= */
 
 function createStar() {
     const star = document.createElement("div");
@@ -29,16 +29,16 @@ function createStar() {
 }
 
 
-/* Create 250 stars */
+/* Make stars */
 
 for (let i = 0; i < 250; i++) {
     createStar();
 }
 
 
-/* =========================
-   METEORS
-========================= */
+/* =========================================
+   METEOR
+========================================= */
 
 function createMeteor() {
 
@@ -47,87 +47,126 @@ function createMeteor() {
     meteor.className = "meteor";
 
 
-    /*
-        Long meteor
-    */
+    /* =====================================
+       METEOR LENGTH
+    ===================================== */
 
     const length =
-        350 + Math.random() * 250;
+        400 + Math.random() * 300;
 
     meteor.style.width =
         `${length}px`;
 
 
+    /* =====================================
+       TOP SPAWN BOX
+
+       Imagine this box sitting ABOVE
+       the website:
+
+       ┌───────────────────────────────┐
+       │   ☄      ☄       ☄      ☄    │
+       │                               │
+       │                               │
+       └───────────────────────────────┘
+       █████████████████████████████████
+              TOP OF SCREEN
+
+       Meteors ONLY come from this box.
+
+       They NEVER spawn on the sides.
+       They NEVER spawn in the middle.
+       They NEVER spawn at the bottom.
+    ===================================== */
+
+    const spawnBoxWidth =
+        window.innerWidth + 1200;
+
+    const spawnBoxLeft =
+        -600;
+
+
     /*
-        =========================
-        SPAWN POSITION
-        =========================
-
-        Meteor starts ABOVE the
-        screen.
-
-        X is deliberately biased
-        toward the LEFT.
-
-        -20vw → 45vw
+        Random X anywhere inside
+        the giant box.
     */
 
     const startX =
-        -20 + Math.random() * 65;
+        spawnBoxLeft +
+        Math.random() * spawnBoxWidth;
+
+
+    /*
+        FAR above the screen.
+
+        This is intentionally huge.
+    */
 
     const startY =
-        -500 - Math.random() * 300;
+        -900 -
+        Math.random() * 900;
 
 
     meteor.style.left =
-        `${startX}vw`;
+        `${startX}px`;
 
     meteor.style.top =
         `${startY}px`;
 
 
-    /*
-        Fast movement
-    */
+    /* =====================================
+       SPEED
+    ===================================== */
 
     const duration =
-        1.3 + Math.random() * 0.6;
+        1.2 +
+        Math.random() * 0.7;
+
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
 
 
-    meteorContainer.appendChild(meteor);
+    meteorContainer.appendChild(
+        meteor
+    );
 
 
-    /*
-        Remove when finished
-    */
+    /* =====================================
+       CLEANUP
+    ===================================== */
 
     setTimeout(() => {
+
         meteor.remove();
-    }, duration * 1000 + 300);
+
+    }, duration * 1000 + 500);
 }
 
 
-/* =========================
-   INFINITE SPAWN
-========================= */
+/* =========================================
+   INFINITE METEOR SPAWNING
+========================================= */
 
-function spawnMeteor() {
+function spawnMeteorForever() {
 
     createMeteor();
 
+
     const delay =
-        150 + Math.random() * 250;
+        120 +
+        Math.random() * 220;
+
 
     setTimeout(
-        spawnMeteor,
+        spawnMeteorForever,
         delay
     );
 }
 
 
-/* Start meteors */
+/* =========================================
+   START
+========================================= */
 
-spawnMeteor();
+spawnMeteorForever();
