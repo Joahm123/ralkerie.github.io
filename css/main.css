@@ -1,1 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+html,
+body {
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    background: #050208;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+#main {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+#profile {
+
+    position: relative;
+
+    z-index: 3;
+
+    min-width: 340px;
+
+    padding: 45px 70px;
+
+    text-align: center;
+
+    background:
+        rgba(8, 3, 12, 0.78);
+
+    border:
+        1px solid
+        rgba(255, 180, 235, 0.22);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 20px 80px
+        rgba(0, 0, 0, 0.8),
+
+        0 0 60px
+        rgba(255, 50, 190, 0.12);
+
+    backdrop-filter:
+        blur(18px);
+}
+
+#profile h1 {
+
+    font-size:
+        clamp(48px, 7vw, 90px);
+
+    letter-spacing: 3px;
+
+    color: white;
+
+    text-shadow:
+        0 0 15px
+        rgba(255, 160, 230, 0.4),
+
+        0 0 40px
+        rgba(255, 60, 190, 0.2);
+}
+
+#profile p {
+
+    margin-top: 12px;
+
+    color:
+        rgba(255, 210, 240, 0.75);
+
+    font-size: 18px;
+
+    letter-spacing: 2px;
+}
