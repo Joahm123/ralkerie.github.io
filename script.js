@@ -49,9 +49,6 @@ function createStar() {
 }
 
 
-/* Lots of stars across the
-   ENTIRE screen */
-
 for (let i = 0; i < 180; i++) {
     createStar();
 }
@@ -67,36 +64,38 @@ function createMeteor() {
 
     meteor.className = "meteor";
 
+
     /*
-       Start WAY off the right side
-       so the full trail can enter.
+       Meteors begin below/left
+       and travel toward the
+       upper-right.
     */
 
     const startX =
-        window.innerWidth + 450;
-
-    /*
-       Spawn anywhere vertically.
-       This covers the ENTIRE screen.
-    */
+        Math.random() *
+        (window.innerWidth * 0.8) -
+        500;
 
     const startY =
-        Math.random() *
-        window.innerHeight;
+        window.innerHeight +
+        300;
+
 
     /*
-       Large meteor heads.
+       Random large size.
     */
 
     const size =
         Math.random() * 12 + 18;
 
+
     /*
-       Different speeds.
+       Random speed.
     */
 
     const duration =
         Math.random() * 2 + 2;
+
 
     meteor.style.left =
         `${startX}px`;
@@ -113,7 +112,9 @@ function createMeteor() {
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
 
+
     meteorContainer.appendChild(meteor);
+
 
     setTimeout(() => {
         meteor.remove();
@@ -128,10 +129,6 @@ function createMeteor() {
 function spawnMeteor() {
     createMeteor();
 
-    /*
-       More frequent meteors.
-    */
-
     const nextMeteor =
         Math.random() * 700 + 300;
 
@@ -141,7 +138,5 @@ function spawnMeteor() {
     );
 }
 
-
-/* Start */
 
 spawnMeteor();
