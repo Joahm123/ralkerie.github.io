@@ -1,5 +1,5 @@
 /* =====================================================
-   STARS
+   RALKERIE STARS
 ===================================================== */
 
 const starContainer =
@@ -8,29 +8,32 @@ const starContainer =
 const stars = [];
 
 
+/* =====================================================
+   CREATE STARS
+===================================================== */
+
 for (let i = 0; i < 220; i++) {
 
-    const element =
+    const star =
         document.createElement("div");
 
-    element.className =
-        "star";
+    star.className = "star";
 
 
     const size =
-        1 + Math.random() * 2;
+        1 + Math.random() * 2.5;
 
 
-    element.style.width =
-        size + "px";
+    star.style.width =
+        `${size}px`;
 
-    element.style.height =
-        size + "px";
+    star.style.height =
+        `${size}px`;
 
 
-    const star = {
+    const data = {
 
-        element,
+        element: star,
 
         x:
             Math.random() *
@@ -42,24 +45,29 @@ for (let i = 0; i < 220; i++) {
 
         speed:
             25 +
-            Math.random() * 60
+            Math.random() * 65
     };
 
 
-    element.style.left =
-        star.x + "px";
+    star.style.left =
+        `${data.x}px`;
 
-    element.style.top =
-        star.y + "px";
+    star.style.top =
+        `${data.y}px`;
 
 
     starContainer.appendChild(
-        element
+        star
     );
 
-    stars.push(star);
+
+    stars.push(data);
 }
 
+
+/* =====================================================
+   ANIMATION
+===================================================== */
 
 let lastTime =
     performance.now();
@@ -70,21 +78,33 @@ function updateStars(time) {
     const delta =
         (time - lastTime) / 1000;
 
-    lastTime = time;
+    lastTime =
+        time;
 
 
     for (const star of stars) {
 
-        star.x +=
-            star.speed * delta;
+        /*
+           Stars move RIGHT.
+        */
 
+        star.x +=
+            star.speed *
+            delta;
+
+
+        /*
+           When a star leaves
+           the right side, bring
+           it back to the left.
+        */
 
         if (
             star.x >
-            window.innerWidth + 10
+            window.innerWidth + 20
         ) {
 
-            star.x = -10;
+            star.x = -20;
 
             star.y =
                 Math.random() *
@@ -93,10 +113,10 @@ function updateStars(time) {
 
 
         star.element.style.left =
-            star.x + "px";
+            `${star.x}px`;
 
         star.element.style.top =
-            star.y + "px";
+            `${star.y}px`;
     }
 
 
