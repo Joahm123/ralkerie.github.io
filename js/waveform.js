@@ -1,9 +1,11 @@
 /* =====================================================
-   RALKERIE SOUND WAVE
+   RALKERIE WAVEFORM
 ===================================================== */
 
 const waveform =
-    document.getElementById("waveform");
+    document.getElementById(
+        "waveform"
+    );
 
 const BAR_COUNT = 70;
 
@@ -12,40 +14,37 @@ const BAR_COUNT = 70;
    CREATE BARS
 ===================================================== */
 
-for (let i = 0; i < BAR_COUNT; i++) {
+for (
+    let i = 0;
+    i < BAR_COUNT;
+    i++
+) {
 
     const bar =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     bar.className =
         "wave-bar";
 
 
-    /*
-       Bars in the middle are taller.
-       Bars toward the edges are shorter.
-    */
-
     const center =
         Math.abs(
-            i - BAR_COUNT / 2
+            i -
+            BAR_COUNT / 2
         ) /
         (BAR_COUNT / 2);
 
 
     const height =
-        1 - center * 0.65;
+        1 -
+        center * 0.65;
 
 
     bar.style.height =
         `${20 + height * 45}px`;
 
-
-    /*
-       Slightly different animation
-       for every bar so it doesn't
-       look perfectly synchronized.
-    */
 
     bar.style.setProperty(
         "--speed",
@@ -59,5 +58,7 @@ for (let i = 0; i < BAR_COUNT; i++) {
     );
 
 
-    waveform.appendChild(bar);
+    waveform.appendChild(
+        bar
+    );
 }
