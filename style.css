@@ -1,25 +1,158 @@
-/* =========================================
-   METEOR CONTAINER
-========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-#meteors {
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    background: #050208;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* ==============================
+   SPACE
+============================== */
+
+#space {
+    position: fixed;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 50%,
+            #241024 0%,
+            #130813 40%,
+            #080409 72%,
+            #020103 100%
+        );
+
+    z-index: 0;
+}
+
+#space::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 20% 50%,
+            rgba(255, 70, 190, 0.14),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 30%,
+            rgba(255, 100, 210, 0.10),
+            transparent 35%
+        );
+}
+
+
+/* ==============================
+   STARS
+============================== */
+
+#stars {
     position: fixed;
     inset: 0;
 
     width: 100vw;
     height: 100vh;
 
-    overflow: visible;
+    overflow: hidden;
+
+    z-index: 1;
 
     pointer-events: none;
+}
 
-    z-index: 2;
+.star {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 4px white,
+        0 0 10px rgba(255, 180, 235, 0.8);
+
+    animation:
+        starMove linear infinite,
+        starTwinkle ease-in-out infinite;
+}
+
+@keyframes starMove {
+
+    from {
+        transform: translateX(-40px);
+    }
+
+    to {
+        transform: translateX(110vw);
+    }
+}
+
+@keyframes starTwinkle {
+
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
 }
 
 
-/* =========================================
+/* ==============================
+   METEOR LAYER
+============================== */
+
+#meteors {
+    position: fixed;
+
+    /*
+        Larger than the viewport.
+
+        This gives us an invisible
+        box surrounding the screen.
+    */
+
+    left: -500px;
+    top: -500px;
+
+    width: calc(100vw + 1000px);
+    height: calc(100vh + 1000px);
+
+    overflow: visible;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* ==============================
    METEOR
-========================================= */
+============================== */
 
 .meteor {
     position: absolute;
@@ -30,99 +163,93 @@
 
     background: linear-gradient(
         to right,
-        transparent 0%,
-        rgba(255, 30, 180, 0.05) 25%,
-        rgba(255, 70, 200, 0.2) 55%,
-        rgba(255, 130, 225, 0.65) 85%,
-        white 100%
+        rgba(255, 20, 180, 0),
+        rgba(255, 50, 195, 0.08),
+        rgba(255, 80, 210, 0.25),
+        rgba(255, 150, 235, 0.65),
+        #ffffff
     );
 
     box-shadow:
-        0 0 12px rgba(255, 130, 225, 0.9),
-        0 0 30px rgba(255, 60, 200, 0.8),
-        0 0 60px rgba(255, 40, 190, 0.5);
+        0 0 10px rgba(255, 150, 230, 0.9),
+        0 0 25px rgba(255, 60, 200, 0.8),
+        0 0 55px rgba(255, 40, 190, 0.5);
 
-    transform:
-        rotate(46deg);
+    transform-origin: right center;
 
-    transform-origin:
-        right center;
+    transform: rotate(46deg);
 }
 
 
-/* =========================================
-   LONG PINK TRAIL
-========================================= */
+/* ==============================
+   LONG TRAIL
+============================== */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    width: 1000px;
-    height: 38px;
-
     right: 0;
     top: 50%;
 
-    transform:
-        translateY(-50%);
+    width: 950px;
+    height: 34px;
+
+    transform: translateY(-50%);
 
     border-radius: 999px;
 
     background: linear-gradient(
         to right,
         transparent,
-        rgba(255, 20, 180, 0.03),
-        rgba(255, 40, 190, 0.1),
-        rgba(255, 70, 205, 0.25),
-        rgba(255, 130, 230, 0.55)
+        rgba(255, 20, 180, 0.02),
+        rgba(255, 40, 190, 0.08),
+        rgba(255, 80, 210, 0.22),
+        rgba(255, 150, 235, 0.55)
     );
 
-    filter: blur(16px);
+    filter: blur(15px);
+
+    z-index: -1;
 }
 
 
-/* =========================================
+/* ==============================
    METEOR HEAD
-========================================= */
+============================== */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    right: -8px;
+    right: -7px;
     top: 50%;
 
-    width: 23px;
-    height: 23px;
+    width: 22px;
+    height: 22px;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     border-radius: 50%;
 
     background: white;
 
     box-shadow:
-        0 0 10px white,
-        0 0 25px #ffd6f5,
-        0 0 45px #ff8bd8,
-        0 0 75px #ff35bd,
+        0 0 8px white,
+        0 0 20px #ffd8f5,
+        0 0 40px #ff8cda,
+        0 0 70px #ff3fbe,
         0 0 110px rgba(255, 40, 190, 0.7);
 }
 
 
-/* =========================================
-   METEOR PATH
-========================================= */
+/* ==============================
+   METEOR MOVEMENT
+============================== */
 
-@keyframes meteorFly {
-
-    /*
-        Meteor is above the viewport.
-    */
+@keyframes meteorMove {
 
     0% {
         transform:
@@ -132,43 +259,71 @@
         opacity: 0;
     }
 
-
-    /*
-        It becomes visible before
-        entering the screen.
-    */
-
-    8% {
+    10% {
         opacity: 1;
     }
-
-
-    /*
-        Glide through the entire screen.
-    */
 
     85% {
         opacity: 1;
     }
 
-
-    /*
-        Continue FAR past the bottom
-        and right side.
-
-        This guarantees it has left
-        the surrounding box before
-        being removed.
-    */
-
     100% {
         transform:
-            translate(
-                calc(100vw + 500px),
-                calc(100vh + 500px)
-            )
+            translate(110vw, 110vh)
             rotate(46deg);
 
         opacity: 0;
     }
+}
+
+
+/* ==============================
+   MAIN CONTENT
+============================== */
+
+.content {
+    position: fixed;
+    inset: 0;
+
+    z-index: 3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ==============================
+   CARD
+============================== */
+
+.card {
+    padding: 50px 75px;
+
+    text-align: center;
+
+    background: rgba(10, 4, 12, 0.55);
+
+    border: 1px solid rgba(255, 180, 235, 0.15);
+
+    border-radius: 25px;
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 20px 80px rgba(0, 0, 0, 0.65),
+        0 0 70px rgba(255, 50, 190, 0.08);
+}
+
+.card h1 {
+    font-size: 64px;
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: #d0aec9;
+
+    font-size: 18px;
 }
