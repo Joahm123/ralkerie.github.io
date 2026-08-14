@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE METEORS
-   DIAGONAL + CLICK POPUP + SONG START TIME
+   SMALL METEOR + LARGE HITBOX
 ===================================================== */
 
 (() => {
@@ -18,16 +18,13 @@
     const GIF_FILE =
         "./assets/images/meteor.gif";
 
-    /*
-       How far into the song to start.
+    const SONG_START_TIME =
+        35;
 
-       15 = starts at 0:15
-       30 = starts at 0:30
-       45 = starts at 0:45
-    */
 
-    const SONG_START_TIME = 35;
-
+    /* =================================================
+       CONTAINER
+    ================================================= */
 
     const meteorContainer =
         document.getElementById("meteors");
@@ -102,7 +99,7 @@
 
 
     /* =================================================
-       OPEN POPUP
+       POPUP
     ================================================= */
 
     function openPopup() {
@@ -112,28 +109,14 @@
         );
 
 
-        /*
-           Start farther into the song.
-        */
-
         meteorAudio.currentTime =
             SONG_START_TIME;
 
 
         meteorAudio.play()
-            .catch(() => {
-
-                console.log(
-                    "Meteor audio could not play."
-                );
-
-            });
+            .catch(() => {});
     }
 
-
-    /* =================================================
-       CLOSE POPUP
-    ================================================= */
 
     function closePopup() {
 
@@ -149,19 +132,11 @@
     }
 
 
-    /* =================================================
-       CLOSE BUTTON
-    ================================================= */
-
     closeButton.addEventListener(
         "click",
         closePopup
     );
 
-
-    /* =================================================
-       CLICK OUTSIDE
-    ================================================= */
 
     popup.addEventListener(
         "click",
@@ -178,10 +153,6 @@
         }
     );
 
-
-    /* =================================================
-       ESCAPE
-    ================================================= */
 
     document.addEventListener(
         "keydown",
@@ -205,16 +176,30 @@
 
     function createMeteor() {
 
-        const meteor =
+        /*
+           OUTER HITBOX
+        */
+
+        const hitbox =
             document.createElement("div");
 
+        hitbox.className =
+            "meteor-hitbox";
+
+
+        /*
+           ACTUAL VISIBLE METEOR
+        */
+
+        const meteor =
+            document.createElement("div");
 
         meteor.className =
             "meteor";
 
 
         /*
-           Normal spawn position.
+           POSITION
         */
 
         const y =
@@ -222,27 +207,27 @@
             Math.random() * 65;
 
 
-        meteor.style.left =
+        hitbox.style.left =
             "-100px";
 
-
-        meteor.style.top =
+        hitbox.style.top =
             `${y}vh`;
 
 
-        meteor.style.opacity =
-            "1";
+        /*
+           Put meteor inside hitbox.
+        */
+
+        hitbox.appendChild(
+            meteor
+        );
 
 
-        meteor.style.visibility =
-            "visible";
+        /*
+           CLICK THE LARGE HITBOX
+        */
 
-
-        /* ---------------------------------------------
-           CLICK
-        --------------------------------------------- */
-
-        meteor.addEventListener(
+        hitbox.addEventListener(
             "click",
             (event) => {
 
@@ -254,26 +239,26 @@
         );
 
 
-        /* ---------------------------------------------
-           ADD METEOR
-        --------------------------------------------- */
+        /*
+           ADD TO PAGE
+        */
 
         meteorContainer.appendChild(
-            meteor
+            hitbox
         );
 
 
-        /* ---------------------------------------------
-           REMOVE OLD METEOR
-        --------------------------------------------- */
+        /*
+           REMOVE AFTER A WHILE
+        */
 
         setTimeout(
             () => {
 
-                meteor.remove();
+                hitbox.remove();
 
             },
-            6000
+            6500
         );
     }
 
