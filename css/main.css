@@ -1,46 +1,50 @@
+/* =====================================================
+   RALKERIE MAIN CSS
+===================================================== */
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
 html,
 body {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
 
-    overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 body {
+    background: #050505;
+
+    color: #ffffff;
+
     font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-    color: white;
+    overflow: hidden;
 
-    background: #050208;
+    image-rendering: pixelated;
 }
 
 
 /* =====================================================
-   MAIN
+   MAIN CONTENT
 ===================================================== */
 
-#main {
-
-    position: fixed;
-
-    inset: 0;
+main {
+    position: relative;
 
     width: 100vw;
     height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
 
     z-index: 10;
 
@@ -49,66 +53,445 @@ body {
 
 
 /* =====================================================
-   PROFILE
+   TOP-RIGHT PIXEL TABS
 ===================================================== */
 
-#profile {
+.pixel-tabs {
+    position: fixed;
 
+    top: 20px;
+    right: 24px;
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 5px;
+
+    z-index: 1000;
+
+    background: #000000;
+
+    border: 2px solid #1c1c1c;
+
+    border-radius: 0;
+
+    box-shadow:
+        3px 3px 0 #000000;
+
+    white-space: nowrap;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   INDIVIDUAL TAB
+===================================================== */
+
+.pixel-tab {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height: 34px;
+
+    min-width: 65px;
+
+    padding: 0 12px;
+
+    border: 0;
+
+    border-radius: 0;
+
+    background: #000000;
+
+    color: #ffffff;
+
+    font-family:
+        monospace;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 1px 1px 0 #222222,
+        inset -1px -1px 0 #000000;
+
+    transition:
+        background 100ms linear,
+        color 100ms linear,
+        transform 100ms linear;
+}
+
+
+/* =====================================================
+   TAB HOVER
+===================================================== */
+
+.pixel-tab:hover {
+    background: #161616;
+
+    color: #ffffff;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =====================================================
+   ACTIVE TAB
+===================================================== */
+
+.pixel-tab.active {
+    background: #0b0b0b;
+
+    color: #ffffff;
+
+    box-shadow:
+        inset 0 -2px 0 #ffffff,
+        inset 1px 1px 0 #292929;
+}
+
+
+/* =====================================================
+   PAGE SECTIONS
+===================================================== */
+
+.pixel-page {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    padding: 100px 30px 30px;
+
+    pointer-events: none;
+}
+
+
+.pixel-page.active {
+    display: flex;
+}
+
+
+/* =====================================================
+   PIXEL PANEL
+===================================================== */
+
+.pixel-panel {
     position: relative;
 
-    z-index: 3;
+    width:
+        min(700px, 85vw);
 
-    min-width: 340px;
+    padding: 35px;
 
-    padding: 45px 70px;
+    background:
+        rgba(0, 0, 0, 0.78);
+
+    border:
+        2px solid #ffffff;
+
+    border-radius: 0;
+
+    box-shadow:
+        6px 6px 0 #000000;
 
     text-align: center;
 
-    background:
-        rgba(8, 3, 12, 0.78);
-
-    border:
-        1px solid
-        rgba(255, 180, 235, 0.22);
-
-    border-radius: 24px;
-
-    box-shadow:
-        0 20px 80px
-        rgba(0, 0, 0, 0.8),
-
-        0 0 60px
-        rgba(255, 50, 190, 0.12);
-
-    backdrop-filter:
-        blur(18px);
+    pointer-events: auto;
 }
 
-#profile h1 {
 
-    font-size:
-        clamp(48px, 7vw, 90px);
+/* =====================================================
+   PAGE LABEL
+===================================================== */
+
+.pixel-label {
+    margin: 0 0 8px;
+
+    font-family:
+        monospace;
+
+    font-size: 11px;
+
+    font-weight: 700;
 
     letter-spacing: 3px;
 
-    color: white;
-
-    text-shadow:
-        0 0 15px
-        rgba(255, 160, 230, 0.4),
-
-        0 0 40px
-        rgba(255, 60, 190, 0.2);
+    color:
+        #aaaaaa;
 }
 
-#profile p {
 
-    margin-top: 12px;
+/* =====================================================
+   PAGE TITLE
+===================================================== */
+
+.pixel-panel h1 {
+    margin: 0 0 15px;
+
+    font-family:
+        monospace;
+
+    font-size:
+        clamp(
+            28px,
+            5vw,
+            52px
+        );
+
+    font-weight: 800;
+
+    letter-spacing: 4px;
+
+    color: #ffffff;
+
+    text-shadow:
+        3px 3px 0 #000000;
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.pixel-description {
+    margin: 0;
 
     color:
-        rgba(255, 210, 240, 0.75);
+        #bdbdbd;
 
-    font-size: 18px;
+    font-family:
+        monospace;
 
-    letter-spacing: 2px;
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   MUSIC CARD
+===================================================== */
+
+.music-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-top: 25px;
+
+    padding: 12px;
+
+    background:
+        #080808;
+
+    border:
+        1px solid #333333;
+
+    text-align: left;
+}
+
+
+.music-cover {
+    width: 55px;
+    height: 55px;
+
+    flex-shrink: 0;
+
+    background:
+        #151515;
+
+    border:
+        1px solid #444444;
+}
+
+
+.music-info {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.music-info strong {
+    color:
+        #ffffff;
+
+    font-family:
+        monospace;
+
+    font-size: 13px;
+}
+
+
+.music-info span {
+    color:
+        #888888;
+
+    font-family:
+        monospace;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   LINKS
+===================================================== */
+
+.link-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 8px;
+
+    margin-top: 25px;
+}
+
+
+.pixel-link {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 45px;
+
+    background:
+        #050505;
+
+    border:
+        1px solid #333333;
+
+    color:
+        #ffffff;
+
+    text-decoration: none;
+
+    font-family:
+        monospace;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    transition:
+        background 100ms linear,
+        border-color 100ms linear;
+}
+
+
+.pixel-link:hover {
+    background:
+        #171717;
+
+    border-color:
+        #ffffff;
+}
+
+
+/* =====================================================
+   MOBILE NAVIGATION
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .pixel-tabs {
+        top: 12px;
+
+        right: 12px;
+
+        left: 12px;
+
+        max-width:
+            calc(100vw - 24px);
+
+        overflow-x: auto;
+
+        justify-content:
+            flex-start;
+    }
+
+
+    .pixel-tab {
+        min-width: 55px;
+
+        height: 30px;
+
+        padding:
+            0 8px;
+
+        font-size: 10px;
+    }
+
+
+    .pixel-page {
+        padding:
+            80px 15px 20px;
+    }
+
+
+    .pixel-panel {
+        width:
+            92vw;
+
+        padding:
+            25px 18px;
+    }
+
+
+    .link-grid {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .pixel-tab {
+        transition: none;
+    }
 }
