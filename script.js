@@ -1,6 +1,63 @@
 const meteorContainer =
     document.getElementById("meteors");
 
+const starContainer =
+    document.getElementById("stars");
+
+
+/* =========================
+   STARS
+========================= */
+
+function createStar() {
+    const star =
+        document.createElement("div");
+
+    star.className = "star";
+
+    const size =
+        Math.random() * 2 + 1;
+
+    const y =
+        Math.random() * 100;
+
+    const duration =
+        Math.random() * 8 + 5;
+
+    const delay =
+        Math.random() * -10;
+
+    star.style.width =
+        `${size}px`;
+
+    star.style.height =
+        `${size}px`;
+
+    star.style.left =
+        `${Math.random() * 100}vw`;
+
+    star.style.top =
+        `${y}vh`;
+
+    star.style.animationDuration =
+        `${duration}s`;
+
+    star.style.animationDelay =
+        `${delay}s`;
+
+    starContainer.appendChild(star);
+}
+
+
+for (let i = 0; i < 120; i++) {
+    createStar();
+}
+
+
+/* =========================
+   METEORS
+========================= */
+
 function createMeteor() {
     const meteor =
         document.createElement("div");
@@ -8,34 +65,32 @@ function createMeteor() {
     meteor.className = "meteor";
 
     /*
-        Spawn from the upper-right
-        so the meteor travels
-        diagonally toward the bottom-left.
+       Start on the RIGHT.
+       Meteor travels toward
+       the LEFT.
     */
 
     const startX =
         window.innerWidth +
-        Math.random() * 400;
+        350;
 
     const startY =
         Math.random() *
-        (window.innerHeight * 0.55) -
-        200;
+        window.innerHeight;
 
     /*
-        Bigger random meteor sizes.
+       Bigger random meteors
     */
 
     const size =
-        Math.random() * 8 + 8;
+        Math.random() * 10 + 16;
 
     /*
-        Random speed.
-        Smaller duration = faster.
+       Random speed
     */
 
     const duration =
-        Math.random() * 1.2 + 1.2;
+        Math.random() * 1.8 + 1.8;
 
     meteor.style.left =
         `${startX}px`;
@@ -54,27 +109,25 @@ function createMeteor() {
 
     meteorContainer.appendChild(meteor);
 
-    /*
-        Remove after animation.
-    */
-
     setTimeout(() => {
         meteor.remove();
     }, duration * 1000);
 }
 
 
-/*
-    Spawn meteors randomly
-    instead of at a perfectly
-    regular interval.
-*/
+/* =========================
+   METEOR SPAWNING
+========================= */
 
 function spawnMeteor() {
     createMeteor();
 
+    /*
+       More frequent than before.
+    */
+
     const nextMeteor =
-        Math.random() * 900 + 500;
+        Math.random() * 1000 + 500;
 
     setTimeout(
         spawnMeteor,
@@ -82,9 +135,5 @@ function spawnMeteor() {
     );
 }
 
-
-/*
-    Start meteor system.
-*/
 
 spawnMeteor();
