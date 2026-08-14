@@ -17,8 +17,7 @@ function createMeteor(x, y) {
     const element =
         document.createElement("div");
 
-    element.className =
-        "meteor";
+    element.className = "meteor";
 
 
     const meteor = {
@@ -26,24 +25,16 @@ function createMeteor(x, y) {
         element,
 
         x,
-
         y,
 
-        /*
-           FAST RIGHT
-        */
-
+        // FAST + DIAGONALLY DOWN RIGHT
         velocityX:
-            1000 +
+            900 +
             Math.random() * 400,
 
-        /*
-           DOWN
-        */
-
         velocityY:
-            650 +
-            Math.random() * 300
+            600 +
+            Math.random() * 250
     };
 
 
@@ -58,10 +49,7 @@ function createMeteor(x, y) {
         element
     );
 
-
-    meteors.push(
-        meteor
-    );
+    meteors.push(meteor);
 }
 
 
@@ -76,47 +64,34 @@ function createInitialMeteors() {
 
 
     /*
-       Spread them across
-       the ENTIRE top.
+       Spread across the entire
+       top of the screen.
 
-       12 separate zones.
+       Slightly biased LEFT.
     */
 
-    const zones = 12;
+    const amount = 10;
 
 
     for (
         let i = 0;
-        i < zones;
+        i < amount;
         i++
     ) {
 
-        const zoneWidth =
-            width / zones;
-
-
-        /*
-           Random position
-           inside each zone.
-
-           This guarantees
-           the entire width
-           gets covered.
-        */
-
         const x =
-            i * zoneWidth +
+            -300 +
             Math.random() *
-            zoneWidth;
+            (width + 300);
 
 
         /*
-           Above the screen.
+           ABOVE THE SCREEN
         */
 
         const y =
             -100 -
-            Math.random() * 500;
+            Math.random() * 600;
 
 
         createMeteor(
@@ -128,24 +103,33 @@ function createInitialMeteors() {
 
 
 /* =====================================================
-   CONTINUOUS SPAWNING
+   CONTINUOUS SPAWN
 ===================================================== */
 
 function spawnMeteor() {
 
-    /*
-       Anywhere across
-       the ENTIRE top.
-    */
-
-    const x =
-        Math.random() *
+    const width =
         window.innerWidth;
 
 
+    /*
+       Spawn across the whole
+       top, with a slight
+       left-side bias.
+    */
+
+    const x =
+        -250 +
+        Math.pow(
+            Math.random(),
+            1.25
+        ) *
+        (width + 250);
+
+
     const y =
-        -100 -
-        Math.random() * 400;
+        -80 -
+        Math.random() * 300;
 
 
     createMeteor(
@@ -154,33 +138,29 @@ function spawnMeteor() {
     );
 
 
-    /*
-       Less frequent spawning.
-    */
-
     setTimeout(
         spawnMeteor,
 
-        550 +
-        Math.random() * 300
+        700 +
+        Math.random() * 500
     );
 }
 
 
 /* =====================================================
-   MOVEMENT
+   ANIMATION
 ===================================================== */
 
-let meteorLastTime =
+let lastTime =
     performance.now();
 
 
 function updateMeteors(time) {
 
     const delta =
-        (time - meteorLastTime) / 1000;
+        (time - lastTime) / 1000;
 
-    meteorLastTime =
+    lastTime =
         time;
 
 
@@ -194,10 +174,18 @@ function updateMeteors(time) {
             meteors[i];
 
 
+        /*
+           Move RIGHT
+        */
+
         meteor.x +=
             meteor.velocityX *
             delta;
 
+
+        /*
+           Move DOWN
+        */
 
         meteor.y +=
             meteor.velocityY *
@@ -212,16 +200,17 @@ function updateMeteors(time) {
 
 
         /*
-           Delete once it is
-           completely offscreen.
+           Remove once completely
+           past the bottom/right.
+
+           Keep the meteor alive
+           while it can still be
+           visible.
         */
 
         if (
-            meteor.x >
-                window.innerWidth + 1000
-            &&
             meteor.y >
-                window.innerHeight + 1000
+            window.innerHeight + 200
         ) {
 
             meteor.element.remove();
