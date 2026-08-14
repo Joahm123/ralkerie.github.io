@@ -7,10 +7,6 @@
 
 <style>
 
-/* =========================================
-   RESET
-========================================= */
-
 * {
     margin: 0;
     padding: 0;
@@ -31,9 +27,9 @@ body {
 }
 
 
-/* =========================================
+/* =====================================================
    SPACE BACKGROUND
-========================================= */
+===================================================== */
 
 #background {
     position: fixed;
@@ -42,16 +38,16 @@ body {
     width: 100vw;
     height: 100vh;
 
-    z-index: 0;
-
     background:
         radial-gradient(
             ellipse at 50% 45%,
             #351431 0%,
-            #1d0b1d 35%,
-            #0c050d 70%,
+            #1c0a1c 35%,
+            #0b040d 70%,
             #020103 100%
         );
+
+    z-index: 0;
 }
 
 #background::before {
@@ -62,21 +58,21 @@ body {
 
     background:
         radial-gradient(
-            circle at 15% 40%,
+            circle at 15% 45%,
             rgba(255, 40, 190, 0.18),
             transparent 35%
         ),
         radial-gradient(
             circle at 85% 25%,
-            rgba(255, 90, 210, 0.14),
+            rgba(255, 90, 210, 0.13),
             transparent 35%
         );
 }
 
 
-/* =========================================
+/* =====================================================
    STARS
-========================================= */
+===================================================== */
 
 #stars {
     position: fixed;
@@ -87,33 +83,51 @@ body {
 
     overflow: hidden;
 
-    z-index: 1;
-
     pointer-events: none;
+
+    z-index: 1;
 }
 
 .star {
     position: absolute;
-
-    width: 2px;
-    height: 2px;
 
     border-radius: 50%;
 
     background: white;
 
     box-shadow:
-        0 0 5px white,
-        0 0 10px rgba(255, 180, 235, 0.9);
+        0 0 4px white,
+        0 0 9px rgba(255, 180, 235, 0.8);
+
+    /*
+       TWO ANIMATIONS:
+
+       1. starTravel = moves across screen
+       2. starTwinkle = sparkles
+    */
 
     animation:
-        twinkle ease-in-out infinite;
+        starTravel linear infinite,
+        starTwinkle ease-in-out infinite;
 }
 
-@keyframes twinkle {
+
+@keyframes starTravel {
+
+    from {
+        transform: translateX(-100px);
+    }
+
+    to {
+        transform: translateX(110vw);
+    }
+}
+
+
+@keyframes starTwinkle {
 
     0% {
-        opacity: 0.2;
+        opacity: 0.25;
     }
 
     50% {
@@ -121,110 +135,120 @@ body {
     }
 
     100% {
-        opacity: 0.2;
+        opacity: 0.25;
     }
 }
 
 
-/* =========================================
-   METEOR CONTAINER
-========================================= */
+/* =====================================================
+   METEORS
+===================================================== */
 
 #meteors {
     position: fixed;
-
     inset: 0;
 
     width: 100vw;
     height: 100vh;
 
+    /*
+       IMPORTANT:
+
+       The container itself is NOT moved.
+
+       Meteors can exist outside the viewport
+       because overflow is visible.
+    */
+
     overflow: visible;
 
-    z-index: 2;
-
     pointer-events: none;
+
+    z-index: 2;
 }
 
-
-/* =========================================
-   METEOR
-========================================= */
 
 .meteor {
     position: absolute;
 
-    height: 11px;
+    height: 10px;
 
     border-radius: 999px;
 
-    transform-origin: right center;
+    /*
+       Meteor points RIGHT.
+    */
 
     background: linear-gradient(
-        90deg,
+        to right,
         transparent 0%,
-        rgba(255, 30, 180, 0.05) 25%,
-        rgba(255, 70, 205, 0.25) 55%,
-        rgba(255, 150, 235, 0.7) 85%,
+        rgba(255, 30, 180, 0.04) 20%,
+        rgba(255, 60, 200, 0.18) 55%,
+        rgba(255, 140, 230, 0.65) 88%,
         white 100%
     );
 
     box-shadow:
-        0 0 12px rgba(255, 130, 225, 1),
-        0 0 30px rgba(255, 60, 200, 0.85),
-        0 0 60px rgba(255, 40, 190, 0.5);
+        0 0 10px rgba(255, 130, 225, 0.9),
+        0 0 25px rgba(255, 60, 200, 0.8),
+        0 0 55px rgba(255, 40, 190, 0.5);
 
-    animation-name: meteor;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
+    /*
+       46 DEGREE DIAGONAL
+    */
+
+    transform-origin: right center;
 }
 
 
-/* =========================================
-   PINK TRAIL
-========================================= */
+/* =====================================================
+   LONG PINK TRAIL
+===================================================== */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    width: 1000px;
-    height: 35px;
-
     right: 0;
     top: 50%;
+
+    width: 1100px;
+    height: 34px;
 
     transform: translateY(-50%);
 
     border-radius: 999px;
 
     background: linear-gradient(
-        90deg,
+        to right,
         transparent 0%,
-        rgba(255, 20, 180, 0.02) 20%,
-        rgba(255, 50, 195, 0.12) 50%,
-        rgba(255, 100, 220, 0.3) 80%,
-        rgba(255, 170, 240, 0.6) 100%
+        rgba(255, 20, 180, 0.01) 20%,
+        rgba(255, 40, 190, 0.08) 45%,
+        rgba(255, 80, 210, 0.25) 75%,
+        rgba(255, 160, 235, 0.55) 100%
     );
 
     filter: blur(15px);
+
+    pointer-events: none;
 }
 
 
-/* =========================================
+/* =====================================================
    METEOR HEAD
-========================================= */
+===================================================== */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    width: 24px;
-    height: 24px;
-
-    right: -8px;
+    right: -7px;
     top: 50%;
+
+    width: 23px;
+    height: 23px;
 
     transform: translateY(-50%);
 
@@ -241,15 +265,15 @@ body {
 }
 
 
-/* =========================================
+/* =====================================================
    METEOR MOVEMENT
+===================================================== */
 
-   Starts ABOVE the screen.
-   Travels DOWN + RIGHT.
-   Ends FAR outside the screen.
-========================================= */
+@keyframes meteorTravel {
 
-@keyframes meteor {
+    /*
+       Starts above the screen.
+    */
 
     0% {
         transform:
@@ -259,19 +283,36 @@ body {
         opacity: 0;
     }
 
+
+    /*
+       Appears while entering from top.
+    */
+
     8% {
         opacity: 1;
     }
 
-    90% {
+
+    /*
+       Crosses the screen.
+    */
+
+    85% {
         opacity: 1;
     }
+
+
+    /*
+       Goes WAY beyond the screen.
+
+       This is the actual despawn area.
+    */
 
     100% {
         transform:
             translate(
-                calc(100vw + 1000px),
-                calc(100vh + 1000px)
+                120vw,
+                150vh
             )
             rotate(46deg);
 
@@ -280,9 +321,9 @@ body {
 }
 
 
-/* =========================================
-   TITLE LAYER
-========================================= */
+/* =====================================================
+   TITLE
+===================================================== */
 
 #content {
     position: fixed;
@@ -292,6 +333,7 @@ body {
     height: 100vh;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -301,14 +343,8 @@ body {
 }
 
 
-/* =========================================
-   TITLE BACKGROUND
-========================================= */
-
 #card {
     padding: 45px 70px;
-
-    min-width: 300px;
 
     text-align: center;
 
@@ -325,19 +361,19 @@ body {
     backdrop-filter: blur(18px);
 }
 
+
 #card h1 {
     font-size: clamp(48px, 7vw, 90px);
 
-    font-weight: 700;
+    color: white;
 
     letter-spacing: 3px;
-
-    color: white;
 
     text-shadow:
         0 0 15px rgba(255, 160, 230, 0.4),
         0 0 40px rgba(255, 60, 190, 0.2);
 }
+
 
 #card p {
     margin-top: 12px;
@@ -355,42 +391,79 @@ body {
 
 <body>
 
-<!-- BACKGROUND -->
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
 <div id="background"></div>
 
-<!-- STARS -->
+
+<!-- =====================================================
+     STARS
+===================================================== -->
+
 <div id="stars"></div>
 
-<!-- METEORS -->
+
+<!-- =====================================================
+     METEORS
+===================================================== -->
+
 <div id="meteors"></div>
 
-<!-- TITLE -->
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+
 <div id="content">
+
     <div id="card">
+
         <h1>Ralkerie</h1>
+
         <p>Coming soon...</p>
+
     </div>
+
 </div>
 
 
 <script>
 
-/* =========================================
-   STARS
-========================================= */
 
-const stars = document.getElementById("stars");
+/* =====================================================
+   STARS
+===================================================== */
+
+const starsContainer =
+    document.getElementById("stars");
+
 
 for (let i = 0; i < 250; i++) {
 
-    const star = document.createElement("div");
+    const star =
+        document.createElement("div");
 
     star.className = "star";
 
-    const size = 1 + Math.random() * 2;
 
-    star.style.width = size + "px";
-    star.style.height = size + "px";
+    const size =
+        1 + Math.random() * 2;
+
+
+    star.style.width =
+        size + "px";
+
+    star.style.height =
+        size + "px";
+
+
+    /*
+       Start randomly across the
+       entire screen.
+    */
 
     star.style.left =
         Math.random() * 100 + "vw";
@@ -398,19 +471,34 @@ for (let i = 0; i < 250; i++) {
     star.style.top =
         Math.random() * 100 + "vh";
 
+
+    /*
+       Movement speed.
+    */
+
     star.style.animationDuration =
-        2 + Math.random() * 4 + "s";
+        (8 + Math.random() * 12) + "s, " +
+        (2 + Math.random() * 3) + "s";
+
+
+    /*
+       Random starting point in
+       the animation.
+    */
 
     star.style.animationDelay =
-        Math.random() * -5 + "s";
+        (Math.random() * -20) + "s, " +
+        (Math.random() * -5) + "s";
 
-    stars.appendChild(star);
+
+    starsContainer.appendChild(star);
 }
 
 
-/* =========================================
+
+/* =====================================================
    METEORS
-========================================= */
+===================================================== */
 
 const meteorContainer =
     document.getElementById("meteors");
@@ -421,95 +509,132 @@ function createMeteor() {
     const meteor =
         document.createElement("div");
 
-    meteor.className = "meteor";
+
+    meteor.className =
+        "meteor";
 
 
-    /*
-        LONG + SKINNY
-    */
+    /* ---------------------------------------------
+       LONG + SKINNY
+    --------------------------------------------- */
+
+    const length =
+        450 +
+        Math.random() * 350;
+
 
     meteor.style.width =
-        450 + Math.random() * 350 + "px";
+        length + "px";
 
 
-    /*
-        =====================================
-        INVISIBLE SPAWN BOX
+    /* ---------------------------------------------
+       SPAWN X
 
-        LEFT:  500px outside
-        RIGHT: 500px outside
+       THIS IS THE IMPORTANT PART.
 
-        BUT SPAWN IS ONLY FROM THE TOP.
+       The meteor can spawn ANYWHERE across
+       the ENTIRE TOP OF THE SCREEN.
 
-        X can be ANYWHERE across:
+       0px = far left
+       window.innerWidth = far right
 
-        -500px → screen width + 500px
-    */
+       No bias.
+       No shifted container.
+       No "-500px".
+    --------------------------------------------- */
 
-    const x =
-        -500 +
+    const startX =
         Math.random() *
-        (window.innerWidth + 1000);
+        window.innerWidth;
 
 
-    /*
-        Far above screen.
+    /* ---------------------------------------------
+       SPAWN Y
 
-        Nothing spawns in the middle.
-    */
+       ALWAYS ABOVE THE SCREEN.
 
-    const y =
-        -700 -
-        Math.random() * 500;
+       It cannot spawn in the middle.
+       It cannot spawn on the sides.
+       It cannot spawn at the bottom.
+    --------------------------------------------- */
+
+    const startY =
+        -200 -
+        Math.random() * 600;
 
 
-    meteor.style.left = x + "px";
-    meteor.style.top = y + "px";
+    meteor.style.left =
+        startX + "px";
 
 
-    /*
-        SPEED
-    */
+    meteor.style.top =
+        startY + "px";
+
+
+    /* ---------------------------------------------
+       SPEED
+    --------------------------------------------- */
 
     const duration =
-        1.2 + Math.random() * 0.7;
-
-    meteor.style.animationDuration =
-        duration + "s";
+        1.3 +
+        Math.random() * 0.6;
 
 
-    meteorContainer.appendChild(meteor);
+    meteor.style.animation =
+        "meteorTravel " +
+        duration +
+        "s linear forwards";
 
 
-    /*
-        DESPAWN AFTER IT IS
-        COMPLETELY OFFSCREEN
-    */
+    meteorContainer.appendChild(
+        meteor
+    );
 
-    setTimeout(() => {
 
-        meteor.remove();
+    /* ---------------------------------------------
+       DESPAWN
 
-    }, duration * 1000 + 1000);
+       Wait until AFTER the animation has
+       traveled completely offscreen.
+    --------------------------------------------- */
+
+    setTimeout(
+        function () {
+
+            meteor.remove();
+
+        },
+        duration * 1000 + 1000
+    );
 }
 
 
-/* =========================================
-   SPAWN FOREVER
-========================================= */
+
+/* =====================================================
+   CONTINUOUS METEORS
+===================================================== */
 
 function spawnMeteor() {
 
     createMeteor();
 
+
+    const nextSpawn =
+        130 +
+        Math.random() * 220;
+
+
     setTimeout(
         spawnMeteor,
-        150 + Math.random() * 200
+        nextSpawn
     );
 }
 
 
+/* START METEORS */
+
 spawnMeteor();
+
 
 </script>
 
