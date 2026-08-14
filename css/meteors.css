@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE METEORS
-   OPTIMIZED + CLICK EXPLOSIONS
+   OPTIMIZED + CLICKABLE + PINK/WHITE EXPLOSIONS
 ===================================================== */
 
 
@@ -27,7 +27,7 @@
 
 
 /* =====================================================
-   METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -45,8 +45,7 @@
 
     /*
        IMPORTANT:
-       Allows the meteor itself
-       to receive clicks.
+       The meteor itself can be clicked.
     */
 
     pointer-events: auto;
@@ -55,7 +54,7 @@
 
     will-change: transform;
 
-    z-index: 1;
+    z-index: 5;
 
     box-shadow:
         0 0 7px #ffffff,
@@ -87,6 +86,12 @@
 
     border-radius: 999px;
 
+    /*
+       White near meteor,
+       strong pink farther out,
+       fades to transparent.
+    */
+
     background:
         linear-gradient(
             to left,
@@ -114,12 +119,12 @@
 
     pointer-events: none;
 
-    z-index: 0;
+    z-index: 1;
 }
 
 
 /* =====================================================
-   WHITE HOT CENTER
+   WHITE CENTER OF TRAIL
 ===================================================== */
 
 .meteor > .meteor-core {
@@ -141,6 +146,7 @@
             to left,
 
             #ffffff 0%,
+
             #ffffff 12%,
 
             rgba(255, 255, 255, 0.98) 30%,
@@ -186,7 +192,7 @@
 
     pointer-events: none;
 
-    z-index: 5;
+    z-index: 6;
 }
 
 
@@ -195,14 +201,14 @@
 ===================================================== */
 
 .meteor-explosion {
-    position: absolute;
+    position: fixed;
 
     width: 1px;
     height: 1px;
 
     pointer-events: none;
 
-    z-index: 20;
+    z-index: 100;
 }
 
 
@@ -225,8 +231,10 @@
 
     box-shadow:
         0 0 10px #ffffff,
-        0 0 25px #ffb5ed,
-        0 0 45px #ff38bd;
+        0 0 22px #ffb5ed,
+        0 0 40px #ff38bd;
+
+    pointer-events: none;
 
     animation:
         meteorFlash
@@ -236,20 +244,37 @@
 }
 
 
+/* =====================================================
+   FLASH ANIMATION
+===================================================== */
+
 @keyframes meteorFlash {
 
     0% {
-        transform: scale(0.3);
+        transform:
+            scale(0.25);
+
         opacity: 1;
     }
 
-    45% {
-        transform: scale(2.5);
-        opacity: 0.9;
+    35% {
+        transform:
+            scale(1.8);
+
+        opacity: 1;
+    }
+
+    65% {
+        transform:
+            scale(3);
+
+        opacity: 0.65;
     }
 
     100% {
-        transform: scale(4);
+        transform:
+            scale(4.5);
+
         opacity: 0;
     }
 }
@@ -270,11 +295,26 @@
 
     border-radius: 50%;
 
-    background: #ffffff;
+    /*
+       Pink center.
+    */
+
+    background:
+        radial-gradient(
+            circle,
+
+            #ffffff 0%,
+
+            #ffffff 35%,
+
+            #ff9de0 65%,
+
+            #ff3fc2 100%
+        );
 
     box-shadow:
-        0 0 5px #ffffff,
-        0 0 10px #ff70d1;
+        0 0 4px #ffffff,
+        0 0 9px #ff72d3;
 
     pointer-events: none;
 
@@ -291,6 +331,10 @@
 }
 
 
+/* =====================================================
+   PARTICLE ANIMATION
+===================================================== */
+
 @keyframes meteorParticle {
 
     0% {
@@ -305,8 +349,12 @@
         opacity: 1;
     }
 
+    40% {
+        opacity: 1;
+    }
+
     70% {
-        opacity: 0.8;
+        opacity: 0.7;
     }
 
     100% {
@@ -324,12 +372,10 @@
 
 
 /* =====================================================
-   MOBILE / TOUCH
+   TOUCH DEVICES
 ===================================================== */
 
-@media (
-    pointer: coarse
-) {
+@media (pointer: coarse) {
 
     .meteor {
         cursor: pointer;
@@ -341,9 +387,7 @@
    REDUCED MOTION
 ===================================================== */
 
-@media (
-    prefers-reduced-motion: reduce
-) {
+@media (prefers-reduced-motion: reduce) {
 
     .meteor-explosion,
     .meteor-flash,
