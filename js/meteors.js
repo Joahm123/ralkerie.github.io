@@ -1,4 +1,4 @@
-```javascript id="h5b1fa"
+
 (function () {
 
     "use strict";
@@ -386,4 +386,4 @@
 
 
 })();
-```
+
