@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Ralkerie</title>
 
 <style>
@@ -138,7 +137,7 @@ body {
 
 
 /* =====================================================
-   METEOR TRAIL
+   PINK + WHITE TRAIL
 ===================================================== */
 
 .meteor::before {
@@ -184,7 +183,6 @@ body {
     z-index: 10;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -329,7 +327,8 @@ function updateStars(time) {
     const delta =
         (time - starLastTime) / 1000;
 
-    starLastTime = time;
+    starLastTime =
+        time;
 
 
     for (const star of stars) {
@@ -380,6 +379,10 @@ const meteorContainer =
 const meteors = [];
 
 
+/* =====================================================
+   CREATE METEOR
+===================================================== */
+
 function createMeteor(x, y) {
 
     const element =
@@ -425,7 +428,7 @@ function createMeteor(x, y) {
 
 
 /* =====================================================
-   INITIAL FULL-WIDTH SPREAD
+   INITIAL METEOR SPREAD
 ===================================================== */
 
 function createInitialMeteorSpread() {
@@ -435,14 +438,19 @@ function createInitialMeteorSpread() {
 
 
     /*
-       16 sections across
-       the ENTIRE screen.
+       Still covers the entire top,
+       but we shift the distribution
+       15% toward the LEFT.
 
-       First section begins
-       exactly at X = 0.
+       This gives more activity on
+       the left side without losing
+       right-side coverage.
     */
 
     const sections = 16;
+
+    const leftShift =
+        width * 0.15;
 
 
     for (
@@ -455,18 +463,23 @@ function createInitialMeteorSpread() {
             width / sections;
 
 
-        /*
-           Random position inside
-           each section.
+        let x =
+            i * sectionWidth +
+            Math.random() *
+            sectionWidth -
+            leftShift;
 
-           This guarantees the
-           LEFTMOST section gets
-           a meteor too.
+
+        /*
+           Keep it inside the
+           left edge.
         */
 
-        const x =
-            i * sectionWidth +
-            Math.random() * sectionWidth;
+        x =
+            Math.max(
+                0,
+                x
+            );
 
 
         const y =
@@ -483,14 +496,33 @@ function createInitialMeteorSpread() {
 
 
 /* =====================================================
-   CONTINUOUS SPAWNING
+   CONTINUOUS SPAWN
 ===================================================== */
 
 function spawnMeteor() {
 
-    const x =
-        Math.random() *
+    const width =
         window.innerWidth;
+
+
+    /*
+       Bias random spawning
+       toward the LEFT.
+
+       Squaring random makes
+       smaller X values much
+       more common.
+    */
+
+    const random =
+        Math.random();
+
+    const x =
+        (
+            random *
+            random
+        ) *
+        width;
 
 
     const y =
@@ -505,20 +537,16 @@ function spawnMeteor() {
 
 
     /*
-       LESS FREQUENT
+       LESS METEORS
 
-       Previous:
-       ~100-250ms
-
-       Now:
-       ~250-400ms
+       One every ~450-700ms.
     */
 
     setTimeout(
         spawnMeteor,
 
-        250 +
-        Math.random() * 150
+        450 +
+        Math.random() * 250
     );
 }
 
@@ -536,7 +564,8 @@ function updateMeteors(time) {
     const delta =
         (time - meteorLastTime) / 1000;
 
-    meteorLastTime = time;
+    meteorLastTime =
+        time;
 
 
     for (
@@ -565,11 +594,6 @@ function updateMeteors(time) {
         meteor.element.style.top =
             meteor.y + "px";
 
-
-        /*
-           Remove only after
-           going far offscreen.
-        */
 
         if (
             meteor.x >
@@ -604,7 +628,7 @@ createInitialMeteorSpread();
 
 setTimeout(
     spawnMeteor,
-    800
+    1200
 );
 
 
