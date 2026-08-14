@@ -29,15 +29,20 @@ function createStar() {
 }
 
 
-/* Make stars */
-
 for (let i = 0; i < 250; i++) {
     createStar();
 }
 
 
 /* =========================================
-   METEOR
+   METEOR SETTINGS
+========================================= */
+
+const BOX_PADDING = 500;
+
+
+/* =========================================
+   CREATE METEOR
 ========================================= */
 
 function createMeteor() {
@@ -47,9 +52,7 @@ function createMeteor() {
     meteor.className = "meteor";
 
 
-    /* =====================================
-       METEOR LENGTH
-    ===================================== */
+    /* Long skinny meteor */
 
     const length =
         400 + Math.random() * 300;
@@ -58,53 +61,54 @@ function createMeteor() {
         `${length}px`;
 
 
-    /* =====================================
-       TOP SPAWN BOX
+    /*
+        =====================================
+        SPAWN FROM TOP EDGE ONLY
+        =====================================
 
-       Imagine this box sitting ABOVE
-       the website:
+        The box is:
 
-       ┌───────────────────────────────┐
-       │   ☄      ☄       ☄      ☄    │
-       │                               │
-       │                               │
-       └───────────────────────────────┘
-       █████████████████████████████████
-              TOP OF SCREEN
+        left   = -500px
+        right  = screen + 500px
+        top    = -500px
+        bottom = screen + 500px
 
-       Meteors ONLY come from this box.
+        BUT METEORS ONLY ENTER FROM
+        THE TOP EDGE.
 
-       They NEVER spawn on the sides.
-       They NEVER spawn in the middle.
-       They NEVER spawn at the bottom.
-    ===================================== */
+        Their X can be anywhere across
+        the entire box.
+    */
 
-    const spawnBoxWidth =
-        window.innerWidth + 1200;
+    const boxLeft =
+        -BOX_PADDING;
 
-    const spawnBoxLeft =
-        -600;
+    const boxRight =
+        window.innerWidth + BOX_PADDING;
 
 
     /*
-        Random X anywhere inside
-        the giant box.
+        Random X across the entire
+        surrounding box.
     */
 
     const startX =
-        spawnBoxLeft +
-        Math.random() * spawnBoxWidth;
+        boxLeft +
+        Math.random() *
+        (boxRight - boxLeft);
 
 
     /*
-        FAR above the screen.
+        Start ABOVE the actual screen,
+        but inside the surrounding box.
 
-        This is intentionally huge.
+        This means you don't see them
+        suddenly appear.
     */
 
     const startY =
-        -900 -
-        Math.random() * 900;
+        -BOX_PADDING +
+        Math.random() * 200;
 
 
     meteor.style.left =
@@ -115,11 +119,11 @@ function createMeteor() {
 
 
     /* =====================================
-       SPEED
+       FAST MOVEMENT
     ===================================== */
 
     const duration =
-        1.2 +
+        1.4 +
         Math.random() * 0.7;
 
 
@@ -133,7 +137,14 @@ function createMeteor() {
 
 
     /* =====================================
-       CLEANUP
+       DESPAWN
+
+       Wait until the meteor has had
+       enough time to travel completely
+       outside the surrounding box.
+
+       It does NOT disappear while
+       still visible.
     ===================================== */
 
     setTimeout(() => {
@@ -145,18 +156,16 @@ function createMeteor() {
 
 
 /* =========================================
-   INFINITE METEOR SPAWNING
+   INFINITE SPAWNING
 ========================================= */
 
 function spawnMeteorForever() {
 
     createMeteor();
 
-
     const delay =
         120 +
         Math.random() * 220;
-
 
     setTimeout(
         spawnMeteorForever,
