@@ -2,254 +2,269 @@
    RALKERIE METEORS
 ===================================================== */
 
-const meteorContainer =
-    document.getElementById("meteors");
+(() => {
 
-const meteors = [];
+    const meteorContainer =
+        document.getElementById("meteors");
 
-
-/* =====================================================
-   CREATE METEOR
-===================================================== */
-
-function createMeteor(x, y) {
-
-    const element =
-        document.createElement("div");
-
-    element.className = "meteor";
+    if (!meteorContainer) {
+        console.error("Meteor container not found.");
+        return;
+    }
 
 
-    const meteor = {
+    /* =================================================
+       SETTINGS
+    ================================================= */
 
-        element,
+    const meteors = [];
 
-        x,
-        y,
+    const METEOR_COUNT = 8;
 
-        /* FAST + DIAGONALLY DOWN RIGHT */
-
-        velocityX:
-            900 +
-            Math.random() * 400,
-
-        velocityY:
-            600 +
-            Math.random() * 250
-    };
+    const SPAWN_MIN = 500;
+    const SPAWN_MAX = 900;
 
 
-    element.style.left =
-        `${x}px`;
+    /* =================================================
+       CREATE METEOR
+    ================================================= */
 
-    element.style.top =
-        `${y}px`;
+    function createMeteor(x, y) {
 
+        const element =
+            document.createElement("div");
 
-    meteorContainer.appendChild(
-        element
-    );
-
-    meteors.push(
-        meteor
-    );
-}
+        element.className = "meteor";
 
 
-/* =====================================================
-   INITIAL METEORS
-===================================================== */
+        const meteor = {
 
-function createInitialMeteors() {
+            element: element,
 
-    const width =
-        window.innerWidth;
+            x: x,
 
-    const amount = 10;
+            y: y,
+
+            speedX:
+                850 +
+                Math.random() * 350,
+
+            speedY:
+                550 +
+                Math.random() * 250
+        };
 
 
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
+        element.style.left =
+            `${x}px`;
+
+        element.style.top =
+            `${y}px`;
+
+
+        meteorContainer.appendChild(
+            element
+        );
+
+
+        meteors.push(
+            meteor
+        );
+    }
+
+
+    /* =================================================
+       INITIAL METEORS
+    ================================================= */
+
+    function createInitialMeteors() {
+
+        const width =
+            window.innerWidth;
+
+
+        for (
+            let i = 0;
+            i < METEOR_COUNT;
+            i++
+        ) {
+
+            /*
+               Entire top of screen.
+
+               Starts slightly offscreen
+               so they glide into view.
+            */
+
+            const x =
+                -250 +
+                Math.random() *
+                (width + 250);
+
+
+            const y =
+                -100 -
+                Math.random() * 500;
+
+
+            createMeteor(
+                x,
+                y
+            );
+        }
+    }
+
+
+    /* =================================================
+       CONTINUOUS SPAWN
+    ================================================= */
+
+    function spawnMeteor() {
+
+        const width =
+            window.innerWidth;
+
 
         /*
-           Spread across the
-           entire top.
+           Entire top.
 
-           Slightly biased LEFT.
+           Slightly more likely
+           toward the LEFT.
         */
 
         const x =
-            -300 +
+            -200 +
             Math.pow(
                 Math.random(),
-                1.25
+                1.2
             ) *
-            (width + 300);
+            (width + 200);
 
-
-        /*
-           Start above screen.
-        */
 
         const y =
             -100 -
-            Math.random() * 600;
+            Math.random() * 250;
 
 
         createMeteor(
             x,
             y
         );
+
+
+        const delay =
+            SPAWN_MIN +
+            Math.random() *
+            (SPAWN_MAX - SPAWN_MIN);
+
+
+        setTimeout(
+            spawnMeteor,
+            delay
+        );
     }
-}
 
 
-/* =====================================================
-   CONTINUOUS SPAWN
-===================================================== */
+    /* =================================================
+       ANIMATION
+    ================================================= */
 
-function spawnMeteor() {
-
-    const width =
-        window.innerWidth;
+    let previousTime =
+        performance.now();
 
 
-    /*
-       Spawn across the whole
-       top with a slight
-       left-side bias.
-    */
+    function animate(currentTime) {
 
-    const x =
-        -250 +
-        Math.pow(
-            Math.random(),
-            1.25
-        ) *
-        (width + 250);
+        const delta =
+            Math.min(
+                (currentTime - previousTime) / 1000,
+                0.05
+            );
 
 
-    const y =
-        -80 -
-        Math.random() * 300;
+        previousTime =
+            currentTime;
 
 
-    createMeteor(
-        x,
-        y
-    );
+        for (
+            let i = meteors.length - 1;
+            i >= 0;
+            i--
+        ) {
 
+            const meteor =
+                meteors[i];
+
+
+            /*
+               RIGHT
+            */
+
+            meteor.x +=
+                meteor.speedX *
+                delta;
+
+
+            /*
+               DOWN
+            */
+
+            meteor.y +=
+                meteor.speedY *
+                delta;
+
+
+            meteor.element.style.left =
+                `${meteor.x}px`;
+
+            meteor.element.style.top =
+                `${meteor.y}px`;
+
+
+            /*
+               Remove once well
+               below the screen.
+            */
+
+            if (
+                meteor.y >
+                window.innerHeight + 300
+            ) {
+
+                meteor.element.remove();
+
+                meteors.splice(
+                    i,
+                    1
+                );
+            }
+        }
+
+
+        requestAnimationFrame(
+            animate
+        );
+    }
+
+
+    /* =================================================
+       START
+    ================================================= */
+
+    createInitialMeteors();
 
     setTimeout(
         spawnMeteor,
-
-        700 +
-        Math.random() * 500
+        800
     );
-}
-
-
-/* =====================================================
-   ANIMATION
-===================================================== */
-
-/*
-   IMPORTANT:
-   This is called meteorLastTime
-   instead of lastTime because
-   stars.js already uses lastTime.
-*/
-
-let meteorLastTime =
-    performance.now();
-
-
-function updateMeteors(time) {
-
-    const delta =
-        (time - meteorLastTime) / 1000;
-
-    meteorLastTime =
-        time;
-
-
-    for (
-        let i = meteors.length - 1;
-        i >= 0;
-        i--
-    ) {
-
-        const meteor =
-            meteors[i];
-
-
-        /*
-           Move RIGHT
-        */
-
-        meteor.x +=
-            meteor.velocityX *
-            delta;
-
-
-        /*
-           Move DOWN
-        */
-
-        meteor.y +=
-            meteor.velocityY *
-            delta;
-
-
-        meteor.element.style.left =
-            `${meteor.x}px`;
-
-        meteor.element.style.top =
-            `${meteor.y}px`;
-
-
-        /*
-           Despawn once below
-           the screen.
-        */
-
-        if (
-            meteor.y >
-            window.innerHeight + 200
-        ) {
-
-            meteor.element.remove();
-
-            meteors.splice(
-                i,
-                1
-            );
-        }
-    }
-
 
     requestAnimationFrame(
-        updateMeteors
+        animate
     );
-}
 
 
-/* =====================================================
-   START
-===================================================== */
+    console.log(
+        "Ralkerie meteors loaded."
+    );
 
-createInitialMeteors();
-
-
-setTimeout(
-    spawnMeteor,
-    1000
-);
-
-
-requestAnimationFrame(
-    updateMeteors
-);
+})();
