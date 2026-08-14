@@ -1,175 +1,38 @@
-const meteorContainer = document.getElementById("meteors");
-const starContainer = document.getElementById("stars");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-/* =========================
-   MOVING STARS
-========================= */
+    <title>Ralkerie</title>
 
-function createStar() {
-    const star = document.createElement("div");
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    star.className = "star";
+<body>
 
-    const size = Math.random() * 2 + 1;
-    const duration = Math.random() * 8 + 5;
-    const delay = Math.random() * -10;
+    <!-- Space background -->
+    <div class="background"></div>
 
-    star.style.width = `${size}px`;
-    star.style.height = `${size}px`;
+    <!-- Moving stars -->
+    <div id="stars"></div>
 
-    star.style.left = `${Math.random() * 100}vw`;
-    star.style.top = `${Math.random() * 100}vh`;
+    <!-- Meteors -->
+    <div id="meteors"></div>
 
-    star.style.animationDuration = `${duration}s`;
-    star.style.animationDelay = `${delay}s`;
+    <!-- Main website -->
+    <main>
+        <section class="profile">
+            <h1>Ralkerie</h1>
+            <p>Coming soon...</p>
+        </section>
+    </main>
 
-    starContainer.appendChild(star);
-}
+    <script src="script.js"></script>
 
-for (let i = 0; i < 220; i++) {
-    createStar();
-}
-
-
-/* =========================
-   CREATE METEOR
-========================= */
-
-function createMeteor() {
-
-    const meteor = document.createElement("div");
-
-    meteor.className = "meteor";
-
-
-    /* =========================
-       METEOR SIZE
-    ========================= */
-
-    const length =
-        320 + Math.random() * 220;
-
-    meteor.style.width =
-        `${length}px`;
-
-
-    /* =========================
-       HEAD POSITION
-    =========================
-
-       The HEAD is the important
-       part because it is on the
-       RIGHT side of the meteor.
-
-       We choose where the HEAD
-       should appear horizontally.
-
-       -250 = slightly off left
-       50vw = center
-       100vw = right edge
-       +250 = slightly off right
-    */
-
-    const headX =
-        -250 +
-        Math.random() *
-        (window.innerWidth + 500);
-
-
-    /*
-        Because the head is on
-        the RIGHT side of the
-        meteor, move the actual
-        element LEFT by its length.
-
-        This fixes the right-side
-        spawning problem.
-    */
-
-    const meteorX =
-        headX - length;
-
-
-    meteor.style.left =
-        `${meteorX}px`;
-
-
-    /* =========================
-       VERTICAL SPAWN
-    =========================
-
-       ALWAYS above the screen.
-
-       Never spawn in the middle.
-    */
-
-    const meteorY =
-        -180 -
-        Math.random() * 250;
-
-    meteor.style.top =
-        `${meteorY}px`;
-
-
-    /* =========================
-       SPEED
-    ========================= */
-
-    const duration =
-        1.4 +
-        Math.random() * 0.7;
-
-
-    meteor.style.animation =
-        `meteorFly ${duration}s linear forwards`;
-
-
-    meteorContainer.appendChild(
-        meteor
-    );
-
-
-    /* =========================
-       CLEANUP
-    ========================= */
-
-    setTimeout(() => {
-
-        meteor.remove();
-
-    }, duration * 1000 + 200);
-}
-
-
-/* =========================
-   INFINITE SPAWNER
-========================= */
-
-function spawnMeteorForever() {
-
-    createMeteor();
-
-
-    /*
-        Keep meteors coming
-        forever.
-    */
-
-    const delay =
-        140 +
-        Math.random() * 260;
-
-
-    setTimeout(
-        spawnMeteorForever,
-        delay
-    );
-}
-
-
-/* =========================
-   START
-========================= */
-
-spawnMeteorForever();
+</body>
+</html>
