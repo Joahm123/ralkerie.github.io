@@ -12,7 +12,6 @@ function createStar() {
     star.className = "star";
 
     const size = Math.random() * 2 + 1;
-
     const duration = Math.random() * 8 + 5;
     const delay = Math.random() * -10;
 
@@ -34,7 +33,7 @@ for (let i = 0; i < 220; i++) {
 
 
 /* =========================
-   CREATE METEOR
+   METEORS
 ========================= */
 
 function createMeteor() {
@@ -42,9 +41,8 @@ function createMeteor() {
 
     meteor.className = "meteor";
 
-
     /*
-        Random long meteor.
+        Random meteor length.
     */
 
     const length = 320 + Math.random() * 220;
@@ -53,54 +51,44 @@ function createMeteor() {
 
 
     /*
-        X POSITION
+        =================================
+        SPAWN COMPLETELY OFF-SCREEN
+        =================================
 
-        -30vw = far left
-         0vw  = left edge
-        50vw  = center
-        100vw = right edge
+        The meteor is placed above the
+        viewport.
 
-        This gives us the ENTIRE
-        top of the screen while
-        shifting the overall spawn
-        area toward the LEFT.
-    */
-
-    const startX =
-        -30 + Math.random() * 130;
-
-
-    /*
-        IMPORTANT:
-
-        EVERY SINGLE METEOR starts
-        above the top of the screen.
-
-        NEVER in the middle.
-        NEVER near the bottom.
+        It CANNOT appear in the middle.
     */
 
     const startY =
-        -350 - Math.random() * 250;
+        -(window.innerHeight + 500);
 
-
-    meteor.style.left = `${startX}vw`;
     meteor.style.top = `${startY}px`;
 
 
     /*
-        MUCH FASTER.
+        Spread meteors across the
+        entire horizontal range.
 
-        Old:
-        ~2.5 - 4.5 seconds
+        Extra left space allows the
+        long trail to enter naturally.
+    */
 
-        New:
-        ~1.1 - 1.8 seconds
+    const startX =
+        -length -
+        Math.random() * 300 +
+        Math.random() * (window.innerWidth + length + 300);
+
+    meteor.style.left = `${startX}px`;
+
+
+    /*
+        Fast but smooth glide.
     */
 
     const duration =
-        1.1 + Math.random() * 0.7;
-
+        1.8 + Math.random() * 0.8;
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -120,21 +108,15 @@ function createMeteor() {
 
 
 /* =========================
-   INFINITE SPAWNER
+   INFINITE SPAWNING
 ========================= */
 
 function spawnMeteorForever() {
 
     createMeteor();
 
-
-    /*
-        Keep them fairly frequent.
-    */
-
     const delay =
-        120 + Math.random() * 250;
-
+        180 + Math.random() * 300;
 
     setTimeout(
         spawnMeteorForever,
