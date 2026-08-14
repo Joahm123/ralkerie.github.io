@@ -2,130 +2,223 @@
    RALKERIE STARS
 ===================================================== */
 
-const starContainer =
-    document.getElementById("stars");
+(() => {
 
-const stars = [];
+    const starContainer =
+        document.getElementById("stars");
 
-
-/* =====================================================
-   CREATE STARS
-===================================================== */
-
-for (let i = 0; i < 220; i++) {
-
-    const star =
-        document.createElement("div");
-
-    star.className = "star";
+    if (!starContainer) {
+        console.error("Star container not found.");
+        return;
+    }
 
 
-    const size =
-        1 + Math.random() * 2.5;
+    /* =================================================
+       SETTINGS
+    ================================================= */
+
+    const STAR_COUNT = 220;
+
+    const stars = [];
+
+    let starsLastTime =
+        performance.now();
 
 
-    star.style.width =
-        `${size}px`;
+    /* =================================================
+       CREATE STARS
+    ================================================= */
 
-    star.style.height =
-        `${size}px`;
+    for (
+        let i = 0;
+        i < STAR_COUNT;
+        i++
+    ) {
 
+        const star =
+            document.createElement("div");
 
-    const data = {
-
-        element: star,
-
-        x:
-            Math.random() *
-            window.innerWidth,
-
-        y:
-            Math.random() *
-            window.innerHeight,
-
-        speed:
-            25 +
-            Math.random() * 65
-    };
+        star.className =
+            "star";
 
 
-    star.style.left =
-        `${data.x}px`;
-
-    star.style.top =
-        `${data.y}px`;
+        const size =
+            1 +
+            Math.random() * 2.5;
 
 
-    starContainer.appendChild(
-        star
-    );
+        star.style.width =
+            `${size}px`;
+
+        star.style.height =
+            `${size}px`;
 
 
-    stars.push(data);
-}
+        const data = {
+
+            element: star,
+
+            x:
+                Math.random() *
+                window.innerWidth,
+
+            y:
+                Math.random() *
+                window.innerHeight,
+
+            speed:
+                25 +
+                Math.random() * 65
+        };
 
 
-/* =====================================================
-   ANIMATION
-===================================================== */
+        star.style.left =
+            `${data.x}px`;
 
-let lastTime =
-    performance.now();
-
-
-function updateStars(time) {
-
-    const delta =
-        (time - lastTime) / 1000;
-
-    lastTime =
-        time;
+        star.style.top =
+            `${data.y}px`;
 
 
-    for (const star of stars) {
+        starContainer.appendChild(
+            star
+        );
+
+
+        stars.push(
+            data
+        );
+    }
+
+
+    /* =================================================
+       ANIMATION
+    ================================================= */
+
+    function updateStars(time) {
 
         /*
-           Stars move RIGHT.
-        */
-
-        star.x +=
-            star.speed *
-            delta;
-
-
-        /*
-           When a star leaves
-           the right side, bring
-           it back to the left.
+           When the tab is hidden,
+           don't accumulate elapsed time.
         */
 
         if (
-            star.x >
-            window.innerWidth + 20
+            document.hidden
         ) {
 
-            star.x = -20;
+            starsLastTime =
+                time;
 
-            star.y =
-                Math.random() *
-                window.innerHeight;
+            requestAnimationFrame(
+                updateStars
+            );
+
+            return;
         }
 
 
-        star.element.style.left =
-            `${star.x}px`;
+        let delta =
+            (time - starsLastTime)
+            / 1000;
 
-        star.element.style.top =
-            `${star.y}px`;
+
+        /*
+           Prevent huge jumps after
+           lag or returning to the tab.
+        */
+
+        delta =
+            Math.min(
+                delta,
+                0.05
+            );
+
+
+        starsLastTime =
+            time;
+
+
+        const width =
+            window.innerWidth;
+
+
+        for (
+            const star of stars
+        ) {
+
+            /*
+               Move RIGHT.
+            */
+
+            star.x +=
+                star.speed *
+                delta;
+
+
+            /*
+               Wrap smoothly from
+               right → left.
+
+               IMPORTANT:
+               Keep the same Y position.
+               This prevents the stars
+               from bunching up.
+            */
+
+            if (
+                star.x >
+                width + 20
+            ) {
+
+                star.x =
+                    -20;
+            }
+
+
+            star.element.style.left =
+                `${star.x}px`;
+
+            star.element.style.top =
+                `${star.y}px`;
+        }
+
+
+        requestAnimationFrame(
+            updateStars
+        );
     }
 
+
+    /* =================================================
+       TAB VISIBILITY
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            /*
+               Reset the animation clock
+               whenever the tab changes
+               visibility.
+            */
+
+            starsLastTime =
+                performance.now();
+        }
+    );
+
+
+    /* =================================================
+       START
+    ================================================= */
 
     requestAnimationFrame(
         updateStars
     );
-}
 
 
-requestAnimationFrame(
-    updateStars
-);
+    console.log(
+        "Ralkerie stars loaded."
+    );
+
+})();
