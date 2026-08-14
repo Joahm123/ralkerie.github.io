@@ -1,4 +1,4 @@
-
+```javascript id="h5b1fa"
 (function () {
 
     "use strict";
@@ -34,11 +34,7 @@
     audio.preload = "auto";
 
 
-    /*
-       AUDIO START TIME
-
-       35 = 35 seconds
-    */
+    /* Start at 35 seconds */
 
     var AUDIO_START_TIME = 35;
 
@@ -105,23 +101,54 @@
 
 
     /* =====================================================
-       OPEN METEOR
+       PLAY AUDIO AT 35 SECONDS
     ===================================================== */
 
-    function meteorClicked() {
+    function playAudioFrom35() {
 
-        popup.classList.add(
-            "visible"
-        );
+        /*
+           Make sure the browser has loaded
+           enough metadata to seek.
+        */
+
+        if (
+            !isFinite(audio.duration)
+        ) {
+
+            console.warn(
+                "Audio metadata has not loaded yet."
+            );
+
+            return;
+        }
 
 
         /*
-           Start the song at 35 seconds.
+           Make sure 35 seconds actually
+           exists in the song.
         */
 
-        audio.currentTime =
-            AUDIO_START_TIME;
+        if (
+            audio.duration <= AUDIO_START_TIME
+        ) {
 
+            console.warn(
+                "Song is shorter than 35 seconds."
+            );
+
+            audio.currentTime = 0;
+
+        } else {
+
+            audio.currentTime =
+                AUDIO_START_TIME;
+
+        }
+
+
+        /*
+           Play after seeking.
+        */
 
         var playPromise =
             audio.play();
@@ -140,6 +167,52 @@
                 }
             );
 
+        }
+    }
+
+
+    /* =====================================================
+       METEOR CLICK
+    ===================================================== */
+
+    function meteorClicked() {
+
+        popup.classList.add(
+            "visible"
+        );
+
+
+        /*
+           If metadata is already loaded,
+           seek immediately.
+        */
+
+        if (
+            audio.readyState >= 1
+        ) {
+
+            playAudioFrom35();
+
+        } else {
+
+            /*
+               Otherwise wait for metadata.
+            */
+
+            audio.addEventListener(
+                "loadedmetadata",
+                playAudioFrom35,
+                {
+                    once: true
+                }
+            );
+
+
+            /*
+               Start loading the audio.
+            */
+
+            audio.load();
         }
     }
 
@@ -222,9 +295,9 @@
             "meteor";
 
 
-        /* ---------------------------------------------
-           SPAWN POSITION
-        --------------------------------------------- */
+        /*
+           Spawn position
+        */
 
         hitbox.style.left =
             "180px";
@@ -237,28 +310,20 @@
             ) + "vh";
 
 
-        /* ---------------------------------------------
-           ADD METEOR
-        --------------------------------------------- */
-
         hitbox.appendChild(
             meteor
         );
 
 
-        /* ---------------------------------------------
-           CLICK
-        --------------------------------------------- */
+        /*
+           Click meteor
+        */
 
         hitbox.addEventListener(
             "click",
             meteorClicked
         );
 
-
-        /* ---------------------------------------------
-           INSERT
-        --------------------------------------------- */
 
         container.appendChild(
             hitbox
@@ -270,9 +335,9 @@
         );
 
 
-        /* ---------------------------------------------
-           REMOVE
-        --------------------------------------------- */
+        /*
+           Remove meteor
+        */
 
         setTimeout(
             function () {
@@ -321,3 +386,4 @@
 
 
 })();
+```
