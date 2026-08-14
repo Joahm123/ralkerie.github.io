@@ -1,8 +1,15 @@
+```css
 /* =====================================================
    RALKERIE METEORS
 ===================================================== */
 
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
 #meteors {
+
     position: fixed;
 
     inset: 0;
@@ -14,15 +21,16 @@
 
     pointer-events: none;
 
-    z-index: 1;
+    z-index: 2;
 }
 
 
 /* =====================================================
-   LARGE INVISIBLE HITBOX
+   HITBOX
 ===================================================== */
 
 .meteor-hitbox {
+
     position: absolute;
 
     width: 110px;
@@ -35,13 +43,18 @@
 
     cursor: pointer;
 
-    z-index: 10;
-
     background: transparent;
 
+    z-index: 10;
+
+    /*
+       Move the ENTIRE meteor
+       diagonally down-right.
+    */
+
     animation:
-        meteorDiagonal
-        4s
+        meteorMove
+        5s
         linear
         forwards;
 }
@@ -52,24 +65,23 @@
 ===================================================== */
 
 .meteor {
+
     position: absolute;
 
-    left: 28px;
-    top: 28px;
+    left: 48px;
+    top: 48px;
 
     width: 10px;
     height: 10px;
 
     background: #ffffff;
 
-    border-radius: 0;
-
-    pointer-events: none;
-
     transform:
         rotate(35deg);
 
-    z-index: 3;
+    z-index: 5;
+
+    pointer-events: none;
 
     box-shadow:
         0 0 3px #ffffff,
@@ -81,7 +93,7 @@
 
 
 /* =====================================================
-   PIXEL HEAD
+   METEOR PIXEL HEAD
 ===================================================== */
 
 .meteor::after {
@@ -119,15 +131,11 @@
             50% 100%,
             0% 50%
         );
-
-    pointer-events: none;
-
-    z-index: 4;
 }
 
 
 /* =====================================================
-   PINK OUTER TRAIL
+   METEOR TRAIL
 ===================================================== */
 
 .meteor::before {
@@ -152,41 +160,39 @@
             to left,
 
             #ffffff 0%,
-            #ffffff 6%,
+            #ffffff 7%,
 
             #ffd8f3 15%,
             #ff9bdd 30%,
 
             #ff63cb 50%,
-            #ff3dbd 68%,
+            #ff3dbd 70%,
 
             rgba(
                 255,
                 61,
                 189,
-                0.35
+                0.3
             ) 88%,
 
             transparent 100%
         );
 
     pointer-events: none;
-
-    z-index: 1;
 }
 
 
 /* =====================================================
-   DIAGONAL MOVEMENT
+   MOVEMENT
 ===================================================== */
 
-@keyframes meteorDiagonal {
+@keyframes meteorMove {
 
-    0% {
+    from {
 
         transform:
             translate3d(
-                80px,
+                0,
                 -100px,
                 0
             );
@@ -194,18 +200,17 @@
         opacity: 0;
     }
 
-
     8% {
+
         opacity: 1;
     }
-
 
     90% {
+
         opacity: 1;
     }
 
-
-    100% {
+    to {
 
         transform:
             translate3d(
@@ -245,9 +250,6 @@
             0.75
         );
 
-    backdrop-filter:
-        blur(4px);
-
     opacity: 0;
 
     visibility: hidden;
@@ -257,7 +259,7 @@
     z-index: 9999;
 
     transition:
-        opacity 150ms ease;
+        opacity 0.15s ease;
 }
 
 
@@ -279,16 +281,6 @@
 
     position: relative;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    max-width: 90vw;
-
-    max-height: 85vh;
-
     padding: 8px;
 
     background: #000000;
@@ -296,14 +288,12 @@
     border: 2px solid #ffffff;
 
     box-shadow:
-        5px 5px 0 #000000,
-
         0 0 25px
         rgba(
             255,
             70,
             190,
-            0.35
+            0.4
         );
 }
 
@@ -320,18 +310,12 @@
 
     max-height: 75vh;
 
-    width: auto;
-
-    height: auto;
-
-    object-fit: contain;
-
     image-rendering: pixelated;
 }
 
 
 /* =====================================================
-   CLOSE BUTTON
+   CLOSE
 ===================================================== */
 
 .meteor-popup-close {
@@ -350,55 +334,22 @@
 
     border: 2px solid #ffffff;
 
-    border-radius: 0;
-
     background: #000000;
 
     color: #ffffff;
 
-    font-family:
-        Arial,
-        sans-serif;
-
     font-size: 23px;
-
-    line-height: 24px;
 
     cursor: pointer;
 
     z-index: 10;
-
-    box-shadow:
-        3px 3px 0 #000000;
 }
 
 
 .meteor-popup-close:hover {
 
-    background: #222222;
-
     color: #ff8bdc;
+
+    background: #222222;
 }
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 700px) {
-
-    .meteor-popup-box {
-
-        max-width: 92vw;
-
-        max-height: 80vh;
-    }
-
-
-    .meteor-popup-gif {
-
-        max-width: 86vw;
-
-        max-height: 70vh;
-    }
-}
+```
