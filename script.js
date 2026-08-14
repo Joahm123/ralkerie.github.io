@@ -55,7 +55,7 @@ for (let i = 220; i > 0; i--) {
 
 
 /* =========================
-   METEORS
+   METEOR
 ========================= */
 
 function createMeteor() {
@@ -67,7 +67,7 @@ function createMeteor() {
 
 
     /*
-        Long meteor
+        Random meteor length.
     */
 
     const length =
@@ -79,28 +79,30 @@ function createMeteor() {
 
 
     /*
-        Spawn across the entire
-        top, but shifted LEFT.
+        SPAWN ANYWHERE.
 
-        -25vw → 75vw
+        X = anywhere from
+        left → right.
 
-        This means the rightmost
-        meteor starts around the
-        middle/right area rather
-        than way off the right.
+        Y = anywhere from
+        top → bottom.
+
+        This makes the entire
+        screen a spawn zone.
     */
 
     const startX =
-        -25 +
+        Math.random() * 100;
+
+    const startY =
         Math.random() * 100;
 
 
-    /*
-        Start above the screen.
-    */
+    meteor.style.left =
+        `${startX}vw`;
 
-    const startY =
-        -300;
+    meteor.style.top =
+        `${startY}vh`;
 
 
     /*
@@ -109,14 +111,8 @@ function createMeteor() {
 
     const duration =
         2 +
-        Math.random() * 1.5;
+        Math.random() * 2;
 
-
-    meteor.style.left =
-        `${startX}vw`;
-
-    meteor.style.top =
-        `${startY}px`;
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -125,33 +121,49 @@ function createMeteor() {
     meteorContainer.appendChild(meteor);
 
 
+    /*
+        Delete it after it
+        leaves the screen.
+    */
+
     setTimeout(() => {
+
         meteor.remove();
+
     }, duration * 1000);
 }
 
 
 /* =========================
-   SPAWN
+   INFINITE METEOR SPAWNER
 ========================= */
 
-function spawnMeteor() {
+function spawnMeteorForever() {
 
     createMeteor();
 
+
+    /*
+        Random delay between
+        meteors.
+
+        This runs FOREVER.
+    */
+
     const delay =
         150 +
-        Math.random() * 300;
+        Math.random() * 350;
+
 
     setTimeout(
-        spawnMeteor,
+        spawnMeteorForever,
         delay
     );
 }
 
 
 /* =========================
-   START
+   START FOREVER
 ========================= */
 
-spawnMeteor();
+spawnMeteorForever();
