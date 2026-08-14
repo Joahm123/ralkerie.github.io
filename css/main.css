@@ -4,12 +4,32 @@
 
 
 /* =====================================================
+   TERRARIA FONT
+===================================================== */
+
+@font-face {
+    font-family: "Terraria";
+
+    src:
+        url("../assets/fonts/Terraria.ttf")
+        format("truetype");
+
+    font-weight: normal;
+
+    font-style: normal;
+
+    font-display: swap;
+}
+
+
+/* =====================================================
    GLOBAL
 ===================================================== */
 
 * {
     box-sizing: border-box;
 }
+
 
 html,
 body {
@@ -20,14 +40,15 @@ body {
     padding: 0;
 }
 
+
 body {
     background: #050505;
 
     color: #ffffff;
 
     font-family:
+        "Terraria",
         Arial,
-        Helvetica,
         sans-serif;
 
     overflow: hidden;
@@ -37,7 +58,7 @@ body {
 
 
 /* =====================================================
-   MAIN CONTENT
+   MAIN
 ===================================================== */
 
 main {
@@ -53,7 +74,7 @@ main {
 
 
 /* =====================================================
-   TOP-RIGHT PIXEL TABS
+   TOP-RIGHT NAV
 ===================================================== */
 
 .pixel-tabs {
@@ -67,8 +88,6 @@ main {
     flex-direction: row;
 
     align-items: center;
-
-    justify-content: center;
 
     gap: 4px;
 
@@ -92,7 +111,7 @@ main {
 
 
 /* =====================================================
-   INDIVIDUAL TAB
+   TAB
 ===================================================== */
 
 .pixel-tab {
@@ -117,11 +136,11 @@ main {
     color: #ffffff;
 
     font-family:
-        monospace;
+        "Terraria",
+        Arial,
+        sans-serif;
 
-    font-size: 12px;
-
-    font-weight: 700;
+    font-size: 15px;
 
     letter-spacing: 1px;
 
@@ -133,27 +152,23 @@ main {
 
     transition:
         background 100ms linear,
-        color 100ms linear,
-        transform 100ms linear;
+        color 100ms linear;
 }
 
 
 /* =====================================================
-   TAB HOVER
+   HOVER
 ===================================================== */
 
 .pixel-tab:hover {
     background: #161616;
 
     color: #ffffff;
-
-    transform:
-        translateY(-1px);
 }
 
 
 /* =====================================================
-   ACTIVE TAB
+   ACTIVE
 ===================================================== */
 
 .pixel-tab.active {
@@ -168,7 +183,7 @@ main {
 
 
 /* =====================================================
-   PAGE SECTIONS
+   PAGES
 ===================================================== */
 
 .pixel-page {
@@ -197,7 +212,7 @@ main {
 
 
 /* =====================================================
-   PIXEL PANEL
+   PANEL
 ===================================================== */
 
 .pixel-panel {
@@ -226,46 +241,41 @@ main {
 
 
 /* =====================================================
-   PAGE LABEL
+   TEXT
 ===================================================== */
 
 .pixel-label {
     margin: 0 0 8px;
 
     font-family:
-        monospace;
+        "Terraria",
+        Arial,
+        sans-serif;
 
-    font-size: 11px;
+    font-size: 16px;
 
-    font-weight: 700;
+    letter-spacing: 2px;
 
-    letter-spacing: 3px;
-
-    color:
-        #aaaaaa;
+    color: #aaaaaa;
 }
 
-
-/* =====================================================
-   PAGE TITLE
-===================================================== */
 
 .pixel-panel h1 {
     margin: 0 0 15px;
 
     font-family:
-        monospace;
+        "Terraria",
+        Arial,
+        sans-serif;
 
     font-size:
         clamp(
-            28px,
+            32px,
             5vw,
-            52px
+            60px
         );
 
-    font-weight: 800;
-
-    letter-spacing: 4px;
+    letter-spacing: 2px;
 
     color: #ffffff;
 
@@ -274,27 +284,24 @@ main {
 }
 
 
-/* =====================================================
-   DESCRIPTION
-===================================================== */
-
 .pixel-description {
     margin: 0;
 
-    color:
-        #bdbdbd;
+    color: #bdbdbd;
 
     font-family:
-        monospace;
+        "Terraria",
+        Arial,
+        sans-serif;
 
-    font-size: 14px;
+    font-size: 16px;
 
     line-height: 1.7;
 }
 
 
 /* =====================================================
-   MUSIC CARD
+   MUSIC
 ===================================================== */
 
 .music-card {
@@ -308,11 +315,9 @@ main {
 
     padding: 12px;
 
-    background:
-        #080808;
+    background: #080808;
 
-    border:
-        1px solid #333333;
+    border: 1px solid #333333;
 
     text-align: left;
 }
@@ -324,11 +329,9 @@ main {
 
     flex-shrink: 0;
 
-    background:
-        #151515;
+    background: #151515;
 
-    border:
-        1px solid #444444;
+    border: 1px solid #444444;
 }
 
 
@@ -341,25 +344,12 @@ main {
 }
 
 
-.music-info strong {
-    color:
-        #ffffff;
-
-    font-family:
-        monospace;
-
-    font-size: 13px;
-}
-
-
+.music-info strong,
 .music-info span {
-    color:
-        #888888;
-
     font-family:
-        monospace;
-
-    font-size: 11px;
+        "Terraria",
+        Arial,
+        sans-serif;
 }
 
 
@@ -391,23 +381,20 @@ main {
 
     min-height: 45px;
 
-    background:
-        #050505;
+    background: #050505;
 
-    border:
-        1px solid #333333;
+    border: 1px solid #333333;
 
-    color:
-        #ffffff;
+    color: #ffffff;
 
     text-decoration: none;
 
     font-family:
-        monospace;
+        "Terraria",
+        Arial,
+        sans-serif;
 
-    font-size: 12px;
-
-    font-weight: 700;
+    font-size: 15px;
 
     letter-spacing: 1px;
 
@@ -418,16 +405,14 @@ main {
 
 
 .pixel-link:hover {
-    background:
-        #171717;
+    background: #171717;
 
-    border-color:
-        #ffffff;
+    border-color: #ffffff;
 }
 
 
 /* =====================================================
-   MOBILE NAVIGATION
+   MOBILE
 ===================================================== */
 
 @media (max-width: 700px) {
@@ -454,10 +439,9 @@ main {
 
         height: 30px;
 
-        padding:
-            0 8px;
+        padding: 0 8px;
 
-        font-size: 10px;
+        font-size: 12px;
     }
 
 
@@ -468,17 +452,14 @@ main {
 
 
     .pixel-panel {
-        width:
-            92vw;
+        width: 92vw;
 
-        padding:
-            25px 18px;
+        padding: 25px 18px;
     }
 
 
     .link-grid {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 }
 
