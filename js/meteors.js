@@ -145,7 +145,7 @@
         audio.pause();
 
         audio.currentTime =
-            0;
+            35;
     }
 
 
