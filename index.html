@@ -8,10 +8,6 @@
 
 <style>
 
-/* =====================================================
-   RESET
-===================================================== */
-
 * {
     margin: 0;
     padding: 0;
@@ -33,17 +29,12 @@ body {
 
 
 /* =====================================================
-   SPACE BACKGROUND
+   BACKGROUND
 ===================================================== */
 
 #background {
     position: fixed;
-
     inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
     z-index: 0;
 
     background:
@@ -56,27 +47,6 @@ body {
         );
 }
 
-#background::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        radial-gradient(
-            circle at 15% 45%,
-            rgba(255, 40, 190, 0.18),
-            transparent 35%
-        ),
-
-        radial-gradient(
-            circle at 85% 25%,
-            rgba(255, 90, 220, 0.15),
-            transparent 35%
-        );
-}
-
 
 /* =====================================================
    STARS
@@ -84,7 +54,6 @@ body {
 
 #stars {
     position: fixed;
-
     inset: 0;
 
     width: 100vw;
@@ -107,18 +76,15 @@ body {
     box-shadow:
         0 0 5px white,
         0 0 10px rgba(255, 180, 235, 0.9);
-
-    will-change: left, top;
 }
 
 
 /* =====================================================
-   METEOR LAYER
+   METEORS
 ===================================================== */
 
 #meteors {
     position: fixed;
-
     inset: 0;
 
     width: 100vw;
@@ -133,16 +99,9 @@ body {
 
 
 /* =====================================================
-   METEOR
+   METEOR ANCHOR
 
-   IMPORTANT:
-
-   This element is ONLY the meteor HEAD position.
-
-   Its X/Y is therefore EXACTLY where the meteor
-   spawns.
-
-   No giant rotated rectangle shifting the spawn point.
+   The anchor itself is the meteor HEAD.
 ===================================================== */
 
 .meteor {
@@ -151,13 +110,9 @@ body {
     width: 1px;
     height: 1px;
 
-    transform:
-        rotate(46deg);
-
-    transform-origin:
-        center center;
-
     pointer-events: none;
+
+    transform: rotate(34deg);
 }
 
 
@@ -192,9 +147,7 @@ body {
 /* =====================================================
    METEOR TRAIL
 
-   WHITE + PINK ONLY
-
-   Trail extends BEHIND the head.
+   WHITE -> PINK -> TRANSPARENT
 ===================================================== */
 
 .meteor::before {
@@ -203,31 +156,27 @@ body {
     position: absolute;
 
     right: 0;
-    top: -5px;
+    top: -4px;
 
     width: 750px;
-    height: 10px;
+    height: 8px;
 
     border-radius: 999px;
 
     background:
         linear-gradient(
             to left,
-
-            rgba(255, 255, 255, 0.95),
-
-            rgba(255, 220, 250, 0.8),
-
-            rgba(255, 150, 235, 0.65),
-
-            rgba(255, 70, 205, 0.35),
-
-            rgba(255, 40, 190, 0)
+            white 0%,
+            rgba(255, 235, 252, 0.95) 8%,
+            rgba(255, 170, 235, 0.8) 25%,
+            rgba(255, 80, 205, 0.5) 55%,
+            rgba(255, 40, 190, 0.15) 80%,
+            transparent 100%
         );
 
     box-shadow:
-        0 0 8px rgba(255, 190, 240, 0.8),
-        0 0 18px rgba(255, 80, 210, 0.45);
+        0 0 8px rgba(255, 220, 250, 0.8),
+        0 0 18px rgba(255, 70, 205, 0.5);
 
     filter: blur(2px);
 }
@@ -239,7 +188,6 @@ body {
 
 #content {
     position: fixed;
-
     inset: 0;
 
     z-index: 10;
@@ -252,11 +200,6 @@ body {
     pointer-events: none;
 }
 
-
-/* =====================================================
-   TITLE CARD
-===================================================== */
-
 #card {
     padding: 45px 70px;
 
@@ -264,11 +207,9 @@ body {
 
     text-align: center;
 
-    background:
-        rgba(8, 3, 12, 0.8);
+    background: rgba(8, 3, 12, 0.8);
 
-    border:
-        1px solid rgba(255, 180, 235, 0.22);
+    border: 1px solid rgba(255, 180, 235, 0.22);
 
     border-radius: 24px;
 
@@ -280,23 +221,17 @@ body {
 }
 
 #card h1 {
-    font-size:
-        clamp(48px, 7vw, 90px);
+    font-size: clamp(48px, 7vw, 90px);
 
     letter-spacing: 3px;
 
     color: white;
-
-    text-shadow:
-        0 0 15px rgba(255, 160, 230, 0.4),
-        0 0 40px rgba(255, 60, 190, 0.2);
 }
 
 #card p {
     margin-top: 12px;
 
-    color:
-        rgba(255, 210, 240, 0.75);
+    color: rgba(255, 210, 240, 0.75);
 
     font-size: 18px;
 
@@ -309,31 +244,12 @@ body {
 
 <body>
 
-
-<!-- =====================================================
-     BACKGROUND
-===================================================== -->
-
 <div id="background"></div>
-
-
-<!-- =====================================================
-     STARS
-===================================================== -->
 
 <div id="stars"></div>
 
-
-<!-- =====================================================
-     METEORS
-===================================================== -->
-
 <div id="meteors"></div>
 
-
-<!-- =====================================================
-     TITLE
-===================================================== -->
 
 <div id="content">
 
@@ -350,7 +266,6 @@ body {
 
 <script>
 
-
 /* =====================================================
    STARS
 ===================================================== */
@@ -361,18 +276,16 @@ const starContainer =
 const stars = [];
 
 
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 220; i++) {
 
     const element =
         document.createElement("div");
 
-    element.className =
-        "star";
+    element.className = "star";
 
 
     const size =
-        1 +
-        Math.random() * 2;
+        1 + Math.random() * 2;
 
 
     element.style.width =
@@ -384,7 +297,7 @@ for (let i = 0; i < 200; i++) {
 
     const star = {
 
-        element: element,
+        element,
 
         x:
             Math.random() *
@@ -395,7 +308,7 @@ for (let i = 0; i < 200; i++) {
             window.innerHeight,
 
         speed:
-            20 +
+            25 +
             Math.random() * 60
     };
 
@@ -411,14 +324,9 @@ for (let i = 0; i < 200; i++) {
         element
     );
 
-
     stars.push(star);
 }
 
-
-/* =====================================================
-   MOVE STARS RIGHT
-===================================================== */
 
 let starLastTime =
     performance.now();
@@ -429,8 +337,7 @@ function updateStars(time) {
     const delta =
         (time - starLastTime) / 1000;
 
-    starLastTime =
-        time;
+    starLastTime = time;
 
 
     for (const star of stars) {
@@ -438,10 +345,6 @@ function updateStars(time) {
         star.x +=
             star.speed * delta;
 
-
-        /*
-           LOOP FROM LEFT
-        */
 
         if (
             star.x >
@@ -489,7 +392,7 @@ const meteors = [];
    CREATE METEOR
 ===================================================== */
 
-function createMeteor() {
+function createMeteor(x, y) {
 
     const element =
         document.createElement("div");
@@ -499,67 +402,31 @@ function createMeteor() {
 
 
     /*
-       =================================================
-       THIS IS THE IMPORTANT FIX.
+       EXACT SPAWN POSITION
 
-       The meteor HEAD spawns at:
+       x = anywhere across the ENTIRE
+           viewport width.
 
-       X = 0 → 100% SCREEN WIDTH
-
-       Y = slightly ABOVE screen
-
-       The trail is attached BEHIND it.
-
-       Therefore the visible meteor head cannot
-       magically spawn on the right.
-       =================================================
+       y = above the screen.
     */
-
-    const x =
-        Math.random() *
-        window.innerWidth;
-
-
-    const y =
-        -50 -
-        Math.random() * 300;
-
-
-    /*
-       =================================================
-       FAST MOVEMENT
-       =================================================
-    */
-
-    const velocityX =
-        850 +
-        Math.random() * 400;
-
-
-    const velocityY =
-        1100 +
-        Math.random() * 450;
-
 
     const meteor = {
 
-        element: element,
+        element,
 
-        x: x,
+        x,
 
-        y: y,
+        y,
 
         velocityX:
-            velocityX,
+            1050 +
+            Math.random() * 450,
 
         velocityY:
-            velocityY
+            700 +
+            Math.random() * 300
     };
 
-
-    /*
-       EXACT INITIAL POSITION
-    */
 
     element.style.left =
         x + "px";
@@ -572,15 +439,121 @@ function createMeteor() {
         element
     );
 
+    meteors.push(meteor);
+}
 
-    meteors.push(
-        meteor
+
+/* =====================================================
+   INITIAL METEORS
+
+   THIS IS THE IMPORTANT PART.
+
+   Divide the ENTIRE SCREEN into sections.
+
+   One meteor is placed in EACH section.
+
+   So they CANNOT all start on one side.
+===================================================== */
+
+function createInitialMeteorSpread() {
+
+    const width =
+        window.innerWidth;
+
+
+    /*
+       12 positions across the entire
+       width of the screen.
+    */
+
+    const sections = 12;
+
+
+    for (
+        let i = 0;
+        i < sections;
+        i++
+    ) {
+
+        /*
+           Center of each section
+           + random offset.
+
+           This guarantees coverage from
+           LEFT → RIGHT.
+        */
+
+        const sectionWidth =
+            width / sections;
+
+
+        const x =
+            (
+                i * sectionWidth
+            ) +
+            (
+                Math.random() *
+                sectionWidth
+            );
+
+
+        /*
+           All start ABOVE the screen.
+        */
+
+        const y =
+            -50 -
+            Math.random() * 500;
+
+
+        createMeteor(
+            x,
+            y
+        );
+    }
+}
+
+
+/* =====================================================
+   CONTINUOUS METEOR SPAWNING
+===================================================== */
+
+function spawnMeteor() {
+
+    /*
+       Every new meteor can appear
+       anywhere across the ENTIRE width.
+
+       0 → viewport width.
+    */
+
+    const x =
+        Math.random() *
+        window.innerWidth;
+
+
+    const y =
+        -50 -
+        Math.random() * 350;
+
+
+    createMeteor(
+        x,
+        y
+    );
+
+
+    setTimeout(
+        spawnMeteor,
+
+        100 +
+        Math.random() * 150
     );
 }
 
 
 /* =====================================================
-   MOVE METEORS
+   METEOR PHYSICS
 ===================================================== */
 
 let meteorLastTime =
@@ -592,8 +565,7 @@ function updateMeteors(time) {
     const delta =
         (time - meteorLastTime) / 1000;
 
-    meteorLastTime =
-        time;
+    meteorLastTime = time;
 
 
     for (
@@ -607,7 +579,7 @@ function updateMeteors(time) {
 
 
         /*
-           RIGHT
+           MOVE RIGHT
         */
 
         meteor.x +=
@@ -616,17 +588,13 @@ function updateMeteors(time) {
 
 
         /*
-           DOWN
+           MOVE DOWN
         */
 
         meteor.y +=
             meteor.velocityY *
             delta;
 
-
-        /*
-           EXACT POSITION
-        */
 
         meteor.element.style.left =
             meteor.x + "px";
@@ -636,7 +604,7 @@ function updateMeteors(time) {
 
 
         /*
-           DESPAWN WELL OFFSCREEN
+           DELETE ONLY FAR OFFSCREEN.
         */
 
         if (
@@ -663,31 +631,39 @@ function updateMeteors(time) {
 }
 
 
-requestAnimationFrame(
-    updateMeteors
+/* =====================================================
+   START EVERYTHING
+===================================================== */
+
+
+/*
+   FIRST:
+
+   Fill the ENTIRE top with meteors.
+*/
+
+createInitialMeteorSpread();
+
+
+/*
+   THEN:
+
+   Keep spawning forever.
+*/
+
+setTimeout(
+    spawnMeteor,
+    400
 );
 
 
-/* =====================================================
-   SPAWN FOREVER
-===================================================== */
+/*
+   Start physics.
+*/
 
-function spawnMeteor() {
-
-    createMeteor();
-
-
-    setTimeout(
-        spawnMeteor,
-
-        100 +
-        Math.random() * 160
-    );
-}
-
-
-spawnMeteor();
-
+requestAnimationFrame(
+    updateMeteors
+);
 
 </script>
 
