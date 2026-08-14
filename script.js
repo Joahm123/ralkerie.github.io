@@ -1,31 +1,35 @@
-const meteorContainer = document.getElementById("meteors");
-const starContainer = document.getElementById("stars");
+const stars = document.getElementById("stars");
+const meteors = document.getElementById("meteors");
 
 
-/* =========================================
-   MOVING STARS
-========================================= */
+/* =====================================
+   STARS
+===================================== */
 
 function createStar() {
+
     const star = document.createElement("div");
 
     star.className = "star";
 
-    const size = 1 + Math.random() * 2;
+    const size = Math.random() * 2 + 1;
 
     star.style.width = `${size}px`;
     star.style.height = `${size}px`;
 
-    star.style.left = `${Math.random() * 100}vw`;
-    star.style.top = `${Math.random() * 100}vh`;
+    star.style.left =
+        `${Math.random() * 100}vw`;
+
+    star.style.top =
+        `${Math.random() * 100}vh`;
 
     star.style.animationDuration =
-        `${8 + Math.random() * 8}s, ${2 + Math.random() * 3}s`;
+        `${8 + Math.random() * 10}s, ${2 + Math.random() * 3}s`;
 
     star.style.animationDelay =
         `${Math.random() * -10}s, ${Math.random() * -3}s`;
 
-    starContainer.appendChild(star);
+    stars.appendChild(star);
 }
 
 
@@ -34,25 +38,46 @@ for (let i = 0; i < 250; i++) {
 }
 
 
-/* =========================================
-   METEOR SETTINGS
-========================================= */
+/* =====================================
+   METEORS
+===================================== */
 
-const BOX_PADDING = 500;
+/*
+    IMPORTANT:
 
+    The meteor container itself is
+    500px outside the screen on every
+    side.
 
-/* =========================================
-   CREATE METEOR
-========================================= */
+    We ONLY spawn from its TOP EDGE.
+
+    So:
+
+             SPAWN AREA
+    ┌─────────────────────────────┐
+    │  ☄     ☄       ☄      ☄    │
+    ├─────────────────────────────┤
+    │                             │
+    │       YOUR SCREEN           │
+    │                             │
+    │                             │
+    └─────────────────────────────┘
+             DESPAWN AREA
+
+    Nothing is spawned from the
+    left, right, or bottom edges.
+*/
+
 
 function createMeteor() {
 
-    const meteor = document.createElement("div");
+    const meteor =
+        document.createElement("div");
 
     meteor.className = "meteor";
 
 
-    /* Long skinny meteor */
+    /* Long meteor */
 
     const length =
         400 + Math.random() * 300;
@@ -62,90 +87,49 @@ function createMeteor() {
 
 
     /*
-        =====================================
-        SPAWN FROM TOP EDGE ONLY
-        =====================================
+        TOP EDGE OF THE BOX
 
-        The box is:
+        The box starts at -500px.
 
-        left   = -500px
-        right  = screen + 500px
-        top    = -500px
-        bottom = screen + 500px
-
-        BUT METEORS ONLY ENTER FROM
-        THE TOP EDGE.
-
-        Their X can be anywhere across
-        the entire box.
+        Therefore the meteor is
+        initially ABOVE the viewport.
     */
 
-    const boxLeft =
-        -BOX_PADDING;
-
-    const boxRight =
-        window.innerWidth + BOX_PADDING;
-
-
-    /*
-        Random X across the entire
-        surrounding box.
-    */
-
-    const startX =
-        boxLeft +
+    const spawnX =
         Math.random() *
-        (boxRight - boxLeft);
+        (window.innerWidth + 1000);
 
-
-    /*
-        Start ABOVE the actual screen,
-        but inside the surrounding box.
-
-        This means you don't see them
-        suddenly appear.
-    */
-
-    const startY =
-        -BOX_PADDING +
-        Math.random() * 200;
+    const spawnY =
+        -500 -
+        Math.random() * 100;
 
 
     meteor.style.left =
-        `${startX}px`;
+        `${spawnX}px`;
 
     meteor.style.top =
-        `${startY}px`;
+        `${spawnY}px`;
 
 
-    /* =====================================
-       FAST MOVEMENT
-    ===================================== */
+    /*
+        Fast movement
+    */
 
     const duration =
-        1.4 +
-        Math.random() * 0.7;
-
+        1.3 + Math.random() * 0.6;
 
     meteor.style.animation =
-        `meteorFly ${duration}s linear forwards`;
+        `meteorMove ${duration}s linear forwards`;
 
 
-    meteorContainer.appendChild(
-        meteor
-    );
+    meteors.appendChild(meteor);
 
 
-    /* =====================================
-       DESPAWN
-
-       Wait until the meteor has had
-       enough time to travel completely
-       outside the surrounding box.
-
-       It does NOT disappear while
-       still visible.
-    ===================================== */
+    /*
+        Remove ONLY after it has
+        completely traveled outside
+        the surrounding box.
+    */
 
     setTimeout(() => {
 
@@ -155,27 +139,22 @@ function createMeteor() {
 }
 
 
-/* =========================================
+/* =====================================
    INFINITE SPAWNING
-========================================= */
+===================================== */
 
-function spawnMeteorForever() {
+function spawnMeteor() {
 
     createMeteor();
 
     const delay =
-        120 +
-        Math.random() * 220;
+        120 + Math.random() * 220;
 
     setTimeout(
-        spawnMeteorForever,
+        spawnMeteor,
         delay
     );
 }
 
 
-/* =========================================
-   START
-========================================= */
-
-spawnMeteorForever();
+spawnMeteor();
