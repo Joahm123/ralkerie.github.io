@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ralkerie</title>
 
 <style>
+
+/* =====================================================
+   RESET
+===================================================== */
 
 * {
     margin: 0;
@@ -28,25 +33,45 @@ body {
 
 
 /* =====================================================
-   BACKGROUND
+   SPACE BACKGROUND
 ===================================================== */
 
 #background {
     position: fixed;
     inset: 0;
+
     width: 100vw;
     height: 100vh;
+
+    z-index: 0;
 
     background:
         radial-gradient(
             ellipse at center,
-            #35152f 0%,
-            #1d0b1c 35%,
-            #0b040d 70%,
+            #3b1737 0%,
+            #210c20 35%,
+            #0d050f 70%,
             #020103 100%
         );
+}
 
-    z-index: 0;
+#background::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 15% 45%,
+            rgba(255, 40, 190, 0.18),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 85% 25%,
+            rgba(255, 90, 220, 0.15),
+            transparent 35%
+        );
 }
 
 
@@ -71,9 +96,6 @@ body {
 .star {
     position: absolute;
 
-    width: 2px;
-    height: 2px;
-
     border-radius: 50%;
 
     background: white;
@@ -81,6 +103,8 @@ body {
     box-shadow:
         0 0 5px white,
         0 0 10px rgba(255, 180, 235, 0.9);
+
+    will-change: left, top;
 }
 
 
@@ -105,27 +129,41 @@ body {
 .meteor {
     position: absolute;
 
-    height: 10px;
+    /*
+       THINNER
+    */
+
+    height: 6px;
 
     border-radius: 999px;
-
-    background: linear-gradient(
-        to right,
-        transparent,
-        rgba(255, 50, 195, 0.15),
-        rgba(255, 110, 220, 0.6),
-        white
-    );
-
-    box-shadow:
-        0 0 12px rgba(255, 120, 225, 1),
-        0 0 30px rgba(255, 50, 200, 0.8),
-        0 0 60px rgba(255, 30, 190, 0.5);
 
     transform: rotate(46deg);
 
     transform-origin: right center;
+
+    /*
+       WHITE + PINK METEOR
+       No black.
+    */
+
+    background: linear-gradient(
+        to right,
+        rgba(255, 90, 210, 0),
+        rgba(255, 100, 220, 0.25),
+        rgba(255, 180, 240, 0.8),
+        white
+    );
+
+    box-shadow:
+        0 0 8px white,
+        0 0 18px rgba(255, 120, 225, 0.95),
+        0 0 35px rgba(255, 50, 200, 0.8);
 }
+
+
+/* =====================================================
+   PINK + WHITE TRAIL
+===================================================== */
 
 .meteor::before {
     content: "";
@@ -135,34 +173,56 @@ body {
     right: 0;
     top: 50%;
 
-    width: 1000px;
-    height: 35px;
+    /*
+       LONG TRAIL
+    */
+
+    width: 1100px;
+
+    /*
+       THIN TRAIL
+    */
+
+    height: 18px;
 
     transform: translateY(-50%);
 
     border-radius: 999px;
 
+    /*
+       ONLY PINK + WHITE
+       No dark/black colors.
+    */
+
     background: linear-gradient(
         to right,
-        transparent,
-        rgba(255, 30, 180, 0.05),
-        rgba(255, 80, 210, 0.25),
-        rgba(255, 170, 240, 0.6)
+        rgba(255, 255, 255, 0),
+        rgba(255, 120, 225, 0.08),
+        rgba(255, 100, 220, 0.22),
+        rgba(255, 160, 235, 0.55),
+        rgba(255, 220, 250, 0.9)
     );
 
-    filter: blur(15px);
+    filter: blur(8px);
+
+    pointer-events: none;
 }
+
+
+/* =====================================================
+   BRIGHT METEOR HEAD
+===================================================== */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    right: -8px;
+    right: -6px;
     top: 50%;
 
-    width: 23px;
-    height: 23px;
+    width: 16px;
+    height: 16px;
 
     transform: translateY(-50%);
 
@@ -171,10 +231,10 @@ body {
     background: white;
 
     box-shadow:
-        0 0 10px white,
-        0 0 25px #ffd6f5,
-        0 0 45px #ff8bd8,
-        0 0 75px #ff35bd;
+        0 0 8px white,
+        0 0 18px white,
+        0 0 30px #ffb8e9,
+        0 0 50px #ff4ac5;
 }
 
 
@@ -189,32 +249,48 @@ body {
     z-index: 10;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     pointer-events: none;
 }
 
+
+/* =====================================================
+   TITLE CARD
+===================================================== */
+
 #card {
     padding: 45px 70px;
 
-    background: rgba(8, 3, 12, 0.8);
-
-    border: 1px solid rgba(255, 180, 235, 0.2);
-
-    border-radius: 24px;
+    min-width: 320px;
 
     text-align: center;
+
+    background: rgba(8, 3, 12, 0.8);
+
+    border: 1px solid rgba(255, 180, 235, 0.22);
+
+    border-radius: 24px;
 
     box-shadow:
         0 20px 80px rgba(0, 0, 0, 0.8),
         0 0 60px rgba(255, 50, 190, 0.12);
+
+    backdrop-filter: blur(18px);
 }
 
 #card h1 {
     font-size: clamp(48px, 7vw, 90px);
 
     letter-spacing: 3px;
+
+    color: white;
+
+    text-shadow:
+        0 0 15px rgba(255, 160, 230, 0.4),
+        0 0 40px rgba(255, 60, 190, 0.2);
 }
 
 #card p {
@@ -223,24 +299,52 @@ body {
     color: rgba(255, 210, 240, 0.75);
 
     font-size: 18px;
+
+    letter-spacing: 2px;
 }
 
 </style>
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
 <div id="background"></div>
 
+
+<!-- =====================================================
+     STARS
+===================================================== -->
+
 <div id="stars"></div>
+
+
+<!-- =====================================================
+     METEORS
+===================================================== -->
 
 <div id="meteors"></div>
 
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+
 <div id="content">
+
     <div id="card">
+
         <h1>Ralkerie</h1>
+
         <p>Coming soon...</p>
+
     </div>
+
 </div>
 
 
@@ -248,8 +352,6 @@ body {
 
 /* =====================================================
    STARS
-
-   They physically move RIGHT.
 ===================================================== */
 
 const starContainer =
@@ -257,12 +359,26 @@ const starContainer =
 
 const stars = [];
 
+
 for (let i = 0; i < 200; i++) {
 
     const element =
         document.createElement("div");
 
-    element.className = "star";
+    element.className =
+        "star";
+
+
+    const size =
+        1 + Math.random() * 2;
+
+
+    element.style.width =
+        size + "px";
+
+    element.style.height =
+        size + "px";
+
 
     const star = {
 
@@ -281,17 +397,26 @@ for (let i = 0; i < 200; i++) {
             Math.random() * 50
     };
 
+
     element.style.left =
         star.x + "px";
 
     element.style.top =
         star.y + "px";
 
-    starContainer.appendChild(element);
+
+    starContainer.appendChild(
+        element
+    );
+
 
     stars.push(star);
 }
 
+
+/* =====================================================
+   MOVE STARS RIGHT
+===================================================== */
 
 let starLastTime =
     performance.now();
@@ -302,13 +427,14 @@ function updateStars(time) {
     const delta =
         (time - starLastTime) / 1000;
 
-    starLastTime = time;
+    starLastTime =
+        time;
 
 
     for (const star of stars) {
 
         /*
-            MOVE RIGHT
+           MOVE RIGHT
         */
 
         star.x +=
@@ -316,8 +442,7 @@ function updateStars(time) {
 
 
         /*
-            WHEN IT LEAVES RIGHT SIDE,
-            PUT IT BACK ON LEFT.
+           LOOP BACK TO LEFT
         */
 
         if (
@@ -354,14 +479,6 @@ requestAnimationFrame(
 
 /* =====================================================
    METEORS
-
-   ABSOLUTE RULE:
-
-   X = 0 → SCREEN WIDTH
-
-   Y = ABOVE SCREEN
-
-   NOTHING ELSE.
 ===================================================== */
 
 const meteorContainer =
@@ -380,43 +497,29 @@ function createMeteor() {
 
 
     /*
-        LONG
+       LONG + SKINNY
     */
 
     element.style.width =
-        (450 +
-        Math.random() * 350) +
-        "px";
+        (
+            450 +
+            Math.random() * 350
+        ) + "px";
 
 
     /*
-        =====================================
-        SPAWN
+       SPAWN ACROSS ENTIRE TOP
 
-        X IS BETWEEN:
+       X:
+       0 → entire screen width
 
-        LEFT EDGE OF SCREEN
-        AND
-        RIGHT EDGE OF SCREEN
-
-        EXACTLY.
-
-        NO NEGATIVE X.
-        NO +500.
-        NO OFFSET.
-    =====================================
+       Y:
+       above screen
     */
 
     const x =
         Math.random() *
         window.innerWidth;
-
-
-    /*
-        Y IS ABOVE SCREEN.
-
-        -100 to -600px.
-    */
 
     const y =
         -100 -
@@ -424,22 +527,20 @@ function createMeteor() {
 
 
     /*
-        =====================================
-        MOVEMENT
+       FAST MOVEMENT
 
-        RIGHT + DOWN
-
-        This is gravity-like.
-    =====================================
+       RIGHT
+       +
+       DOWN
     */
 
     const velocityX =
-        350 +
-        Math.random() * 250;
+        700 +
+        Math.random() * 350;
 
     const velocityY =
-        500 +
-        Math.random() * 300;
+        950 +
+        Math.random() * 400;
 
 
     const meteor = {
@@ -450,9 +551,11 @@ function createMeteor() {
 
         y: y,
 
-        velocityX: velocityX,
+        velocityX:
+            velocityX,
 
-        velocityY: velocityY
+        velocityY:
+            velocityY
     };
 
 
@@ -466,6 +569,7 @@ function createMeteor() {
     meteorContainer.appendChild(
         element
     );
+
 
     meteors.push(
         meteor
@@ -486,7 +590,8 @@ function updateMeteors(time) {
     const delta =
         (time - meteorLastTime) / 1000;
 
-    meteorLastTime = time;
+    meteorLastTime =
+        time;
 
 
     for (
@@ -500,7 +605,7 @@ function updateMeteors(time) {
 
 
         /*
-            RIGHT
+           MOVE RIGHT
         */
 
         meteor.x +=
@@ -509,7 +614,7 @@ function updateMeteors(time) {
 
 
         /*
-            DOWN
+           MOVE DOWN
         */
 
         meteor.y +=
@@ -525,8 +630,7 @@ function updateMeteors(time) {
 
 
         /*
-            DESPAWN ONLY AFTER
-            IT IS FAR OFFSCREEN.
+           DESPAWN FAR OFFSCREEN
         */
 
         if (
@@ -559,17 +663,19 @@ requestAnimationFrame(
 
 
 /* =====================================================
-   SPAWN METEORS FOREVER
+   SPAWN FOREVER
 ===================================================== */
 
 function spawnMeteor() {
 
     createMeteor();
 
+
     setTimeout(
         spawnMeteor,
-        120 +
-        Math.random() * 180
+
+        100 +
+        Math.random() * 150
     );
 }
 
