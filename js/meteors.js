@@ -34,6 +34,15 @@
     audio.preload = "auto";
 
 
+    /*
+       AUDIO START TIME
+
+       35 = 35 seconds
+    */
+
+    var AUDIO_START_TIME = 35;
+
+
     /* =====================================================
        POPUP
     ===================================================== */
@@ -106,8 +115,12 @@
         );
 
 
+        /*
+           Start the song at 35 seconds.
+        */
+
         audio.currentTime =
-            35;
+            AUDIO_START_TIME;
 
 
         var playPromise =
@@ -145,7 +158,7 @@
         audio.pause();
 
         audio.currentTime =
-            35;
+            0;
     }
 
 
