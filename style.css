@@ -18,13 +18,12 @@ body {
 }
 
 /* =========================
-   SPACE BACKGROUND
+   SPACE
 ========================= */
 
 .background {
     position: fixed;
     inset: 0;
-
     width: 100vw;
     height: 100vh;
 
@@ -42,23 +41,20 @@ body {
 
 .background::after {
     content: "";
-
     position: absolute;
     inset: 0;
 
     background:
         radial-gradient(
-            ellipse at 25% 55%,
-            rgba(255, 70, 190, 0.13),
+            ellipse at 20% 55%,
+            rgba(255, 70, 190, 0.14),
             transparent 45%
         ),
         radial-gradient(
             ellipse at 75% 25%,
-            rgba(255, 120, 210, 0.10),
+            rgba(255, 120, 210, 0.09),
             transparent 40%
         );
-
-    pointer-events: none;
 }
 
 /* =========================
@@ -122,19 +118,10 @@ body {
 .meteor {
     position: absolute;
 
-    /*
-        Long + thick meteor
-    */
-
     width: 380px;
     height: 10px;
 
     border-radius: 999px;
-
-    /*
-        Pink trail fading toward
-        the back of the meteor.
-    */
 
     background: linear-gradient(
         to right,
@@ -152,9 +139,8 @@ body {
         0 0 45px rgba(255, 70, 195, 0.45);
 
     /*
-        DOWN + RIGHT
+        ↘ DOWN + RIGHT
     */
-
     transform: rotate(46deg);
 
     transform-origin: right center;
@@ -197,7 +183,7 @@ body {
 }
 
 /* =========================
-   BRIGHT HEAD
+   HEAD
 ========================= */
 
 .meteor::after {
@@ -226,7 +212,7 @@ body {
 }
 
 /* =========================
-   METEOR MOVEMENT
+   MOVEMENT
 ========================= */
 
 @keyframes meteorFly {
@@ -283,8 +269,7 @@ main {
 
     text-align: center;
 
-    background:
-        rgba(12, 4, 14, 0.58);
+    background: rgba(12, 4, 14, 0.58);
 
     border:
         1px solid rgba(255, 180, 230, 0.15);
@@ -296,9 +281,6 @@ main {
     box-shadow:
         0 20px 80px rgba(0, 0, 0, 0.7),
         0 0 60px rgba(255, 60, 190, 0.08);
-
-    animation:
-        appear 1s ease forwards;
 }
 
 .profile h1 {
@@ -309,17 +291,4 @@ main {
 .profile p {
     color: #c9a9c2;
     font-size: 18px;
-}
-
-@keyframes appear {
-
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
