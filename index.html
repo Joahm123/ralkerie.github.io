@@ -97,13 +97,6 @@ body {
     pointer-events: none;
 }
 
-
-/* =====================================================
-   METEOR ANCHOR
-
-   The anchor itself is the meteor HEAD.
-===================================================== */
-
 .meteor {
     position: absolute;
 
@@ -146,8 +139,6 @@ body {
 
 /* =====================================================
    METEOR TRAIL
-
-   WHITE -> PINK -> TRANSPARENT
 ===================================================== */
 
 .meteor::before {
@@ -281,7 +272,8 @@ for (let i = 0; i < 220; i++) {
     const element =
         document.createElement("div");
 
-    element.className = "star";
+    element.className =
+        "star";
 
 
     const size =
@@ -388,10 +380,6 @@ const meteorContainer =
 const meteors = [];
 
 
-/* =====================================================
-   CREATE METEOR
-===================================================== */
-
 function createMeteor(x, y) {
 
     const element =
@@ -400,15 +388,6 @@ function createMeteor(x, y) {
     element.className =
         "meteor";
 
-
-    /*
-       EXACT SPAWN POSITION
-
-       x = anywhere across the ENTIRE
-           viewport width.
-
-       y = above the screen.
-    */
 
     const meteor = {
 
@@ -439,20 +418,14 @@ function createMeteor(x, y) {
         element
     );
 
-    meteors.push(meteor);
+    meteors.push(
+        meteor
+    );
 }
 
 
 /* =====================================================
-   INITIAL METEORS
-
-   THIS IS THE IMPORTANT PART.
-
-   Divide the ENTIRE SCREEN into sections.
-
-   One meteor is placed in EACH section.
-
-   So they CANNOT all start on one side.
+   INITIAL FULL-WIDTH SPREAD
 ===================================================== */
 
 function createInitialMeteorSpread() {
@@ -462,11 +435,14 @@ function createInitialMeteorSpread() {
 
 
     /*
-       12 positions across the entire
-       width of the screen.
+       16 sections across
+       the ENTIRE screen.
+
+       First section begins
+       exactly at X = 0.
     */
 
-    const sections = 12;
+    const sections = 16;
 
 
     for (
@@ -475,31 +451,23 @@ function createInitialMeteorSpread() {
         i++
     ) {
 
-        /*
-           Center of each section
-           + random offset.
-
-           This guarantees coverage from
-           LEFT → RIGHT.
-        */
-
         const sectionWidth =
             width / sections;
 
 
-        const x =
-            (
-                i * sectionWidth
-            ) +
-            (
-                Math.random() *
-                sectionWidth
-            );
-
-
         /*
-           All start ABOVE the screen.
+           Random position inside
+           each section.
+
+           This guarantees the
+           LEFTMOST section gets
+           a meteor too.
         */
+
+        const x =
+            i * sectionWidth +
+            Math.random() * sectionWidth;
+
 
         const y =
             -50 -
@@ -515,17 +483,10 @@ function createInitialMeteorSpread() {
 
 
 /* =====================================================
-   CONTINUOUS METEOR SPAWNING
+   CONTINUOUS SPAWNING
 ===================================================== */
 
 function spawnMeteor() {
-
-    /*
-       Every new meteor can appear
-       anywhere across the ENTIRE width.
-
-       0 → viewport width.
-    */
 
     const x =
         Math.random() *
@@ -543,10 +504,20 @@ function spawnMeteor() {
     );
 
 
+    /*
+       LESS FREQUENT
+
+       Previous:
+       ~100-250ms
+
+       Now:
+       ~250-400ms
+    */
+
     setTimeout(
         spawnMeteor,
 
-        100 +
+        250 +
         Math.random() * 150
     );
 }
@@ -578,18 +549,10 @@ function updateMeteors(time) {
             meteors[i];
 
 
-        /*
-           MOVE RIGHT
-        */
-
         meteor.x +=
             meteor.velocityX *
             delta;
 
-
-        /*
-           MOVE DOWN
-        */
 
         meteor.y +=
             meteor.velocityY *
@@ -604,7 +567,8 @@ function updateMeteors(time) {
 
 
         /*
-           DELETE ONLY FAR OFFSCREEN.
+           Remove only after
+           going far offscreen.
         */
 
         if (
@@ -632,34 +596,17 @@ function updateMeteors(time) {
 
 
 /* =====================================================
-   START EVERYTHING
+   START
 ===================================================== */
-
-
-/*
-   FIRST:
-
-   Fill the ENTIRE top with meteors.
-*/
 
 createInitialMeteorSpread();
 
 
-/*
-   THEN:
-
-   Keep spawning forever.
-*/
-
 setTimeout(
     spawnMeteor,
-    400
+    800
 );
 
-
-/*
-   Start physics.
-*/
 
 requestAnimationFrame(
     updateMeteors
