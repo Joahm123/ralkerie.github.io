@@ -19,7 +19,7 @@ body {
 
 
 /* =========================
-   SPACE BACKGROUND
+   BACKGROUND
 ========================= */
 
 .background {
@@ -62,7 +62,7 @@ body {
 
 
 /* =========================
-   MOVING STARS
+   STARS
 ========================= */
 
 #stars {
@@ -132,8 +132,7 @@ body {
 .meteor {
     position: absolute;
 
-    width: 380px;
-    height: 11px;
+    height: 10px;
 
     border-radius: 999px;
 
@@ -169,8 +168,8 @@ body {
 
     position: absolute;
 
-    width: 850px;
-    height: 38px;
+    width: 900px;
+    height: 34px;
 
     right: 0;
     top: 50%;
@@ -190,14 +189,14 @@ body {
         rgba(255, 160, 235, 0.55)
     );
 
-    filter: blur(16px);
+    filter: blur(15px);
 
     z-index: -1;
 }
 
 
 /* =========================
-   BRIGHT HEAD
+   METEOR HEAD
 ========================= */
 
 .meteor::after {
@@ -208,8 +207,8 @@ body {
     right: -7px;
     top: 50%;
 
-    width: 22px;
-    height: 22px;
+    width: 21px;
+    height: 21px;
 
     transform:
         translateY(-50%);
@@ -245,15 +244,27 @@ body {
         opacity: 1;
     }
 
-    85% {
+    88% {
         opacity: 1;
     }
 
     100% {
+
+        /*
+            ONLY 55vw RIGHT.
+
+            Previously this was 85-110vw,
+            which shoved everything right.
+
+            Now the motion is mostly
+            DOWN with only a moderate
+            RIGHT movement.
+        */
+
         transform:
             translate(
-                85vw,
-                120vh
+                55vw,
+                125vh
             )
             rotate(46deg);
 
