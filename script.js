@@ -66,27 +66,29 @@ function createMeteor() {
 
 
     /*
-       Meteors begin below/left
-       and travel toward the
-       upper-right.
+       Start INSIDE the visible screen
+       instead of spawning off-screen.
     */
 
     const startX =
         Math.random() *
-        (window.innerWidth * 0.8) -
-        500;
+        window.innerWidth;
 
     const startY =
-        window.innerHeight +
-        300;
+        window.innerHeight -
+        Math.random() *
+        (window.innerHeight * 0.35);
 
 
     /*
-       Random large size.
+       Random length.
     */
 
-    const size =
-        Math.random() * 12 + 18;
+    const length =
+        Math.random() * 100 + 150;
+
+    meteor.style.width =
+        `${length}px`;
 
 
     /*
@@ -102,12 +104,6 @@ function createMeteor() {
 
     meteor.style.top =
         `${startY}px`;
-
-    meteor.style.width =
-        `${size}px`;
-
-    meteor.style.height =
-        `${size}px`;
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -130,7 +126,7 @@ function spawnMeteor() {
     createMeteor();
 
     const nextMeteor =
-        Math.random() * 700 + 300;
+        Math.random() * 700 + 400;
 
     setTimeout(
         spawnMeteor,
