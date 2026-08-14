@@ -1,9 +1,10 @@
 /* =====================================================
-   RALKERIE BACKGROUND — STRONGER PINK HUE
+   STAR BACKGROUND
 ===================================================== */
 
 #stars {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -15,66 +16,20 @@
 
     z-index: 0;
 
-    background:
-        radial-gradient(
-            ellipse at 15% 30%,
-            rgba(255, 40, 190, 0.18),
-            transparent 42%
-        ),
+    /*
+       NO PINK BACKGROUND.
+       Keep the background transparent.
+    */
 
-        radial-gradient(
-            ellipse at 85% 70%,
-            rgba(255, 70, 210, 0.15),
-            transparent 45%
-        ),
-
-        radial-gradient(
-            ellipse at 50% 50%,
-            rgba(190, 40, 150, 0.10),
-            transparent 65%
-        ),
-
-        linear-gradient(
-            135deg,
-            rgba(80, 5, 60, 0.30),
-            rgba(15, 0, 15, 0.15),
-            rgba(100, 10, 75, 0.25)
-        );
-}
-
-
-/* =====================================================
-   SOFT PINK SPACE GLOW
-===================================================== */
-
-#stars::before {
-    content: "";
-
-    position: absolute;
-
-    inset: -20%;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle at 30% 45%,
-            rgba(255, 80, 215, 0.12),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 70% 55%,
-            rgba(255, 40, 190, 0.10),
-            transparent 32%
-        );
-
-    z-index: -1;
+    background: transparent;
 }
 
 
 /* =====================================================
    STARS
+   PINK CENTER
+   PINK MIDDLE
+   WHITE EDGE
 ===================================================== */
 
 .star {
@@ -82,13 +37,38 @@
 
     border-radius: 50%;
 
-    background: #ffffff;
+    /*
+       Pink center.
+    */
+
+    background:
+        radial-gradient(
+            circle,
+
+            #ff69d2 0%,
+            #ff55c9 35%,
+
+            #ff8dde 55%,
+
+            #ffffff 78%,
+            #ffffff 100%
+        );
+
+    /*
+       White outside edge + pink glow.
+    */
 
     box-shadow:
-        0 0 4px rgba(255, 255, 255, 0.9),
-        0 0 8px rgba(255, 150, 230, 0.55);
+        0 0 2px #ffffff,
+        0 0 4px #ffffff,
+        0 0 7px #ff8ddd,
+        0 0 11px rgba(255, 60, 195, 0.75);
 
-    opacity: 0.75;
+    opacity: 0.85;
+
+    /*
+       CSS handles movement.
+    */
 
     animation:
         starMove
@@ -105,7 +85,8 @@
         transform,
         opacity;
 
-    contain: layout paint;
+    contain:
+        layout paint;
 }
 
 
@@ -135,7 +116,7 @@
 
     0%,
     100% {
-        opacity: 0.35;
+        opacity: 0.45;
     }
 
     50% {
