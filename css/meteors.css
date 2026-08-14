@@ -1,5 +1,11 @@
 /* =====================================================
-   RALKERIE METEORS — PERFORMANCE OPTIMIZED
+   RALKERIE METEORS
+   OPTIMIZED + CLICK EXPLOSIONS
+===================================================== */
+
+
+/* =====================================================
+   METEOR CONTAINER
 ===================================================== */
 
 #meteors {
@@ -21,7 +27,7 @@
 
 
 /* =====================================================
-   METEOR HEAD
+   METEOR
 ===================================================== */
 
 .meteor {
@@ -37,23 +43,24 @@
 
     background: #ffffff;
 
-    pointer-events: none;
-
     /*
-       GPU movement from meteors.js.
+       IMPORTANT:
+       Allows the meteor itself
+       to receive clicks.
     */
+
+    pointer-events: auto;
+
+    cursor: pointer;
 
     will-change: transform;
 
-    /*
-       Smaller glow = considerably cheaper.
-    */
+    z-index: 1;
 
     box-shadow:
-        0 0 8px #ffffff,
-        0 0 18px #ff9de0;
-
-    z-index: 1;
+        0 0 7px #ffffff,
+        0 0 14px #ffb5ed,
+        0 0 24px rgba(255, 55, 190, 0.75);
 }
 
 
@@ -70,16 +77,15 @@
     top: 50%;
 
     width: 700px;
-    height: 18px;
+    height: 20px;
 
     transform:
         translateY(-50%);
 
-    border-radius: 999px;
+    transform-origin:
+        right center;
 
-    /*
-       White center → pink outside.
-    */
+    border-radius: 999px;
 
     background:
         linear-gradient(
@@ -87,26 +93,24 @@
 
             #ffffff 0%,
 
-            #fff5fc 8%,
+            #fffaff 5%,
 
-            #ffb5e9 20%,
+            #ffd6f4 12%,
 
-            #ff78d2 40%,
+            #ff9de0 25%,
 
-            #ff4bc5 65%,
+            #ff70d1 40%,
 
-            rgba(255, 60, 195, 0.25) 88%,
+            #ff4bc5 58%,
+
+            #ff2fba 75%,
+
+            rgba(255, 35, 180, 0.45) 88%,
 
             transparent 100%
         );
 
-    /*
-       No blur.
-       No mask.
-       Much cheaper.
-    */
-
-    opacity: 0.9;
+    opacity: 0.95;
 
     pointer-events: none;
 
@@ -119,14 +123,13 @@
 ===================================================== */
 
 .meteor > .meteor-core {
-
     position: absolute;
 
     right: 7px;
     top: 50%;
 
     width: 700px;
-    height: 7px;
+    height: 8px;
 
     transform:
         translateY(-50%);
@@ -138,12 +141,15 @@
             to left,
 
             #ffffff 0%,
-
             #ffffff 12%,
 
-            rgba(255,255,255,0.95) 35%,
+            rgba(255, 255, 255, 0.98) 30%,
 
-            rgba(255,255,255,0.65) 65%,
+            rgba(255, 255, 255, 0.85) 50%,
+
+            rgba(255, 255, 255, 0.55) 70%,
+
+            rgba(255, 255, 255, 0.18) 88%,
 
             transparent 100%
         );
@@ -155,7 +161,7 @@
 
 
 /* =====================================================
-   METEOR GLOW
+   METEOR HEAD GLOW
 ===================================================== */
 
 .meteor::after {
@@ -174,10 +180,174 @@
     background: #ffffff;
 
     box-shadow:
-        0 0 10px #ffffff,
-        0 0 22px #ff9de0;
+        0 0 8px #ffffff,
+        0 0 16px #ffb5ed,
+        0 0 28px rgba(255, 45, 185, 0.8);
 
     pointer-events: none;
 
     z-index: 5;
+}
+
+
+/* =====================================================
+   CLICK EXPLOSION
+===================================================== */
+
+.meteor-explosion {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    pointer-events: none;
+
+    z-index: 20;
+}
+
+
+/* =====================================================
+   EXPLOSION FLASH
+===================================================== */
+
+.meteor-flash {
+    position: absolute;
+
+    left: -12px;
+    top: -12px;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 10px #ffffff,
+        0 0 25px #ffb5ed,
+        0 0 45px #ff38bd;
+
+    animation:
+        meteorFlash
+        350ms
+        ease-out
+        forwards;
+}
+
+
+@keyframes meteorFlash {
+
+    0% {
+        transform: scale(0.3);
+        opacity: 1;
+    }
+
+    45% {
+        transform: scale(2.5);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+
+/* =====================================================
+   EXPLOSION PARTICLES
+===================================================== */
+
+.meteor-particle {
+    position: absolute;
+
+    left: -3px;
+    top: -3px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 5px #ffffff,
+        0 0 10px #ff70d1;
+
+    pointer-events: none;
+
+    animation:
+        meteorParticle
+        600ms
+        cubic-bezier(
+            0.2,
+            0.8,
+            0.3,
+            1
+        )
+        forwards;
+}
+
+
+@keyframes meteorParticle {
+
+    0% {
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            )
+            scale(1);
+
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform:
+            translate3d(
+                var(--particle-x),
+                var(--particle-y),
+                0
+            )
+            scale(0);
+
+        opacity: 0;
+    }
+}
+
+
+/* =====================================================
+   MOBILE / TOUCH
+===================================================== */
+
+@media (
+    pointer: coarse
+) {
+
+    .meteor {
+        cursor: pointer;
+    }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .meteor-explosion,
+    .meteor-flash,
+    .meteor-particle {
+        animation: none;
+    }
 }
