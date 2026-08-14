@@ -34,6 +34,8 @@
     width: 14px;
     height: 14px;
 
+    box-sizing: content-box;
+
     background: #ffffff;
 
     border-radius: 0;
@@ -46,8 +48,13 @@
 
     opacity: 1;
 
+    /*
+       Meteor points DOWN-RIGHT
+       to match its movement.
+    */
+
     transform:
-        rotate(-35deg);
+        rotate(35deg);
 
     animation:
         meteorDiagonal
@@ -64,25 +71,13 @@
 
 
 /* =====================================================
-   BIGGER CLICK HITBOX
+   BIG CLICK HITBOX
 ===================================================== */
 
 .meteor {
-    /*
-       The visible meteor stays 14px.
-
-       This invisible area makes it
-       much easier to click.
-    */
-
     padding: 28px;
 
-    margin:
-        -28px;
-
-    /*
-       Keep the hitbox clickable.
-    */
+    margin: -28px;
 
     pointer-events: auto;
 }
@@ -212,7 +207,7 @@
                 -100px,
                 0
             )
-            rotate(-35deg);
+            rotate(35deg);
 
         opacity: 0;
     }
@@ -238,7 +233,7 @@
                 calc(100vh + 500px),
                 0
             )
-            rotate(-35deg);
+            rotate(35deg);
 
         opacity: 0;
     }
@@ -287,6 +282,10 @@
 }
 
 
+/* =====================================================
+   POPUP VISIBLE
+===================================================== */
+
 .meteor-popup.visible {
 
     opacity: 1;
@@ -323,6 +322,7 @@
 
     box-shadow:
         5px 5px 0 #000000,
+
         0 0 25px
         rgba(
             255,
@@ -348,6 +348,8 @@
     width: auto;
 
     height: auto;
+
+    object-fit: contain;
 
     image-rendering: pixelated;
 }
