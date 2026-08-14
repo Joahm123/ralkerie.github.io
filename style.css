@@ -12,7 +12,7 @@ body {
 
 body {
     overflow: hidden;
-    background: #020207;
+    background: #08030a;
     color: white;
     font-family: Arial, sans-serif;
 }
@@ -30,13 +30,37 @@ body {
 
     background:
         radial-gradient(
-            ellipse at center,
-            #0d0d18 0%,
-            #05050c 50%,
-            #010103 100%
+            ellipse at 50% 50%,
+            #1b0c1d 0%,
+            #100713 35%,
+            #07030a 70%,
+            #020105 100%
         );
 
     z-index: -3;
+}
+
+/* Subtle pink atmospheric glow */
+
+.background::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at 30% 60%,
+            rgba(255, 70, 190, 0.10),
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse at 75% 25%,
+            rgba(255, 120, 210, 0.08),
+            transparent 40%
+        );
+
+    pointer-events: none;
 }
 
 /* =========================
@@ -61,11 +85,11 @@ body {
 
     border-radius: 50%;
 
-    background: white;
+    background: #fff5fc;
 
     box-shadow:
-        0 0 5px white,
-        0 0 10px rgba(255, 255, 255, 0.7);
+        0 0 5px #ffffff,
+        0 0 10px rgba(255, 180, 230, 0.7);
 
     animation: starMove linear infinite;
 }
@@ -105,30 +129,42 @@ body {
 
     border-radius: 50%;
 
-    background: white;
+    background: #fff;
 
     box-shadow:
-        0 0 8px white,
+        0 0 8px #fff,
         0 0 18px #ffd6f2,
         0 0 35px #ff8bd8,
         0 0 60px #ff4fc3,
         0 0 90px rgba(255, 79, 195, 0.5);
+
+    z-index: 2;
 }
 
-/* Pink trail */
+/* =========================
+   METEOR TRAIL
+========================= */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    width: 330px;
+    width: 340px;
     height: 10px;
 
-    right: 14px;
+    /*
+       Trail extends BEHIND
+       the meteor.
+    */
+    right: 13px;
     top: 50%;
 
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%)
+        rotate(46deg);
+
+    transform-origin: right center;
 
     border-radius: 999px;
 
@@ -144,18 +180,24 @@ body {
     filter: blur(2px);
 }
 
+/* Soft trail glow */
+
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    width: 380px;
-    height: 30px;
+    width: 390px;
+    height: 28px;
 
     right: 8px;
     top: 50%;
 
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%)
+        rotate(46deg);
+
+    transform-origin: right center;
 
     border-radius: 999px;
 
@@ -168,11 +210,20 @@ body {
     filter: blur(10px);
 }
 
-/* Right → Left */
+/* =========================
+   METEOR MOVEMENT
+========================= */
+
+/*
+    Meteor travels RIGHT and UP
+    at approximately 46 degrees.
+*/
 
 @keyframes meteorFly {
     0% {
-        transform: translateX(0);
+        transform:
+            translate(-450px, 450px);
+
         opacity: 0;
     }
 
@@ -185,7 +236,12 @@ body {
     }
 
     100% {
-        transform: translateX(calc(-100vw - 600px));
+        transform:
+            translate(
+                calc(100vw + 500px),
+                calc(-100vh - 500px)
+            );
+
         opacity: 0;
     }
 }
@@ -214,38 +270,48 @@ main {
 
     text-align: center;
 
-    background: rgba(5, 5, 12, 0.55);
+    background:
+        rgba(12, 4, 14, 0.58);
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border:
+        1px solid rgba(255, 180, 230, 0.15);
 
     border-radius: 24px;
 
     backdrop-filter: blur(20px);
 
     box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.7);
+        0 20px 80px rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(255, 60, 190, 0.08);
 
-    animation: appear 1s ease forwards;
+    animation:
+        appear 1s ease forwards;
 }
 
 .profile h1 {
     font-size: 60px;
+
     margin-bottom: 10px;
 }
 
 .profile p {
-    color: #aaa;
+    color: #c9a9c2;
+
     font-size: 18px;
 }
 
 @keyframes appear {
     from {
         opacity: 0;
-        transform: translateY(20px);
+
+        transform:
+            translateY(20px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+
+        transform:
+            translateY(0);
     }
 }
