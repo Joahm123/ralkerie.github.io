@@ -14,13 +14,12 @@
 
     pointer-events: none;
 
-    /* Behind the profile/content */
     z-index: 1;
 }
 
 
 /* =====================================================
-   METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -31,24 +30,25 @@
 
     border-radius: 50%;
 
-    background: white;
+    background: #ffffff;
 
     pointer-events: none;
 
     z-index: 1;
 
+    transform: rotate(34deg);
+
     box-shadow:
-        0 0 8px white,
-        0 0 18px white,
+        0 0 8px #ffffff,
+        0 0 18px #ffffff,
         0 0 30px #ffb5ed,
         0 0 50px #ff38bd;
-
-    transform: rotate(34deg);
 }
 
 
 /* =====================================================
-   METEOR TRAIL
+   WHITE → PINK TRAIL
+   THICK → THIN → FADE
 ===================================================== */
 
 .meteor::before {
@@ -57,33 +57,85 @@
     position: absolute;
 
     right: 4px;
-    top: 3px;
+    top: 50%;
 
-    width: 700px;
-    height: 6px;
+    width: 750px;
+    height: 18px;
+
+    transform:
+        translateY(-50%);
 
     border-radius: 999px;
+
+    /*
+       Thick white near the meteor,
+       gradually becoming thinner
+       and fading into pink.
+    */
 
     background:
         linear-gradient(
             to left,
-            white 0%,
-            rgba(255, 255, 255, 0.95) 8%,
-            rgba(255, 190, 240, 0.8) 30%,
-            rgba(255, 80, 205, 0.45) 60%,
-            transparent 100%
+
+            #ffffff 0%,
+
+            rgba(255, 255, 255, 0.98) 4%,
+
+            rgba(255, 240, 252, 0.95) 10%,
+
+            rgba(255, 190, 240, 0.85) 22%,
+
+            rgba(255, 120, 220, 0.65) 40%,
+
+            rgba(255, 70, 200, 0.38) 60%,
+
+            rgba(255, 50, 190, 0.15) 80%,
+
+            rgba(255, 50, 190, 0) 100%
+        );
+
+    /*
+       Mask makes the trail physically
+       taper from thick → thin.
+    */
+
+    clip-path:
+        polygon(
+            0% 20%,
+            5% 18%,
+            15% 22%,
+            30% 30%,
+            50% 38%,
+            70% 44%,
+            85% 48%,
+            100% 50%,
+
+            85% 52%,
+            70% 56%,
+            50% 62%,
+            30% 70%,
+            15% 78%,
+            5% 82%,
+            0% 80%
         );
 
     box-shadow:
-        0 0 8px white,
-        0 0 20px rgba(255, 80, 210, 0.7);
+        0 0 8px
+        rgba(255, 255, 255, 0.95),
 
-    filter: blur(1px);
+        0 0 18px
+        rgba(255, 180, 240, 0.75),
+
+        0 0 35px
+        rgba(255, 60, 200, 0.45);
+
+    filter:
+        blur(1px);
 }
 
 
 /* =====================================================
-   METEOR GLOW
+   METEOR CORE GLOW
 ===================================================== */
 
 .meteor::after {
@@ -99,12 +151,13 @@
 
     border-radius: 50%;
 
-    background: white;
+    background: #ffffff;
 
     box-shadow:
-        0 0 10px white,
-        0 0 25px #ffb5ed,
-        0 0 45px #ff38bd;
+        0 0 10px #ffffff,
+        0 0 22px #ffffff,
+        0 0 35px #ffb5ed,
+        0 0 50px #ff38bd;
 
-    opacity: 0.9;
+    opacity: 0.95;
 }
