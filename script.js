@@ -20,10 +20,10 @@ function createStar() {
         Math.random() * 2 + 1;
 
     const duration =
-        Math.random() * 8 + 5;
+        Math.random() * 2 + 2;
 
     const delay =
-        Math.random() * -10;
+        Math.random() * -5;
 
     star.style.width =
         `${size}px`;
@@ -47,15 +47,15 @@ function createStar() {
 }
 
 
-/* Lots of stars */
+/* Create stars */
 
-for (let i = 0; i < 220; i++) {
+for (let i = 220; i > 0; i--) {
     createStar();
 }
 
 
 /* =========================
-   METEOR
+   METEORS
 ========================= */
 
 function createMeteor() {
@@ -67,31 +67,7 @@ function createMeteor() {
 
 
     /*
-        RANDOM X POSITION.
-
-        0 = FAR LEFT
-        50 = CENTER
-        100 = FAR RIGHT
-
-        This covers the ENTIRE
-        top of the screen.
-    */
-
-    const startX =
-        Math.random() * 100;
-
-
-    /*
-        Start just above the screen.
-    */
-
-    const startY =
-        -300;
-
-
-    /*
-        Slightly different
-        meteor lengths.
+        Long meteor
     */
 
     const length =
@@ -103,25 +79,44 @@ function createMeteor() {
 
 
     /*
-        Put meteor at random
-        percentage across screen.
+        Spawn across the entire
+        top, but shifted LEFT.
+
+        -25vw → 75vw
+
+        This means the rightmost
+        meteor starts around the
+        middle/right area rather
+        than way off the right.
     */
 
-    meteor.style.left =
-        `${startX}vw`;
-
-    meteor.style.top =
-        `${startY}px`;
+    const startX =
+        -25 +
+        Math.random() * 100;
 
 
     /*
-        Different speeds.
+        Start above the screen.
+    */
+
+    const startY =
+        -300;
+
+
+    /*
+        Random speed.
     */
 
     const duration =
         2 +
         Math.random() * 1.5;
 
+
+    meteor.style.left =
+        `${startX}vw`;
+
+    meteor.style.top =
+        `${startY}px`;
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -130,35 +125,23 @@ function createMeteor() {
     meteorContainer.appendChild(meteor);
 
 
-    /*
-        Clean it up.
-    */
-
     setTimeout(() => {
-
         meteor.remove();
-
     }, duration * 1000);
 }
 
 
 /* =========================
-   SPAWN METEORS
+   SPAWN
 ========================= */
 
 function spawnMeteor() {
 
     createMeteor();
 
-
-    /*
-        Lots of meteors.
-    */
-
     const delay =
         150 +
         Math.random() * 300;
-
 
     setTimeout(
         spawnMeteor,
