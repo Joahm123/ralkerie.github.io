@@ -1,1 +1,171 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    background: #050507;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Background */
+
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 50% 50%, #11111a 0%, #050507 65%);
+}
+
+/* Moving glowing orbs */
+
+.orb {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.35;
+}
+
+.orb1 {
+    background: #7c3aed;
+    top: -100px;
+    left: -100px;
+    animation: float1 14s ease-in-out infinite alternate;
+}
+
+.orb2 {
+    background: #2563eb;
+    right: -100px;
+    top: 20%;
+    animation: float2 18s ease-in-out infinite alternate;
+}
+
+.orb3 {
+    background: #ec4899;
+    bottom: -150px;
+    left: 25%;
+    animation: float3 20s ease-in-out infinite alternate;
+}
+
+.orb4 {
+    background: #06b6d4;
+    bottom: 10%;
+    right: 20%;
+    animation: float4 16s ease-in-out infinite alternate;
+}
+
+@keyframes float1 {
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(250px, 180px);
+    }
+}
+
+@keyframes float2 {
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(-250px, 150px);
+    }
+}
+
+@keyframes float3 {
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(200px, -200px);
+    }
+}
+
+@keyframes float4 {
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(-180px, -180px);
+    }
+}
+
+/* Subtle grid */
+
+.grid {
+    position: absolute;
+    inset: -100%;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(500px) rotateX(60deg);
+    animation: gridMove 12s linear infinite;
+}
+
+@keyframes gridMove {
+    from {
+        transform: perspective(500px) rotateX(60deg) translateY(0);
+    }
+
+    to {
+        transform: perspective(500px) rotateX(60deg) translateY(60px);
+    }
+}
+
+/* Profile */
+
+main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile {
+    padding: 50px 70px;
+    text-align: center;
+
+    background: rgba(10, 10, 15, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+
+    animation: appear 1s ease forwards;
+}
+
+.profile h1 {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.profile p {
+    color: #aaa;
+    font-size: 18px;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
