@@ -10,7 +10,6 @@ const starContainer =
 ========================= */
 
 function createStar() {
-
     const star =
         document.createElement("div");
 
@@ -50,7 +49,9 @@ function createStar() {
 }
 
 
-for (let i = 0; i < 220; i++) {
+/* Lots of stars */
+
+for (let i = 220; i > 0; i--) {
     createStar();
 }
 
@@ -60,7 +61,6 @@ for (let i = 0; i < 220; i++) {
 ========================= */
 
 function createMeteor() {
-
     const meteor =
         document.createElement("div");
 
@@ -68,22 +68,10 @@ function createMeteor() {
 
 
     /*
-        SPAWN ACROSS THE
-        ENTIRE TOP OF SCREEN.
+        LONG METEOR
 
-        No bottom spawning.
-    */
-
-    const startX =
-        Math.random() *
-        window.innerWidth;
-
-    const startY =
-        -450;
-
-
-    /*
-        Random extra length.
+        Every meteor gets a
+        slightly different length.
     */
 
     const length =
@@ -94,7 +82,31 @@ function createMeteor() {
 
 
     /*
-        Fast shooting-star speed.
+        SPAWN ACROSS THE ENTIRE
+        TOP OF THE SCREEN.
+
+        Account for the meteor's
+        length so it isn't pushed
+        toward the right.
+    */
+
+    const startX =
+        Math.random() *
+        (window.innerWidth + length) -
+        length;
+
+
+    /*
+        ALWAYS START ABOVE
+        THE TOP OF THE SCREEN.
+    */
+
+    const startY =
+        -450;
+
+
+    /*
+        Random falling speed.
     */
 
     const duration =
@@ -107,12 +119,22 @@ function createMeteor() {
     meteor.style.top =
         `${startY}px`;
 
+
+    /*
+        Meteor travels:
+        TOP → DOWN + RIGHT
+    */
+
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
 
 
     meteorContainer.appendChild(meteor);
 
+
+    /*
+        Remove after animation.
+    */
 
     setTimeout(() => {
         meteor.remove();
@@ -121,19 +143,24 @@ function createMeteor() {
 
 
 /* =========================
-   FREQUENT METEORS
+   METEOR SPAWNING
 ========================= */
 
 function spawnMeteor() {
 
     createMeteor();
 
+
     /*
-        Lots more meteors.
+        Frequent meteors.
+
+        Smaller number =
+        more frequent.
     */
 
     const nextMeteor =
         Math.random() * 300 + 120;
+
 
     setTimeout(
         spawnMeteor,
@@ -141,5 +168,9 @@ function spawnMeteor() {
     );
 }
 
+
+/* =========================
+   START
+========================= */
 
 spawnMeteor();
