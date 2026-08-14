@@ -19,10 +19,15 @@
 
     const meteors = [];
 
-    const METEOR_COUNT = 8;
+    const MAX_METEORS = 10;
 
-    const SPAWN_MIN = 500;
-    const SPAWN_MAX = 900;
+    const SPAWN_MIN = 700;
+    const SPAWN_MAX = 1200;
+
+    let meteorSpawnTimer = null;
+
+    let meteorLastTime =
+        performance.now();
 
 
     /* =================================================
@@ -31,19 +36,44 @@
 
     function createMeteor(x, y) {
 
+        /*
+           Don't create unlimited meteors.
+        */
+
+        if (meteors.length >= MAX_METEORS) {
+            return;
+        }
+
+
         const element =
             document.createElement("div");
 
-        element.className = "meteor";
+        element.className =
+            "meteor";
+
+
+        /*
+           White center.
+        */
+
+        const core =
+            document.createElement("div");
+
+        core.className =
+            "meteor-core";
+
+        element.appendChild(
+            core
+        );
 
 
         const meteor = {
 
-            element: element,
+            element,
 
-            x: x,
+            x,
 
-            y: y,
+            y,
 
             speedX:
                 850 +
@@ -66,10 +96,98 @@
             element
         );
 
-
         meteors.push(
             meteor
         );
+    }
+
+
+    /* =================================================
+       SPAWN
+    ================================================= */
+
+    function spawnMeteor() {
+
+        /*
+           If the tab was hidden,
+           don't dump a bunch of
+           meteors onto the screen.
+        */
+
+        if (
+            document.hidden
+        ) {
+            return;
+        }
+
+
+        if (
+            meteors.length >=
+            MAX_METEORS
+        ) {
+            return;
+        }
+
+
+        const width =
+            window.innerWidth;
+
+
+        /*
+           Spawn across the entire
+           top with a slight LEFT
+           bias.
+        */
+
+        const x =
+            -250 +
+            Math.pow(
+                Math.random(),
+                1.2
+            ) *
+            (width + 250);
+
+
+        const y =
+            -120 -
+            Math.random() * 250;
+
+
+        createMeteor(
+            x,
+            y
+        );
+
+
+        scheduleMeteor();
+    }
+
+
+    /* =================================================
+       SCHEDULE
+    ================================================= */
+
+    function scheduleMeteor() {
+
+        clearTimeout(
+            meteorSpawnTimer
+        );
+
+
+        const delay =
+            SPAWN_MIN +
+            Math.random() *
+            (
+                SPAWN_MAX -
+                SPAWN_MIN
+            );
+
+
+        meteorSpawnTimer =
+            setTimeout(
+                spawnMeteor,
+                delay
+            );
     }
 
 
@@ -83,18 +201,15 @@
             window.innerWidth;
 
 
+        /*
+           Only a few initially.
+        */
+
         for (
             let i = 0;
-            i < METEOR_COUNT;
+            i < 4;
             i++
         ) {
-
-            /*
-               Entire top of screen.
-
-               Starts slightly offscreen
-               so they glide into view.
-            */
 
             const x =
                 -250 +
@@ -116,74 +231,52 @@
 
 
     /* =================================================
-       CONTINUOUS SPAWN
-    ================================================= */
-
-    function spawnMeteor() {
-
-        const width =
-            window.innerWidth;
-
-
-        /*
-           Entire top.
-
-           Slightly more likely
-           toward the LEFT.
-        */
-
-        const x =
-            -200 +
-            Math.pow(
-                Math.random(),
-                1.2
-            ) *
-            (width + 200);
-
-
-        const y =
-            -100 -
-            Math.random() * 250;
-
-
-        createMeteor(
-            x,
-            y
-        );
-
-
-        const delay =
-            SPAWN_MIN +
-            Math.random() *
-            (SPAWN_MAX - SPAWN_MIN);
-
-
-        setTimeout(
-            spawnMeteor,
-            delay
-        );
-    }
-
-
-    /* =================================================
        ANIMATION
     ================================================= */
 
-    let previousTime =
-        performance.now();
+    function animate(now) {
+
+        /*
+           Reset the clock when the
+           tab comes back.
+
+           This prevents a giant
+           time jump.
+        */
+
+        if (
+            document.hidden
+        ) {
+
+            meteorLastTime =
+                now;
+
+            requestAnimationFrame(
+                animate
+            );
+
+            return;
+        }
 
 
-    function animate(currentTime) {
+        let delta =
+            (now - meteorLastTime)
+            / 1000;
 
-        const delta =
+
+        /*
+           Never allow a huge frame.
+        */
+
+        delta =
             Math.min(
-                (currentTime - previousTime) / 1000,
+                delta,
                 0.05
             );
 
 
-        previousTime =
-            currentTime;
+        meteorLastTime =
+            now;
 
 
         for (
@@ -196,18 +289,10 @@
                 meteors[i];
 
 
-            /*
-               RIGHT
-            */
-
             meteor.x +=
                 meteor.speedX *
                 delta;
 
-
-            /*
-               DOWN
-            */
 
             meteor.y +=
                 meteor.speedY *
@@ -222,13 +307,13 @@
 
 
             /*
-               Remove once well
-               below the screen.
+               Remove once below
+               the screen.
             */
 
             if (
                 meteor.y >
-                window.innerHeight + 300
+                window.innerHeight + 400
             ) {
 
                 meteor.element.remove();
@@ -248,15 +333,63 @@
 
 
     /* =================================================
+       TAB VISIBILITY
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.hidden
+            ) {
+
+                /*
+                   Stop spawning while
+                   tab is hidden.
+                */
+
+                clearTimeout(
+                    meteorSpawnTimer
+                );
+
+                meteorSpawnTimer =
+                    null;
+
+                return;
+            }
+
+
+            /*
+               Reset animation clock.
+            */
+
+            meteorLastTime =
+                performance.now();
+
+
+            /*
+               Resume normal spawning
+               with ONE meteor.
+            */
+
+            if (
+                !meteorSpawnTimer
+            ) {
+
+                scheduleMeteor();
+            }
+        }
+    );
+
+
+    /* =================================================
        START
     ================================================= */
 
     createInitialMeteors();
 
-    setTimeout(
-        spawnMeteor,
-        800
-    );
+    scheduleMeteor();
 
     requestAnimationFrame(
         animate
