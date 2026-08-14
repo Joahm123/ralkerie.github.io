@@ -1,10 +1,5 @@
 /* =====================================================
-   RALKERIE METEORS — OPTIMIZED CSS
-===================================================== */
-
-
-/* =====================================================
-   METEOR CONTAINER
+   RALKERIE METEORS — PERFORMANCE OPTIMIZED
 ===================================================== */
 
 #meteors {
@@ -21,12 +16,12 @@
 
     z-index: 1;
 
-    contain: layout style;
+    contain: layout;
 }
 
 
 /* =====================================================
-   METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -44,26 +39,21 @@
 
     pointer-events: none;
 
-    z-index: 1;
-
     /*
-       GPU-friendly movement.
+       GPU movement from meteors.js.
     */
 
     will-change: transform;
 
     /*
-       Keeps the meteor centered
-       while the JS moves it.
+       Smaller glow = considerably cheaper.
     */
-
-    transform-origin: center center;
 
     box-shadow:
         0 0 8px #ffffff,
-        0 0 18px #ffffff,
-        0 0 30px #ffb5ed,
-        0 0 55px #ff38bd;
+        0 0 18px #ff9de0;
+
+    z-index: 1;
 }
 
 
@@ -76,22 +66,14 @@
 
     position: absolute;
 
-    /*
-       Connect directly to the
-       meteor head.
-    */
-
     right: 7px;
     top: 50%;
 
-    width: 900px;
+    width: 700px;
     height: 18px;
 
     transform:
         translateY(-50%);
-
-    transform-origin:
-        right center;
 
     border-radius: 999px;
 
@@ -104,59 +86,29 @@
             to left,
 
             #ffffff 0%,
-            #fff8fd 6%,
-            #ffd5f4 14%,
-            #ff9de0 27%,
-            #ff67ce 45%,
-            #ff3fc1 65%,
-            rgba(255, 50, 190, 0.35) 87%,
+
+            #fff5fc 8%,
+
+            #ffb5e9 20%,
+
+            #ff78d2 40%,
+
+            #ff4bc5 65%,
+
+            rgba(255, 60, 195, 0.25) 88%,
+
             transparent 100%
         );
 
     /*
-       Fade the END of the trail,
-       while keeping the beginning
-       completely thick.
+       No blur.
+       No mask.
+       Much cheaper.
     */
 
-    -webkit-mask-image:
-        linear-gradient(
-            to left,
+    opacity: 0.9;
 
-            #000000 0%,
-            #000000 8%,
-            rgba(0, 0, 0, 0.95) 20%,
-            rgba(0, 0, 0, 0.75) 40%,
-            rgba(0, 0, 0, 0.45) 60%,
-            rgba(0, 0, 0, 0.18) 82%,
-            transparent 100%
-        );
-
-    mask-image:
-        linear-gradient(
-            to left,
-
-            #000000 0%,
-            #000000 8%,
-            rgba(0, 0, 0, 0.95) 20%,
-            rgba(0, 0, 0, 0.75) 40%,
-            rgba(0, 0, 0, 0.45) 60%,
-            rgba(0, 0, 0, 0.18) 82%,
-            transparent 100%
-        );
-
-    box-shadow:
-        0 0 12px
-        rgba(255, 255, 255, 0.95),
-
-        0 0 25px
-        rgba(255, 100, 215, 0.85),
-
-        0 0 50px
-        rgba(255, 40, 190, 0.55);
-
-    filter:
-        blur(1px);
+    pointer-events: none;
 
     z-index: 0;
 }
@@ -167,13 +119,14 @@
 ===================================================== */
 
 .meteor > .meteor-core {
+
     position: absolute;
 
     right: 7px;
     top: 50%;
 
-    width: 900px;
-    height: 9px;
+    width: 700px;
+    height: 7px;
 
     transform:
         translateY(-50%);
@@ -185,55 +138,24 @@
             to left,
 
             #ffffff 0%,
-            #ffffff 10%,
-            rgba(255, 255, 255, 0.98) 25%,
-            rgba(255, 255, 255, 0.88) 45%,
-            rgba(255, 255, 255, 0.60) 65%,
-            rgba(255, 255, 255, 0.20) 85%,
+
+            #ffffff 12%,
+
+            rgba(255,255,255,0.95) 35%,
+
+            rgba(255,255,255,0.65) 65%,
+
             transparent 100%
         );
 
-    /*
-       Keep the white center thick
-       near the meteor and fade it
-       smoothly.
-    */
-
-    -webkit-mask-image:
-        linear-gradient(
-            to left,
-
-            #000000 0%,
-            #000000 8%,
-            rgba(0, 0, 0, 0.95) 25%,
-            rgba(0, 0, 0, 0.75) 45%,
-            rgba(0, 0, 0, 0.40) 70%,
-            transparent 100%
-        );
-
-    mask-image:
-        linear-gradient(
-            to left,
-
-            #000000 0%,
-            #000000 8%,
-            rgba(0, 0, 0, 0.95) 25%,
-            rgba(0, 0, 0, 0.75) 45%,
-            rgba(0, 0, 0, 0.40) 70%,
-            transparent 100%
-        );
-
-    box-shadow:
-        0 0 8px #ffffff,
-        0 0 18px
-        rgba(255, 255, 255, 0.9);
+    pointer-events: none;
 
     z-index: 2;
 }
 
 
 /* =====================================================
-   METEOR HEAD GLOW
+   METEOR GLOW
 ===================================================== */
 
 .meteor::after {
@@ -241,11 +163,11 @@
 
     position: absolute;
 
-    left: -7px;
-    top: -7px;
+    left: -5px;
+    top: -5px;
 
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
 
     border-radius: 50%;
 
@@ -253,11 +175,7 @@
 
     box-shadow:
         0 0 10px #ffffff,
-        0 0 22px #ffffff,
-        0 0 35px #ffb5ed,
-        0 0 55px #ff38bd;
-
-    opacity: 1;
+        0 0 22px #ff9de0;
 
     pointer-events: none;
 
