@@ -235,3 +235,17 @@ main {
         transform: translateY(0);
     }
 }
+@keyframes meteorFly {
+    from {
+        transform: translate(0, 0) rotate(45deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-500px, 500px) rotate(45deg);
+        opacity: 0;
+    }
