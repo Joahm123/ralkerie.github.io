@@ -49,9 +49,7 @@ function createStar() {
 }
 
 
-/* Lots of stars */
-
-for (let i = 220; i > 0; i--) {
+for (let i = 0; i < 220; i++) {
     createStar();
 }
 
@@ -61,6 +59,7 @@ for (let i = 220; i > 0; i--) {
 ========================= */
 
 function createMeteor() {
+
     const meteor =
         document.createElement("div");
 
@@ -68,10 +67,7 @@ function createMeteor() {
 
 
     /*
-        LONG METEOR
-
-        Every meteor gets a
-        slightly different length.
+        Long meteor
     */
 
     const length =
@@ -82,31 +78,29 @@ function createMeteor() {
 
 
     /*
-        SPAWN ACROSS THE ENTIRE
-        TOP OF THE SCREEN.
+        SPAWN ACROSS THE
+        ENTIRE TOP.
 
-        Account for the meteor's
-        length so it isn't pushed
-        toward the right.
+        Start from LEFT side
+        and spread toward RIGHT.
     */
 
     const startX =
         Math.random() *
-        (window.innerWidth + length) -
-        length;
+        window.innerWidth;
 
 
     /*
-        ALWAYS START ABOVE
-        THE TOP OF THE SCREEN.
+        Start slightly above
+        the top of the screen.
     */
 
     const startY =
-        -450;
+        -100;
 
 
     /*
-        Random falling speed.
+        Speed
     */
 
     const duration =
@@ -119,22 +113,12 @@ function createMeteor() {
     meteor.style.top =
         `${startY}px`;
 
-
-    /*
-        Meteor travels:
-        TOP → DOWN + RIGHT
-    */
-
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
 
 
     meteorContainer.appendChild(meteor);
 
-
-    /*
-        Remove after animation.
-    */
 
     setTimeout(() => {
         meteor.remove();
@@ -143,24 +127,15 @@ function createMeteor() {
 
 
 /* =========================
-   METEOR SPAWNING
+   SPAWN MORE METEORS
 ========================= */
 
 function spawnMeteor() {
 
     createMeteor();
 
-
-    /*
-        Frequent meteors.
-
-        Smaller number =
-        more frequent.
-    */
-
     const nextMeteor =
-        Math.random() * 300 + 120;
-
+        Math.random() * 250 + 100;
 
     setTimeout(
         spawnMeteor,
@@ -168,9 +143,5 @@ function spawnMeteor() {
     );
 }
 
-
-/* =========================
-   START
-========================= */
 
 spawnMeteor();
