@@ -1,6 +1,5 @@
 /* =====================================================
    RALKERIE METEORS
-   NORMAL SPAWN POSITION
 ===================================================== */
 
 (() => {
@@ -9,15 +8,8 @@
 
 
     /* =================================================
-       SETTINGS
+       ELEMENT
     ================================================= */
-
-    const AUDIO_FILE =
-        "./assets/audio/meteor.mp3";
-
-    const GIF_FILE =
-        "./assets/images/meteor.gif";
-
 
     const meteorContainer =
         document.getElementById("meteors");
@@ -26,7 +18,7 @@
     if (!meteorContainer) {
 
         console.error(
-            "Ralkerie: #meteors not found."
+            "Ralkerie: #meteors was not found."
         );
 
         return;
@@ -36,6 +28,17 @@
     console.log(
         "Ralkerie meteors loaded."
     );
+
+
+    /* =================================================
+       FILES
+    ================================================= */
+
+    const AUDIO_FILE =
+        "./assets/audio/meteor.mp3";
+
+    const GIF_FILE =
+        "./assets/images/meteor.gif";
 
 
     /* =================================================
@@ -61,7 +64,6 @@
 
 
     popup.innerHTML = `
-
         <div class="meteor-popup-box">
 
             <button
@@ -78,7 +80,6 @@
             >
 
         </div>
-
     `;
 
 
@@ -94,7 +95,7 @@
 
 
     /* =================================================
-       OPEN POPUP
+       POPUP OPEN
     ================================================= */
 
     function openPopup() {
@@ -109,12 +110,18 @@
 
 
         meteorAudio.play()
-            .catch(() => {});
+            .catch(() => {
+
+                console.log(
+                    "Meteor audio could not play."
+                );
+
+            });
     }
 
 
     /* =================================================
-       CLOSE POPUP
+       POPUP CLOSE
     ================================================= */
 
     function closePopup() {
@@ -184,39 +191,22 @@
 
 
         /* ---------------------------------------------
-           NORMAL SPAWN
-
-           Back to the original area.
+           NORMAL POSITION
         --------------------------------------------- */
 
-        const y =
-            15 +
-            Math.random() * 65;
-
-
-        const x =
-            -80 -
-            Math.random() * 120;
-
-
         meteor.style.left =
-            `${x}px`;
+            "-100px";
 
 
         meteor.style.top =
-            `${y}vh`;
-
-
-        meteor.style.opacity =
-            "1";
-
-
-        meteor.style.visibility =
-            "visible";
+            (
+                15 +
+                Math.random() * 65
+            ) + "vh";
 
 
         /* ---------------------------------------------
-           CLICK METEOR
+           CLICK
         --------------------------------------------- */
 
         meteor.addEventListener(
@@ -232,7 +222,7 @@
 
 
         /* ---------------------------------------------
-           ADD METEOR
+           ADD TO DOM
         --------------------------------------------- */
 
         meteorContainer.appendChild(
@@ -240,80 +230,35 @@
         );
 
 
-        /* ---------------------------------------------
-           MOVEMENT
-        --------------------------------------------- */
-
-        const duration =
-            2800 +
-            Math.random() * 1800;
-
-
-        const distance =
-            window.innerWidth +
-            800;
-
-
-        const animation =
-            meteor.animate(
-
-                [
-                    {
-                        transform:
-                            "translate3d(0, 0, 0)",
-
-                        opacity: 1
-                    },
-
-                    {
-                        transform:
-                            `translate3d(${distance}px, 0, 0)`,
-
-                        opacity: 1
-                    }
-                ],
-
-                {
-                    duration:
-                        duration,
-
-                    easing:
-                        "linear",
-
-                    fill:
-                        "forwards"
-                }
-
-            );
+        console.log(
+            "Meteor spawned."
+        );
 
 
         /* ---------------------------------------------
-           CLEANUP
+           REMOVE OLD METEOR
         --------------------------------------------- */
 
-        animation.finished
-            .then(() => {
+        setTimeout(
+            () => {
 
                 meteor.remove();
 
-            })
-            .catch(() => {
-
-                meteor.remove();
-
-            });
+            },
+            6000
+        );
     }
 
 
     /* =================================================
-       FIRST METEOR
+       SPAWN FIRST METEOR
     ================================================= */
 
     createMeteor();
 
 
     /* =================================================
-       SPAWN LOOP
+       SPAWN MORE
     ================================================= */
 
     function spawnMeteor() {
@@ -329,7 +274,7 @@
 
         const delay =
             3000 +
-            Math.random() * 4500;
+            Math.random() * 4000;
 
 
         setTimeout(
@@ -341,7 +286,8 @@
 
     setTimeout(
         spawnMeteor,
-        3500
+        3000
     );
+
 
 })();
