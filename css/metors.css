@@ -1,1 +1,151 @@
+/* =====================================================
+   METEOR CONTAINER
+===================================================== */
 
+#meteors {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: visible;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   METEOR
+===================================================== */
+
+.meteor {
+
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    pointer-events: none;
+
+    transform:
+        rotate(34deg);
+}
+
+
+/* =====================================================
+   METEOR HEAD
+===================================================== */
+
+.meteor::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -9px;
+    top: -9px;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 0 8px white,
+
+        0 0 18px white,
+
+        0 0 30px #ffd5f4,
+
+        0 0 45px #ff8bd8,
+
+        0 0 65px #ff35bd;
+}
+
+
+/* =====================================================
+   METEOR TRAIL
+===================================================== */
+
+.meteor::before {
+
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+
+    top: -4px;
+
+    width: 750px;
+
+    height: 8px;
+
+    border-radius: 999px;
+
+    background:
+
+        linear-gradient(
+            to left,
+
+            white 0%,
+
+            rgba(
+                255,
+                235,
+                252,
+                0.95
+            ) 8%,
+
+            rgba(
+                255,
+                170,
+                235,
+                0.8
+            ) 25%,
+
+            rgba(
+                255,
+                80,
+                205,
+                0.5
+            ) 55%,
+
+            rgba(
+                255,
+                40,
+                190,
+                0.15
+            ) 80%,
+
+            transparent 100%
+        );
+
+    box-shadow:
+
+        0 0 8px
+        rgba(
+            255,
+            220,
+            250,
+            0.8
+        ),
+
+        0 0 18px
+        rgba(
+            255,
+            70,
+            205,
+            0.5
+        );
+
+    filter: blur(2px);
+}
