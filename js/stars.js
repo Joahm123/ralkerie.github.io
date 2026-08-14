@@ -1,51 +1,67 @@
 /* =====================================================
-   RALKERIE STARS
+   RALKERIE STARS — PERFORMANCE OPTIMIZED
 ===================================================== */
 
 (() => {
+    "use strict";
 
-    const starContainer =
+    const container =
         document.getElementById("stars");
 
-    if (!starContainer) {
+    if (!container) {
         console.error("Star container not found.");
         return;
     }
 
+    const STAR_COUNT = 160;
 
-    /* =================================================
-       SETTINGS
-    ================================================= */
+    /*
+       Create stars once.
+       CSS handles all movement.
+    */
 
-    const STAR_COUNT = 220;
-
-    const stars = [];
-
-    let starsLastTime =
-        performance.now();
-
-
-    /* =================================================
-       CREATE STARS
-    ================================================= */
+    const fragment =
+        document.createDocumentFragment();
 
     for (
         let i = 0;
         i < STAR_COUNT;
         i++
     ) {
-
         const star =
             document.createElement("div");
 
-        star.className =
-            "star";
-
+        star.className = "star";
 
         const size =
-            1 +
-            Math.random() * 2.5;
+            1 + Math.random() * 2.2;
 
+        /*
+           Random starting position.
+        */
+
+        star.style.left =
+            `${Math.random() * 100}vw`;
+
+        star.style.top =
+            `${Math.random() * 100}vh`;
+
+        /*
+           Slightly different speeds.
+        */
+
+        star.style.setProperty(
+            "--star-speed",
+            `${18 + Math.random() * 45}s`
+        );
+
+        /*
+           Different animation offsets
+           prevent them moving together.
+        */
+
+        star.style.animationDelay =
+            `${-Math.random() * 60}s`;
 
         star.style.width =
             `${size}px`;
@@ -53,172 +69,26 @@
         star.style.height =
             `${size}px`;
 
+        /*
+           Random sparkle timing.
+        */
 
-        const data = {
+        star.style.setProperty(
+            "--sparkle-speed",
+            `${1.5 + Math.random() * 3}s`
+        );
 
-            element: star,
-
-            x:
-                Math.random() *
-                window.innerWidth,
-
-            y:
-                Math.random() *
-                window.innerHeight,
-
-            speed:
-                25 +
-                Math.random() * 65
-        };
-
-
-        star.style.left =
-            `${data.x}px`;
-
-        star.style.top =
-            `${data.y}px`;
-
-
-        starContainer.appendChild(
+        fragment.appendChild(
             star
         );
-
-
-        stars.push(
-            data
-        );
     }
 
-
-    /* =================================================
-       ANIMATION
-    ================================================= */
-
-    function updateStars(time) {
-
-        /*
-           When the tab is hidden,
-           don't accumulate elapsed time.
-        */
-
-        if (
-            document.hidden
-        ) {
-
-            starsLastTime =
-                time;
-
-            requestAnimationFrame(
-                updateStars
-            );
-
-            return;
-        }
-
-
-        let delta =
-            (time - starsLastTime)
-            / 1000;
-
-
-        /*
-           Prevent huge jumps after
-           lag or returning to the tab.
-        */
-
-        delta =
-            Math.min(
-                delta,
-                0.05
-            );
-
-
-        starsLastTime =
-            time;
-
-
-        const width =
-            window.innerWidth;
-
-
-        for (
-            const star of stars
-        ) {
-
-            /*
-               Move RIGHT.
-            */
-
-            star.x +=
-                star.speed *
-                delta;
-
-
-            /*
-               Wrap smoothly from
-               right → left.
-
-               IMPORTANT:
-               Keep the same Y position.
-               This prevents the stars
-               from bunching up.
-            */
-
-            if (
-                star.x >
-                width + 20
-            ) {
-
-                star.x =
-                    -20;
-            }
-
-
-            star.element.style.left =
-                `${star.x}px`;
-
-            star.element.style.top =
-                `${star.y}px`;
-        }
-
-
-        requestAnimationFrame(
-            updateStars
-        );
-    }
-
-
-    /* =================================================
-       TAB VISIBILITY
-    ================================================= */
-
-    document.addEventListener(
-        "visibilitychange",
-        () => {
-
-            /*
-               Reset the animation clock
-               whenever the tab changes
-               visibility.
-            */
-
-            starsLastTime =
-                performance.now();
-        }
+    container.appendChild(
+        fragment
     );
-
-
-    /* =================================================
-       START
-    ================================================= */
-
-    requestAnimationFrame(
-        updateStars
-    );
-
 
     console.log(
-        "Ralkerie stars loaded."
+        "Ralkerie optimized stars loaded."
     );
 
 })();
