@@ -91,7 +91,8 @@ body {
         0 0 9px rgba(255, 180, 230, 0.8);
 
     /*
-        Stars move horizontally
+        Stars continue moving
+        across the screen.
     */
 
     animation:
@@ -111,7 +112,7 @@ body {
 
 
 /* =========================
-   METEORS
+   METEOR CONTAINER
 ========================= */
 
 #meteors {
@@ -127,6 +128,11 @@ body {
 
     z-index: 1;
 }
+
+
+/* =========================
+   METEOR
+========================= */
 
 .meteor {
     position: absolute;
@@ -150,6 +156,10 @@ body {
         0 0 10px rgba(255, 140, 220, 0.9),
         0 0 25px rgba(255, 70, 195, 0.75),
         0 0 50px rgba(255, 70, 195, 0.45);
+
+    /*
+        DOWN-RIGHT angle.
+    */
 
     transform: rotate(46deg);
 
@@ -193,7 +203,7 @@ body {
 
 
 /* =========================
-   METEOR HEAD
+   BRIGHT METEOR HEAD
 ========================= */
 
 .meteor::after {
@@ -228,6 +238,11 @@ body {
 
 @keyframes meteorFly {
 
+    /*
+        START:
+        Above the top edge.
+    */
+
     0% {
         transform:
             translate(0, 0)
@@ -236,29 +251,31 @@ body {
         opacity: 0;
     }
 
-    5% {
+
+    /*
+        Enter quickly.
+    */
+
+    4% {
         opacity: 1;
     }
 
-    90% {
+
+    85% {
         opacity: 1;
     }
+
+
+    /*
+        END:
+        Far below + to the right.
+    */
 
     100% {
-
-        /*
-            Move down AND right,
-            but NOT based on where
-            it spawned.
-
-            This lets both the left
-            and right side work.
-        */
-
         transform:
             translate(
-                60vw,
-                70vh
+                95vw,
+                115vh
             )
             rotate(46deg);
 
@@ -309,12 +326,10 @@ main {
 
 .profile h1 {
     font-size: 60px;
-
     margin-bottom: 10px;
 }
 
 .profile p {
     color: #c9a9c2;
-
     font-size: 18px;
 }
