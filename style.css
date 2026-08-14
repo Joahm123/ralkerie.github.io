@@ -7,13 +7,13 @@
 body {
     min-height: 100vh;
     overflow: hidden;
-    background: #050507;
+    background: #020207;
     color: white;
     font-family: Arial, sans-serif;
 }
 
 /* =========================
-   BACKGROUND
+   SPACE
 ========================= */
 
 .background {
@@ -24,148 +24,49 @@ body {
 
     background:
         radial-gradient(
-            circle at 50% 50%,
-            #14101c 0%,
-            #08070c 45%,
-            #030305 100%
+            ellipse at center,
+            #0d0d18 0%,
+            #05050c 45%,
+            #010103 100%
         );
 }
 
 /* =========================
-   GLOWING ORBS
+   STARS
 ========================= */
 
-.orb {
+#stars {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.star {
     position: absolute;
 
-    width: 400px;
-    height: 400px;
+    width: 2px;
+    height: 2px;
 
     border-radius: 50%;
 
-    filter: blur(120px);
+    background: white;
 
-    opacity: 0.32;
+    box-shadow:
+        0 0 5px white,
+        0 0 10px rgba(255, 255, 255, 0.7);
+
+    animation: starMove linear infinite;
 }
 
-.orb1 {
-    background: #7c3aed;
-
-    top: -120px;
-    left: -100px;
-
-    animation: float1 14s ease-in-out infinite alternate;
-}
-
-.orb2 {
-    background: #2563eb;
-
-    right: -120px;
-    top: 20%;
-
-    animation: float2 18s ease-in-out infinite alternate;
-}
-
-.orb3 {
-    background: #ec4899;
-
-    bottom: -180px;
-    left: 25%;
-
-    animation: float3 20s ease-in-out infinite alternate;
-}
-
-.orb4 {
-    background: #06b6d4;
-
-    bottom: 10%;
-    right: 20%;
-
-    animation: float4 16s ease-in-out infinite alternate;
-}
-
-@keyframes float1 {
+@keyframes starMove {
     from {
-        transform: translate(0, 0);
+        transform: translateX(-20px);
     }
 
     to {
-        transform: translate(250px, 180px);
-    }
-}
-
-@keyframes float2 {
-    from {
-        transform: translate(0, 0);
-    }
-
-    to {
-        transform: translate(-250px, 150px);
-    }
-}
-
-@keyframes float3 {
-    from {
-        transform: translate(0, 0);
-    }
-
-    to {
-        transform: translate(200px, -200px);
-    }
-}
-
-@keyframes float4 {
-    from {
-        transform: translate(0, 0);
-    }
-
-    to {
-        transform: translate(-180px, -180px);
-    }
-}
-
-/* =========================
-   GRID
-========================= */
-
-.grid {
-    position: absolute;
-
-    inset: -100%;
-
-    background-image:
-        linear-gradient(
-            rgba(255, 255, 255, 0.025) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.025) 1px,
-            transparent 1px
-        );
-
-    background-size: 60px 60px;
-
-    transform:
-        perspective(500px)
-        rotateX(60deg);
-
-    animation: gridMove 12s linear infinite;
-}
-
-@keyframes gridMove {
-    from {
-        transform:
-            perspective(500px)
-            rotateX(60deg)
-            translateY(0);
-    }
-
-    to {
-        transform:
-            perspective(500px)
-            rotateX(60deg)
-            translateY(60px);
+        transform: translateX(110vw);
     }
 }
 
@@ -175,11 +76,9 @@ body {
 
 #meteors {
     position: fixed;
-
     inset: 0;
 
     pointer-events: none;
-
     overflow: hidden;
 
     z-index: 0;
@@ -188,93 +87,101 @@ body {
 .meteor {
     position: absolute;
 
-    width: 10px;
-    height: 10px;
+    /*
+       Bigger meteor head
+    */
+    width: 20px;
+    height: 20px;
 
     border-radius: 50%;
 
-    background: #ffd1f1;
+    background: #ffe5f6;
 
     box-shadow:
-        0 0 8px #ffffff,
-        0 0 18px #ff9de2,
-        0 0 35px #ff4fc3,
-        0 0 60px #ff4fc3;
+        0 0 10px white,
+        0 0 22px #ffb3e5,
+        0 0 45px #ff65c8,
+        0 0 75px #ff3fba;
 
-    transform: rotate(45deg);
+    /*
+       Head points RIGHT
+    */
+    transform: rotate(0deg);
 
-    animation-name: meteorFly;
-
-    animation-timing-function: linear;
-
-    animation-fill-mode: forwards;
+    animation:
+        meteorFly linear forwards;
 }
 
-/* Long glowing tail */
+/* =========================
+   METEOR TRAIL
+========================= */
 
 .meteor::before {
     content: "";
 
     position: absolute;
 
-    width: 220px;
-    height: 7px;
+    /*
+       Trail extends BEHIND
+       the meteor toward the right.
+    */
+    width: 300px;
+    height: 9px;
 
-    right: 4px;
+    left: 12px;
     top: 50%;
 
-    transform:
-        translateY(-50%);
-
-    transform-origin: right center;
+    transform: translateY(-50%);
 
     border-radius: 999px;
 
     background: linear-gradient(
-        to left,
-        rgba(255, 255, 255, 1),
-        rgba(255, 157, 226, 0.9) 15%,
-        rgba(255, 79, 195, 0.5) 45%,
-        rgba(255, 79, 195, 0.15) 75%,
-        rgba(255, 79, 195, 0)
+        to right,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 180, 230, 0.85) 15%,
+        rgba(255, 75, 190, 0.5) 45%,
+        rgba(255, 75, 190, 0.15) 75%,
+        rgba(255, 75, 190, 0)
     );
 
     filter: blur(2px);
 }
 
-/* Extra soft glow behind the trail */
+/* Soft trail glow */
 
 .meteor::after {
     content: "";
 
     position: absolute;
 
-    width: 260px;
-    height: 18px;
+    width: 340px;
+    height: 28px;
 
-    right: 0;
+    left: 8px;
     top: 50%;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
+
+    border-radius: 999px;
 
     background: linear-gradient(
-        to left,
-        rgba(255, 79, 195, 0.45),
-        rgba(255, 79, 195, 0)
+        to right,
+        rgba(255, 70, 190, 0.4),
+        rgba(255, 70, 190, 0)
     );
 
-    filter: blur(8px);
-
-    opacity: 0.7;
+    filter: blur(10px);
 }
 
-@keyframes meteorFly {
-    0% {
-        transform:
-            translate(0, 0)
-            rotate(45deg);
+/* =========================
+   METEOR MOVEMENT
+========================= */
 
+@keyframes meteorFly {
+    from {
+        transform:
+            translateX(120vw)
+            translateY(0);
         opacity: 0;
     }
 
@@ -282,15 +189,14 @@ body {
         opacity: 1;
     }
 
-    80% {
+    85% {
         opacity: 1;
     }
 
-    100% {
+    to {
         transform:
-            translate(-700px, 700px)
-            rotate(45deg);
-
+            translateX(-500px)
+            translateY(120px);
         opacity: 0;
     }
 }
@@ -303,18 +209,15 @@ main {
     min-height: 100vh;
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
     position: relative;
-
     z-index: 2;
 }
 
 .profile {
     position: relative;
-
     z-index: 2;
 
     padding: 50px 70px;
@@ -322,7 +225,7 @@ main {
     text-align: center;
 
     background:
-        rgba(10, 10, 15, 0.55);
+        rgba(5, 5, 12, 0.55);
 
     border:
         1px solid rgba(255, 255, 255, 0.1);
@@ -332,7 +235,7 @@ main {
     backdrop-filter: blur(20px);
 
     box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.5);
+        0 20px 80px rgba(0, 0, 0, 0.7);
 
     animation:
         appear 1s ease forwards;
@@ -340,28 +243,22 @@ main {
 
 .profile h1 {
     font-size: 60px;
-
     margin-bottom: 10px;
 }
 
 .profile p {
     color: #aaa;
-
     font-size: 18px;
 }
 
 @keyframes appear {
     from {
         opacity: 0;
-
-        transform:
-            translateY(20px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
-
-        transform:
-            translateY(0);
+        transform: translateY(0);
     }
 }
