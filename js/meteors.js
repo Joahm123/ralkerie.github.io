@@ -1,4 +1,4 @@
-
+```javascript id="e4r6q0"
 (function () {
 
     "use strict";
@@ -33,8 +33,6 @@
 
     audio.preload = "auto";
 
-
-    /* Start at 35 seconds */
 
     var AUDIO_START_TIME = 35;
 
@@ -101,73 +99,70 @@
 
 
     /* =====================================================
-       PLAY AUDIO AT 35 SECONDS
+       PLAY AUDIO
     ===================================================== */
 
-    function playAudioFrom35() {
+    function playMeteorAudio() {
 
         /*
-           Make sure the browser has loaded
-           enough metadata to seek.
+           Reset the audio.
         */
 
-        if (
-            !isFinite(audio.duration)
-        ) {
-
-            console.warn(
-                "Audio metadata has not loaded yet."
-            );
-
-            return;
-        }
+        audio.pause();
 
 
         /*
-           Make sure 35 seconds actually
-           exists in the song.
+           Start from zero first.
+           This happens directly from
+           the meteor click.
         */
 
-        if (
-            audio.duration <= AUDIO_START_TIME
-        ) {
+        audio.currentTime = 0;
 
-            console.warn(
-                "Song is shorter than 35 seconds."
-            );
-
-            audio.currentTime = 0;
-
-        } else {
-
-            audio.currentTime =
-                AUDIO_START_TIME;
-
-        }
-
-
-        /*
-           Play after seeking.
-        */
 
         var playPromise =
             audio.play();
 
 
-        if (playPromise) {
+        if (!playPromise) {
+            return;
+        }
 
-            playPromise.catch(
-                function (error) {
+
+        playPromise.then(
+            function () {
+
+                /*
+                   Once playback has actually
+                   started, jump to 35 seconds.
+                */
+
+                try {
+
+                    audio.currentTime =
+                        AUDIO_START_TIME;
+
+                } catch (error) {
 
                     console.error(
-                        "Meteor audio error:",
+                        "Could not seek audio:",
                         error
                     );
 
                 }
-            );
 
-        }
+            }
+        ).catch(
+            function (error) {
+
+                console.error(
+                    "Audio playback failed:",
+                    error
+                );
+
+            }
+        );
+
     }
 
 
@@ -175,7 +170,12 @@
        METEOR CLICK
     ===================================================== */
 
-    function meteorClicked() {
+    function meteorClicked(event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
 
         popup.classList.add(
             "visible"
@@ -183,37 +183,12 @@
 
 
         /*
-           If metadata is already loaded,
-           seek immediately.
+           This is called directly by
+           the user's click.
         */
 
-        if (
-            audio.readyState >= 1
-        ) {
+        playMeteorAudio();
 
-            playAudioFrom35();
-
-        } else {
-
-            /*
-               Otherwise wait for metadata.
-            */
-
-            audio.addEventListener(
-                "loadedmetadata",
-                playAudioFrom35,
-                {
-                    once: true
-                }
-            );
-
-
-            /*
-               Start loading the audio.
-            */
-
-            audio.load();
-        }
     }
 
 
@@ -232,6 +207,7 @@
 
         audio.currentTime =
             0;
+
     }
 
 
@@ -280,7 +256,9 @@
     function createMeteor() {
 
         var hitbox =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         hitbox.className =
@@ -288,7 +266,9 @@
 
 
         var meteor =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         meteor.className =
@@ -310,13 +290,17 @@
             ) + "vh";
 
 
+        /*
+           Put meteor inside hitbox
+        */
+
         hitbox.appendChild(
             meteor
         );
 
 
         /*
-           Click meteor
+           Click
         */
 
         hitbox.addEventListener(
@@ -324,6 +308,10 @@
             meteorClicked
         );
 
+
+        /*
+           Add to page
+        */
 
         container.appendChild(
             hitbox
@@ -336,7 +324,7 @@
 
 
         /*
-           Remove meteor
+           Remove after animation
         */
 
         setTimeout(
@@ -355,6 +343,7 @@
             },
             5500
         );
+
     }
 
 
@@ -384,6 +373,5 @@
         3500
     );
 
-
 })();
-
+```
