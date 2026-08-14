@@ -19,7 +19,7 @@ body {
 
 
 /* =========================
-   BACKGROUND
+   SPACE BACKGROUND
 ========================= */
 
 .background {
@@ -62,7 +62,7 @@ body {
 
 
 /* =========================
-   STARS
+   MOVING STARS
 ========================= */
 
 #stars {
@@ -151,11 +151,9 @@ body {
         0 0 25px rgba(255, 70, 195, 0.75),
         0 0 50px rgba(255, 70, 195, 0.45);
 
-    transform:
-        rotate(46deg);
+    transform: rotate(46deg);
 
-    transform-origin:
-        right center;
+    transform-origin: right center;
 }
 
 
@@ -174,8 +172,7 @@ body {
     right: 0;
     top: 50%;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     border-radius: 999px;
 
@@ -210,8 +207,7 @@ body {
     width: 21px;
     height: 21px;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     border-radius: 50%;
 
@@ -240,32 +236,17 @@ body {
         opacity: 0;
     }
 
-    8% {
+    10% {
         opacity: 1;
     }
 
-    88% {
+    85% {
         opacity: 1;
     }
 
     100% {
-
-        /*
-            ONLY 55vw RIGHT.
-
-            Previously this was 85-110vw,
-            which shoved everything right.
-
-            Now the motion is mostly
-            DOWN with only a moderate
-            RIGHT movement.
-        */
-
         transform:
-            translate(
-                55vw,
-                125vh
-            )
+            translate(55vw, 125vh)
             rotate(46deg);
 
         opacity: 0;
@@ -274,7 +255,7 @@ body {
 
 
 /* =========================
-   PROFILE
+   MAIN CONTENT
 ========================= */
 
 main {
@@ -290,6 +271,11 @@ main {
     justify-content: center;
     align-items: center;
 }
+
+
+/* =========================
+   PROFILE CARD
+========================= */
 
 .profile {
     position: relative;
@@ -315,10 +301,12 @@ main {
 
 .profile h1 {
     font-size: 60px;
+
     margin-bottom: 10px;
 }
 
 .profile p {
     color: #c9a9c2;
+
     font-size: 18px;
 }
