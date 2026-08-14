@@ -33,90 +33,133 @@ for (let i = 0; i < 220; i++) {
 
 
 /* =========================
-   METEORS
+   CREATE METEOR
 ========================= */
 
 function createMeteor() {
+
     const meteor = document.createElement("div");
 
     meteor.className = "meteor";
 
-    /*
-        Random meteor length.
+
+    /* =========================
+       METEOR SIZE
+    ========================= */
+
+    const length =
+        320 + Math.random() * 220;
+
+    meteor.style.width =
+        `${length}px`;
+
+
+    /* =========================
+       HEAD POSITION
+    =========================
+
+       The HEAD is the important
+       part because it is on the
+       RIGHT side of the meteor.
+
+       We choose where the HEAD
+       should appear horizontally.
+
+       -250 = slightly off left
+       50vw = center
+       100vw = right edge
+       +250 = slightly off right
     */
 
-    const length = 320 + Math.random() * 220;
-
-    meteor.style.width = `${length}px`;
-
-
-    /*
-        =================================
-        SPAWN COMPLETELY OFF-SCREEN
-        =================================
-
-        The meteor is placed above the
-        viewport.
-
-        It CANNOT appear in the middle.
-    */
-
-    const startY =
-        -(window.innerHeight + 500);
-
-    meteor.style.top = `${startY}px`;
-
-
-    /*
-        Spread meteors across the
-        entire horizontal range.
-
-        Extra left space allows the
-        long trail to enter naturally.
-    */
-
-    const startX =
-        -length -
-        Math.random() * 300 +
-        Math.random() * (window.innerWidth + length + 300);
-
-    meteor.style.left = `${startX}px`;
+    const headX =
+        -250 +
+        Math.random() *
+        (window.innerWidth + 500);
 
 
     /*
-        Fast but smooth glide.
+        Because the head is on
+        the RIGHT side of the
+        meteor, move the actual
+        element LEFT by its length.
+
+        This fixes the right-side
+        spawning problem.
     */
+
+    const meteorX =
+        headX - length;
+
+
+    meteor.style.left =
+        `${meteorX}px`;
+
+
+    /* =========================
+       VERTICAL SPAWN
+    =========================
+
+       ALWAYS above the screen.
+
+       Never spawn in the middle.
+    */
+
+    const meteorY =
+        -180 -
+        Math.random() * 250;
+
+    meteor.style.top =
+        `${meteorY}px`;
+
+
+    /* =========================
+       SPEED
+    ========================= */
 
     const duration =
-        1.8 + Math.random() * 0.8;
+        1.4 +
+        Math.random() * 0.7;
+
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
 
 
-    meteorContainer.appendChild(meteor);
+    meteorContainer.appendChild(
+        meteor
+    );
 
 
-    /*
-        Remove after animation.
-    */
+    /* =========================
+       CLEANUP
+    ========================= */
 
     setTimeout(() => {
+
         meteor.remove();
-    }, duration * 1000 + 100);
+
+    }, duration * 1000 + 200);
 }
 
 
 /* =========================
-   INFINITE SPAWNING
+   INFINITE SPAWNER
 ========================= */
 
 function spawnMeteorForever() {
 
     createMeteor();
 
+
+    /*
+        Keep meteors coming
+        forever.
+    */
+
     const delay =
-        180 + Math.random() * 300;
+        140 +
+        Math.random() * 260;
+
 
     setTimeout(
         spawnMeteorForever,
