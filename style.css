@@ -1,335 +1,48 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
-}
-
-body {
-    overflow: hidden;
-    background: #08030a;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-
-/* =========================
-   SPACE BACKGROUND
-========================= */
-
-.background {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            #1b0c1d 0%,
-            #100713 35%,
-            #07030a 70%,
-            #020105 100%
-        );
-
-    z-index: -3;
-}
-
-.background::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    background:
-        radial-gradient(
-            ellipse at 25% 55%,
-            rgba(255, 70, 190, 0.14),
-            transparent 45%
-        ),
-        radial-gradient(
-            ellipse at 75% 25%,
-            rgba(255, 120, 210, 0.09),
-            transparent 40%
-        );
-}
-
-
-/* =========================
-   STARS
-========================= */
-
-#stars {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    pointer-events: none;
-
-    z-index: -1;
-}
-
-.star {
-    position: absolute;
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 4px white,
-        0 0 9px rgba(255, 180, 230, 0.8);
-
-    /*
-        Stars continue moving
-        across the screen.
-    */
-
-    animation:
-        starMove linear infinite;
-}
-
-@keyframes starMove {
-
-    from {
-        transform: translateX(-30px);
-    }
-
-    to {
-        transform: translateX(110vw);
-    }
-}
-
-
-/* =========================
-   METEOR CONTAINER
-========================= */
-
-#meteors {
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    pointer-events: none;
-
-    z-index: 1;
-}
-
-
-/* =========================
-   METEOR
-========================= */
-
-.meteor {
-    position: absolute;
-
-    width: 380px;
-    height: 11px;
-
-    border-radius: 999px;
-
-    background: linear-gradient(
-        to right,
-        rgba(255, 30, 180, 0),
-        rgba(255, 45, 190, 0.08),
-        rgba(255, 70, 200, 0.25),
-        rgba(255, 120, 220, 0.6),
-        #ffdff5,
-        white
-    );
-
-    box-shadow:
-        0 0 10px rgba(255, 140, 220, 0.9),
-        0 0 25px rgba(255, 70, 195, 0.75),
-        0 0 50px rgba(255, 70, 195, 0.45);
-
-    /*
-        DOWN-RIGHT angle.
-    */
-
-    transform: rotate(46deg);
-
-    transform-origin: right center;
-}
-
-
-/* =========================
-   LONG PINK TRAIL
-========================= */
-
-.meteor::before {
-    content: "";
-
-    position: absolute;
-
-    width: 850px;
-    height: 38px;
-
-    right: 0;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    border-radius: 999px;
-
-    background: linear-gradient(
-        to right,
-        rgba(255, 0, 170, 0),
-        rgba(255, 30, 180, 0.02),
-        rgba(255, 50, 190, 0.08),
-        rgba(255, 70, 200, 0.18),
-        rgba(255, 100, 215, 0.35),
-        rgba(255, 160, 235, 0.55)
-    );
-
-    filter: blur(16px);
-
-    z-index: -1;
-}
-
-
-/* =========================
-   BRIGHT METEOR HEAD
-========================= */
-
-.meteor::after {
-    content: "";
-
-    position: absolute;
-
-    right: -7px;
-    top: 50%;
-
-    width: 22px;
-    height: 22px;
-
-    transform: translateY(-50%);
-
-    border-radius: 50%;
-
-    background: white;
-
-    box-shadow:
-        0 0 8px white,
-        0 0 20px #ffd6f2,
-        0 0 40px #ff8bd8,
-        0 0 65px #ff4fc3,
-        0 0 100px rgba(255, 79, 195, 0.6);
-}
-
-
-/* =========================
-   METEOR MOVEMENT
-========================= */
-
 @keyframes meteorFly {
 
     /*
-        START:
-        Above the top edge.
+        Start completely invisible
+        and far above the screen.
     */
 
     0% {
-        transform:
-            translate(0, 0)
-            rotate(46deg);
-
+        transform: translate(0, 0) rotate(46deg);
         opacity: 0;
     }
 
-
     /*
-        Enter quickly.
+        Fade in BEFORE reaching
+        the visible area.
     */
 
-    4% {
+    12% {
+        opacity: 0.35;
+    }
+
+    20% {
         opacity: 1;
     }
 
+    /*
+        Smooth glide through screen.
+    */
 
     85% {
         opacity: 1;
     }
 
-
     /*
-        END:
-        Far below + to the right.
+        Leave completely.
     */
 
     100% {
         transform:
             translate(
-                95vw,
-                115vh
+                100vw,
+                calc(100vh + 1000px)
             )
             rotate(46deg);
 
         opacity: 0;
     }
-}
-
-
-/* =========================
-   PROFILE
-========================= */
-
-main {
-    position: relative;
-
-    z-index: 2;
-
-    width: 100%;
-    min-height: 100vh;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-}
-
-.profile {
-    position: relative;
-
-    padding: 50px 70px;
-
-    text-align: center;
-
-    background:
-        rgba(12, 4, 14, 0.58);
-
-    border:
-        1px solid rgba(255, 180, 230, 0.15);
-
-    border-radius: 24px;
-
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.7),
-        0 0 60px rgba(255, 60, 190, 0.08);
-}
-
-.profile h1 {
-    font-size: 60px;
-    margin-bottom: 10px;
-}
-
-.profile p {
-    color: #c9a9c2;
-    font-size: 18px;
 }
