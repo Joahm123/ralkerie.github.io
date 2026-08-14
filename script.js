@@ -3,7 +3,7 @@ const starContainer = document.getElementById("stars");
 
 
 /* =========================
-   MOVING STARS
+   STARS
 ========================= */
 
 function createStar() {
@@ -11,9 +11,7 @@ function createStar() {
 
     star.className = "star";
 
-    const size = Math.random() * 2 + 1;
-    const duration = Math.random() * 8 + 5;
-    const delay = Math.random() * -10;
+    const size = 1 + Math.random() * 2;
 
     star.style.width = `${size}px`;
     star.style.height = `${size}px`;
@@ -21,19 +19,25 @@ function createStar() {
     star.style.left = `${Math.random() * 100}vw`;
     star.style.top = `${Math.random() * 100}vh`;
 
-    star.style.animationDuration = `${duration}s`;
-    star.style.animationDelay = `${delay}s`;
+    star.style.animationDuration =
+        `${8 + Math.random() * 8}s, ${2 + Math.random() * 3}s`;
+
+    star.style.animationDelay =
+        `${Math.random() * -10}s, ${Math.random() * -3}s`;
 
     starContainer.appendChild(star);
 }
 
-for (let i = 220; i > 0; i--) {
+
+/* Create 250 stars */
+
+for (let i = 0; i < 250; i++) {
     createStar();
 }
 
 
 /* =========================
-   METEOR
+   METEORS
 ========================= */
 
 function createMeteor() {
@@ -44,7 +48,7 @@ function createMeteor() {
 
 
     /*
-        Long skinny meteors
+        Long meteor
     */
 
     const length =
@@ -56,33 +60,23 @@ function createMeteor() {
 
     /*
         =========================
-        SPAWN AREA
+        SPAWN POSITION
         =========================
 
-        ONLY THE LEFT SIDE.
+        Meteor starts ABOVE the
+        screen.
 
-        0%   = far left
-        45%  = just left of center
+        X is deliberately biased
+        toward the LEFT.
 
-        NOTHING CAN SPAWN
-        ON THE RIGHT HALF.
+        -20vw → 45vw
     */
 
     const startX =
-        Math.random() * 45;
-
-
-    /*
-        ALWAYS ABOVE THE SCREEN.
-
-        They enter naturally from
-        above instead of appearing
-        in your view.
-    */
+        -20 + Math.random() * 65;
 
     const startY =
-        -600 -
-        Math.random() * 300;
+        -500 - Math.random() * 300;
 
 
     meteor.style.left =
@@ -93,13 +87,11 @@ function createMeteor() {
 
 
     /*
-        FAST
+        Fast movement
     */
 
     const duration =
-        1.2 +
-        Math.random() * 0.6;
-
+        1.3 + Math.random() * 0.6;
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -108,33 +100,34 @@ function createMeteor() {
     meteorContainer.appendChild(meteor);
 
 
+    /*
+        Remove when finished
+    */
+
     setTimeout(() => {
         meteor.remove();
-    }, duration * 1000 + 200);
+    }, duration * 1000 + 300);
 }
 
 
 /* =========================
-   INFINITE METEORS
+   INFINITE SPAWN
 ========================= */
 
-function spawnMeteorForever() {
+function spawnMeteor() {
 
     createMeteor();
 
     const delay =
-        120 +
-        Math.random() * 220;
+        150 + Math.random() * 250;
 
     setTimeout(
-        spawnMeteorForever,
+        spawnMeteor,
         delay
     );
 }
 
 
-/* =========================
-   START
-========================= */
+/* Start meteors */
 
-spawnMeteorForever();
+spawnMeteor();
