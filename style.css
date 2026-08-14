@@ -21,8 +21,14 @@ body {
     inset: 0;
     overflow: hidden;
     z-index: -2;
+
     background:
-        radial-gradient(circle at 50% 50%, #11111a 0%, #050507 65%);
+        radial-gradient(
+            circle at 50% 50%,
+            #14101c 0%,
+            #08070c 45%,
+            #030305 100%
+        );
 }
 
 /* =========================
@@ -31,38 +37,50 @@ body {
 
 .orb {
     position: absolute;
-    width: 350px;
-    height: 350px;
+
+    width: 400px;
+    height: 400px;
+
     border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.35;
+
+    filter: blur(120px);
+
+    opacity: 0.32;
 }
 
 .orb1 {
     background: #7c3aed;
-    top: -100px;
+
+    top: -120px;
     left: -100px;
+
     animation: float1 14s ease-in-out infinite alternate;
 }
 
 .orb2 {
     background: #2563eb;
-    right: -100px;
+
+    right: -120px;
     top: 20%;
+
     animation: float2 18s ease-in-out infinite alternate;
 }
 
 .orb3 {
     background: #ec4899;
-    bottom: -150px;
+
+    bottom: -180px;
     left: 25%;
+
     animation: float3 20s ease-in-out infinite alternate;
 }
 
 .orb4 {
     background: #06b6d4;
+
     bottom: 10%;
     right: 20%;
+
     animation: float4 16s ease-in-out infinite alternate;
 }
 
@@ -107,27 +125,47 @@ body {
 }
 
 /* =========================
-   MOVING GRID
+   GRID
 ========================= */
 
 .grid {
     position: absolute;
+
     inset: -100%;
+
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+
     background-size: 60px 60px;
-    transform: perspective(500px) rotateX(60deg);
+
+    transform:
+        perspective(500px)
+        rotateX(60deg);
+
     animation: gridMove 12s linear infinite;
 }
 
 @keyframes gridMove {
     from {
-        transform: perspective(500px) rotateX(60deg) translateY(0);
+        transform:
+            perspective(500px)
+            rotateX(60deg)
+            translateY(0);
     }
 
     to {
-        transform: perspective(500px) rotateX(60deg) translateY(60px);
+        transform:
+            perspective(500px)
+            rotateX(60deg)
+            translateY(60px);
     }
 }
 
@@ -137,44 +175,124 @@ body {
 
 #meteors {
     position: fixed;
+
     inset: 0;
+
     pointer-events: none;
+
     overflow: hidden;
+
     z-index: 0;
 }
 
 .meteor {
     position: absolute;
-    width: 3px;
-    height: 3px;
+
+    width: 10px;
+    height: 10px;
+
     border-radius: 50%;
-    background: #ff9de2;
+
+    background: #ffd1f1;
 
     box-shadow:
-        0 0 6px #ff9de2,
-        0 0 14px #ff5dcc,
-        0 0 30px #ff5dcc;
+        0 0 8px #ffffff,
+        0 0 18px #ff9de2,
+        0 0 35px #ff4fc3,
+        0 0 60px #ff4fc3;
+
+    transform: rotate(45deg);
+
+    animation-name: meteorFly;
+
+    animation-timing-function: linear;
+
+    animation-fill-mode: forwards;
 }
 
-.meteor::after {
+/* Long glowing tail */
+
+.meteor::before {
     content: "";
+
     position: absolute;
 
-    width: 120px;
-    height: 2px;
+    width: 220px;
+    height: 7px;
 
-    right: 2px;
+    right: 4px;
     top: 50%;
 
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%);
+
+    transform-origin: right center;
+
+    border-radius: 999px;
 
     background: linear-gradient(
         to left,
-        rgba(255, 93, 204, 0),
-        rgba(255, 157, 226, 0.8)
+        rgba(255, 255, 255, 1),
+        rgba(255, 157, 226, 0.9) 15%,
+        rgba(255, 79, 195, 0.5) 45%,
+        rgba(255, 79, 195, 0.15) 75%,
+        rgba(255, 79, 195, 0)
     );
 
-    filter: blur(1px);
+    filter: blur(2px);
+}
+
+/* Extra soft glow behind the trail */
+
+.meteor::after {
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 18px;
+
+    right: 0;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    background: linear-gradient(
+        to left,
+        rgba(255, 79, 195, 0.45),
+        rgba(255, 79, 195, 0)
+    );
+
+    filter: blur(8px);
+
+    opacity: 0.7;
+}
+
+@keyframes meteorFly {
+    0% {
+        transform:
+            translate(0, 0)
+            rotate(45deg);
+
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(-700px, 700px)
+            rotate(45deg);
+
+        opacity: 0;
+    }
 }
 
 /* =========================
@@ -185,24 +303,29 @@ main {
     min-height: 100vh;
 
     display: flex;
+
     justify-content: center;
     align-items: center;
 
     position: relative;
+
     z-index: 2;
 }
 
 .profile {
     position: relative;
+
     z-index: 2;
 
     padding: 50px 70px;
 
     text-align: center;
 
-    background: rgba(10, 10, 15, 0.55);
+    background:
+        rgba(10, 10, 15, 0.55);
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border:
+        1px solid rgba(255, 255, 255, 0.1);
 
     border-radius: 24px;
 
@@ -211,41 +334,34 @@ main {
     box-shadow:
         0 20px 80px rgba(0, 0, 0, 0.5);
 
-    animation: appear 1s ease forwards;
+    animation:
+        appear 1s ease forwards;
 }
 
 .profile h1 {
     font-size: 60px;
+
     margin-bottom: 10px;
 }
 
 .profile p {
     color: #aaa;
+
     font-size: 18px;
 }
 
 @keyframes appear {
     from {
         opacity: 0;
-        transform: translateY(20px);
+
+        transform:
+            translateY(20px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+
+        transform:
+            translateY(0);
     }
 }
-@keyframes meteorFly {
-    from {
-        transform: translate(0, 0) rotate(45deg);
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-500px, 500px) rotate(45deg);
-        opacity: 0;
-    }
