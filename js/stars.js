@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE STARS
-   LEFT-SIDE HEAVY STARFIELD
+   LEFT-HEAVY + CONTINUOUS RESPAWN
 ===================================================== */
 
 (() => {
@@ -9,7 +9,7 @@
 
 
     /* =================================================
-       CONTAINER
+       STAR CONTAINER
     ================================================= */
 
     const starContainer =
@@ -54,7 +54,7 @@
 
 
         /*
-           Small pixel sizes.
+           Pixel-sized stars.
         */
 
         const size =
@@ -72,10 +72,13 @@
 
 
         /*
-           70% of stars start on
-           the LEFT half.
+           LEFT-HEAVY DISTRIBUTION
 
-           30% are spread normally.
+           70% of stars:
+           left 55% of screen
+
+           30%:
+           entire screen
         */
 
         let x;
@@ -105,11 +108,6 @@
             window.innerHeight;
 
 
-        /*
-           Slightly different speeds
-           so they don't form a line.
-        */
-
         const speed =
             18 +
             Math.random() * 55;
@@ -127,12 +125,20 @@
         };
 
 
-        star.style.left =
-            `${x}px`;
+        /*
+           IMPORTANT:
 
+           We use transform for movement,
+           so don't use left/top for the
+           animation.
+        */
 
-        star.style.top =
-            `${y}px`;
+        star.style.transform =
+            `translate3d(
+                ${x}px,
+                ${y}px,
+                0
+            )`;
 
 
         starContainer.appendChild(
@@ -147,16 +153,12 @@
 
 
     /* =================================================
-       ANIMATION CLOCK
+       ANIMATION
     ================================================= */
 
     let lastTime =
         performance.now();
 
-
-    /* =================================================
-       ANIMATION
-    ================================================= */
 
     function updateStars(
         time
@@ -174,8 +176,8 @@
 
 
         /*
-           Prevent huge jumps after
-           lag/tab switching.
+           Prevent giant jumps after
+           lag or switching tabs.
         */
 
         if (
@@ -186,26 +188,29 @@
         }
 
 
+        const width =
+            window.innerWidth;
+
+
+        const height =
+            window.innerHeight;
+
+
         /*
-           Don't update while the tab
-           isn't visible.
+           Only animate while visible.
         */
 
         if (
             !document.hidden
         ) {
 
-            const screenWidth =
-                window.innerWidth;
-
-
-            const screenHeight =
-                window.innerHeight;
-
-
             for (
                 const star of stars
             ) {
+
+                /*
+                   Move right.
+                */
 
                 star.x +=
                     star.speed *
@@ -213,30 +218,35 @@
 
 
                 /*
-                   Wrap to LEFT instead of
-                   randomly changing position.
+                   STAR LEFT THE SCREEN
+                   -------------------
 
-                   This prevents the stars
-                   from bunching together.
+                   Immediately respawn
+                   on the LEFT.
                 */
 
                 if (
                     star.x >
-                    screenWidth + 5
+                    width + 10
                 ) {
 
-                    star.x = -5;
+                    star.x =
+                        -10;
+
 
                     /*
-                       Keep returning stars
-                       distributed vertically.
+                       New random Y.
                     */
 
                     star.y =
                         Math.random() *
-                        screenHeight;
+                        height;
                 }
 
+
+                /*
+                   Apply position.
+                */
 
                 star.element.style.transform =
                     `translate3d(
@@ -255,6 +265,27 @@
 
 
     /* =================================================
+       TAB SWITCH FIX
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            /*
+               Reset the animation clock
+               so stars don't teleport after
+               returning to the tab.
+            */
+
+            lastTime =
+                performance.now();
+
+        }
+    );
+
+
+    /* =================================================
        RESIZE
     ================================================= */
 
@@ -262,44 +293,33 @@
         "resize",
         () => {
 
-            /*
-               Don't recreate stars.
-               This keeps memory/CPU low.
-            */
+            const height =
+                window.innerHeight;
+
 
             for (
                 const star of stars
             ) {
 
+                /*
+                   Keep stars inside the
+                   new screen height.
+                */
+
                 if (
                     star.y >
-                    window.innerHeight
+                    height
                 ) {
 
                     star.y =
                         Math.random() *
-                        window.innerHeight;
+                        height;
                 }
             }
 
         },
         {
             passive: true
-        }
-    );
-
-
-    /* =================================================
-       TAB VISIBILITY
-    ================================================= */
-
-    document.addEventListener(
-        "visibilitychange",
-        () => {
-
-            lastTime =
-                performance.now();
-
         }
     );
 
@@ -314,7 +334,7 @@
 
 
     console.log(
-        "Ralkerie stars loaded — left-heavy field."
+        "Ralkerie stars loaded."
     );
 
 })();
