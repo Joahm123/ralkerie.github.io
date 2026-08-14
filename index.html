@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -13,7 +14,9 @@
     <title>Ralkerie</title>
 
 
-    <!-- CSS -->
+    <!-- =================================================
+         CSS
+    ================================================== -->
 
     <link
         rel="stylesheet"
@@ -41,42 +44,303 @@
 <body>
 
 
-    <!-- BACKGROUND -->
+    <!-- =================================================
+         BACKGROUND
+    ================================================== -->
 
-    <div id="background"></div>
-
-    <div id="stars"></div>
-
-    <div id="meteors"></div>
-
-
-    <!-- MAIN -->
-
-    <main id="main">
-
-        <div id="waveform"></div>
+    <div
+        id="stars"
+        aria-hidden="true"
+    ></div>
 
 
-        <section id="profile">
+    <div
+        id="meteors"
+        aria-hidden="true"
+    ></div>
 
-            <h1>Ralkerie</h1>
 
-            <p>Coming soon...</p>
+    <!-- =================================================
+         PIXEL NAVIGATION
+    ================================================== -->
+
+    <nav
+        class="pixel-tabs"
+        aria-label="Main navigation"
+    >
+
+        <button
+            class="pixel-tab active"
+            data-page="live"
+        >
+            LIVE
+        </button>
+
+
+        <button
+            class="pixel-tab"
+            data-page="music"
+        >
+            MUSIC
+        </button>
+
+
+        <button
+            class="pixel-tab"
+            data-page="links"
+        >
+            LINKS
+        </button>
+
+
+        <button
+            class="pixel-tab"
+            data-page="tools"
+        >
+            TOOLS
+        </button>
+
+
+        <button
+            class="pixel-tab"
+            data-page="about"
+        >
+            ABOUT
+        </button>
+
+    </nav>
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main>
+
+
+        <!-- =============================================
+             LIVE
+        ============================================== -->
+
+        <section
+            id="live"
+            class="pixel-page active"
+        >
+
+            <div class="pixel-panel">
+
+                <p class="pixel-label">
+                    RALKERIE
+                </p>
+
+                <h1>
+                    LIVE
+                </h1>
+
+                <p class="pixel-description">
+                    Currently offline
+                </p>
+
+            </div>
 
         </section>
+
+
+        <!-- =============================================
+             MUSIC
+        ============================================== -->
+
+        <section
+            id="music"
+            class="pixel-page"
+        >
+
+            <div class="pixel-panel">
+
+                <p class="pixel-label">
+                    MUSIC
+                </p>
+
+                <h1>
+                    NOW PLAYING
+                </h1>
+
+                <div
+                    id="music-card"
+                    class="music-card"
+                >
+
+                    <div
+                        class="music-cover"
+                    >
+                    </div>
+
+                    <div
+                        class="music-info"
+                    >
+
+                        <strong>
+                            No song playing
+                        </strong>
+
+                        <span>
+                            Spotify
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             LINKS
+        ============================================== -->
+
+        <section
+            id="links"
+            class="pixel-page"
+        >
+
+            <div class="pixel-panel">
+
+                <p class="pixel-label">
+                    RALKERIE
+                </p>
+
+                <h1>
+                    LINKS
+                </h1>
+
+
+                <div
+                    class="link-grid"
+                >
+
+                    <a
+                        href="#"
+                        class="pixel-link"
+                    >
+                        DISCORD
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="pixel-link"
+                    >
+                        GITHUB
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="pixel-link"
+                    >
+                        SPOTIFY
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="pixel-link"
+                    >
+                        OTHER
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             TOOLS
+        ============================================== -->
+
+        <section
+            id="tools"
+            class="pixel-page"
+        >
+
+            <div class="pixel-panel">
+
+                <p class="pixel-label">
+                    RALKERIE
+                </p>
+
+                <h1>
+                    TOOLS
+                </h1>
+
+                <p class="pixel-description">
+                    Tools and projects will go here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             ABOUT
+        ============================================== -->
+
+        <section
+            id="about"
+            class="pixel-page"
+        >
+
+            <div class="pixel-panel">
+
+                <p class="pixel-label">
+                    RALKERIE
+                </p>
+
+                <h1>
+                    ABOUT
+                </h1>
+
+                <p class="pixel-description">
+                    Welcome to my little corner
+                    of the internet.
+                </p>
+
+            </div>
+
+        </section>
+
 
     </main>
 
 
-    <!-- JAVASCRIPT -->
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
 
-    <script src="./js/stars.js"></script>
+    <script
+        src="./js/stars.js"
+    ></script>
 
-    <script src="./js/meteors.js"></script>
 
-    <script src="./js/waveform.js"></script>
+    <script
+        src="./js/meteors.js"
+    ></script>
 
-    <script src="./js/main.js"></script>
+
+    <script
+        src="./js/waveform.js"
+    ></script>
+
+
+    <script
+        src="./js/main.js"
+    ></script>
+
 
 </body>
 
