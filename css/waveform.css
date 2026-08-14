@@ -1,1 +1,72 @@
+/* =====================================================
+   CENTER SOUND WAVE
+===================================================== */
 
+#waveform {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: min(520px, 75vw);
+    height: 140px;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    pointer-events: none;
+
+    opacity: 0.9;
+}
+
+.wave-bar {
+    width: 4px;
+
+    height: 20px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        to top,
+        #ff35bd,
+        #ffb9ec,
+        white
+    );
+
+    box-shadow:
+        0 0 8px rgba(255, 70, 200, 0.8),
+        0 0 18px rgba(255, 70, 200, 0.35);
+
+    transform-origin: center;
+
+    animation:
+        waveformPulse
+        var(--speed)
+        ease-in-out
+        infinite alternate;
+
+    animation-delay: var(--delay);
+}
+
+@keyframes waveformPulse {
+
+    0% {
+        transform: scaleY(0.25);
+        opacity: 0.45;
+    }
+
+    50% {
+        transform: scaleY(0.7);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scaleY(1.8);
+        opacity: 1;
+    }
+}
