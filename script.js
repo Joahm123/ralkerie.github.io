@@ -1,117 +1,106 @@
-const meteorContainer =
-    document.getElementById("meteors");
-
-const starContainer =
-    document.getElementById("stars");
+const meteorContainer = document.getElementById("meteors");
+const starContainer = document.getElementById("stars");
 
 
 /* =========================
-   STARS
+   MOVING STARS
 ========================= */
 
 function createStar() {
-
-    const star =
-        document.createElement("div");
+    const star = document.createElement("div");
 
     star.className = "star";
 
-    const size =
-        Math.random() * 2 + 1;
+    const size = Math.random() * 2 + 1;
 
-    const duration =
-        Math.random() * 2 + 2;
+    const duration = Math.random() * 8 + 5;
+    const delay = Math.random() * -10;
 
-    const delay =
-        Math.random() * -5;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
 
-    star.style.width =
-        `${size}px`;
+    star.style.left = `${Math.random() * 100}vw`;
+    star.style.top = `${Math.random() * 100}vh`;
 
-    star.style.height =
-        `${size}px`;
-
-    star.style.left =
-        `${Math.random() * 100}vw`;
-
-    star.style.top =
-        `${Math.random() * 100}vh`;
-
-    star.style.animationDuration =
-        `${duration}s`;
-
-    star.style.animationDelay =
-        `${delay}s`;
+    star.style.animationDuration = `${duration}s`;
+    star.style.animationDelay = `${delay}s`;
 
     starContainer.appendChild(star);
 }
 
 
-/* Create stars */
+/* Lots of moving stars */
 
-for (let i = 220; i > 0; i--) {
+for (let i = 0; i < 220; i++) {
     createStar();
 }
 
 
 /* =========================
-   METEOR
+   METEORS
 ========================= */
 
 function createMeteor() {
 
-    const meteor =
-        document.createElement("div");
+    const meteor = document.createElement("div");
 
     meteor.className = "meteor";
 
 
     /*
-        Random meteor length.
+        Random meteor length
     */
 
-    const length =
-        320 +
-        Math.random() * 200;
+    const length = 320 + Math.random() * 200;
 
-    meteor.style.width =
-        `${length}px`;
+    meteor.style.width = `${length}px`;
 
 
     /*
-        SPAWN ANYWHERE.
+        IMPORTANT:
+        Spawn across BOTH halves.
 
-        X = anywhere from
-        left → right.
+        50% of meteors start
+        on the LEFT half.
 
-        Y = anywhere from
-        top → bottom.
-
-        This makes the entire
-        screen a spawn zone.
+        50% start on the RIGHT half.
     */
 
-    const startX =
-        Math.random() * 100;
+    let startX;
+
+    if (Math.random() < 0.5) {
+
+        // LEFT HALF
+        startX = Math.random() * 50;
+
+    } else {
+
+        // RIGHT HALF
+        startX = 50 + Math.random() * 50;
+    }
+
+
+    /*
+        Spawn anywhere vertically,
+        but keep enough room for
+        the meteor to be visible.
+    */
 
     const startY =
-        Math.random() * 100;
+        Math.random() * 85;
 
 
-    meteor.style.left =
-        `${startX}vw`;
-
-    meteor.style.top =
-        `${startY}vh`;
+    meteor.style.left = `${startX}vw`;
+    meteor.style.top = `${startY}vh`;
 
 
     /*
-        Random speed.
+        Every meteor travels
+        DOWN + RIGHT.
     */
 
     const duration =
-        2 +
-        Math.random() * 2;
+        2.5 + Math.random() * 2;
 
 
     meteor.style.animation =
@@ -122,38 +111,25 @@ function createMeteor() {
 
 
     /*
-        Delete it after it
-        leaves the screen.
+        Remove after animation.
     */
 
     setTimeout(() => {
-
         meteor.remove();
-
     }, duration * 1000);
 }
 
 
 /* =========================
-   INFINITE METEOR SPAWNER
+   INFINITE SPAWNING
 ========================= */
 
 function spawnMeteorForever() {
 
     createMeteor();
 
-
-    /*
-        Random delay between
-        meteors.
-
-        This runs FOREVER.
-    */
-
     const delay =
-        150 +
-        Math.random() * 350;
-
+        150 + Math.random() * 300;
 
     setTimeout(
         spawnMeteorForever,
@@ -162,8 +138,6 @@ function spawnMeteorForever() {
 }
 
 
-/* =========================
-   START FOREVER
-========================= */
+/* Start forever */
 
 spawnMeteorForever();
