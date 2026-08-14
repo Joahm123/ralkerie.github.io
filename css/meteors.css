@@ -1,11 +1,11 @@
 /* =====================================================
    RALKERIE METEORS
-   SMALL METEOR + LARGE HITBOX
+   PIXEL METEOR + LARGE HITBOX
 ===================================================== */
 
 
 /* =====================================================
-   METEOR CONTAINER
+   CONTAINER
 ===================================================== */
 
 #meteors {
@@ -25,7 +25,7 @@
 
 
 /* =====================================================
-   LARGE INVISIBLE HITBOX
+   HITBOX
 ===================================================== */
 
 .meteor-hitbox {
@@ -45,11 +45,6 @@
 
     background: transparent;
 
-    /*
-       THE ENTIRE HITBOX MOVES
-       DIAGONALLY.
-    */
-
     animation:
         meteorDiagonal
         4s
@@ -59,7 +54,7 @@
 
 
 /* =====================================================
-   SMALL VISIBLE METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -68,27 +63,89 @@
     left: 28px;
     top: 28px;
 
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
 
-    background: #ffffff;
+    /*
+       Pixel meteor head.
+    */
+
+    background:
+        #ffffff;
 
     border-radius: 0;
 
     pointer-events: none;
 
-    /*
-       Meteor points DOWN-RIGHT.
-    */
-
     transform:
         rotate(35deg);
 
+    z-index: 3;
+
     box-shadow:
-        0 0 4px #ffffff,
-        0 0 8px #ffffff,
-        0 0 14px #ff9bdd,
-        0 0 22px #ff3fbd;
+
+        /* White core */
+
+        0 0 3px #ffffff,
+
+        0 0 7px #ffffff,
+
+        /* Pink glow */
+
+        0 0 12px #ffb3e7,
+
+        0 0 20px #ff66cc,
+
+        0 0 30px #ff2db5;
+}
+
+
+/* =====================================================
+   METEOR HEAD PIXEL SHAPE
+===================================================== */
+
+.meteor::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -4px;
+    top: -4px;
+
+    width: 18px;
+    height: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+
+            #ff55c9 0%,
+
+            #ff55c9 18%,
+
+            #ffffff 18%,
+
+            #ffffff 55%,
+
+            #ff8bdd 55%,
+
+            #ff8bdd 75%,
+
+            #ff2db5 75%
+        );
+
+    clip-path:
+        polygon(
+            50% 0%,
+            100% 50%,
+            50% 100%,
+            0% 50%
+        );
+
+    pointer-events: none;
+
+    z-index: 4;
 }
 
 
@@ -97,17 +154,18 @@
 ===================================================== */
 
 .meteor::before {
+
     content: "";
 
     position: absolute;
 
-    right: 3px;
+    right: 5px;
 
     top: 50%;
 
     width: 600px;
 
-    height: 14px;
+    height: 16px;
 
     transform:
         translateY(-50%);
@@ -118,15 +176,15 @@
 
             #ffffff 0%,
 
-            #ffffff 7%,
+            #ffffff 6%,
 
-            #ffd8f3 16%,
+            #ffd8f3 15%,
 
-            #ff9bdd 32%,
+            #ff9bdd 30%,
 
-            #ff63cb 52%,
+            #ff63cb 50%,
 
-            #ff3dbd 70%,
+            #ff3dbd 68%,
 
             rgba(
                 255,
@@ -145,60 +203,16 @@
 
 
 /* =====================================================
-   WHITE CENTER TRAIL
+   WHITE TRAIL CENTER
 ===================================================== */
 
-.meteor::after {
-    content: "";
+.meteor::before {
 
-    position: absolute;
+    /*
+       Keep the main pink trail.
+    */
 
-    right: 3px;
-
-    top: 50%;
-
-    width: 600px;
-
-    height: 6px;
-
-    transform:
-        translateY(-50%);
-
-    background:
-        linear-gradient(
-            to left,
-
-            #ffffff 0%,
-
-            #ffffff 12%,
-
-            rgba(
-                255,
-                255,
-                255,
-                0.95
-            ) 30%,
-
-            rgba(
-                255,
-                255,
-                255,
-                0.65
-            ) 55%,
-
-            rgba(
-                255,
-                255,
-                255,
-                0.25
-            ) 78%,
-
-            transparent 100%
-        );
-
-    pointer-events: none;
-
-    z-index: 2;
+    box-sizing: border-box;
 }
 
 
@@ -212,7 +226,7 @@
 
         transform:
             translate3d(
-                -100px,
+                80px,
                 -100px,
                 0
             );
@@ -252,6 +266,7 @@
 ===================================================== */
 
 .meteor-popup {
+
     position: fixed;
 
     inset: 0;
@@ -289,6 +304,7 @@
 
 
 .meteor-popup.visible {
+
     opacity: 1;
 
     visibility: visible;
@@ -302,6 +318,7 @@
 ===================================================== */
 
 .meteor-popup-box {
+
     position: relative;
 
     display: flex;
@@ -321,6 +338,7 @@
     border: 2px solid #ffffff;
 
     box-shadow:
+
         5px 5px 0 #000000,
 
         0 0 25px
@@ -338,6 +356,7 @@
 ===================================================== */
 
 .meteor-popup-gif {
+
     display: block;
 
     max-width: 80vw;
@@ -359,6 +378,7 @@
 ===================================================== */
 
 .meteor-popup-close {
+
     position: absolute;
 
     top: -16px;
@@ -397,6 +417,7 @@
 
 
 .meteor-popup-close:hover {
+
     background: #222222;
 
     color: #ff8bdc;
@@ -410,6 +431,7 @@
 @media (max-width: 700px) {
 
     .meteor-popup-box {
+
         max-width: 92vw;
 
         max-height: 80vh;
@@ -417,6 +439,7 @@
 
 
     .meteor-popup-gif {
+
         max-width: 86vw;
 
         max-height: 70vh;
