@@ -24,6 +24,7 @@ body {
 .background {
     position: fixed;
     inset: 0;
+
     width: 100vw;
     height: 100vh;
 
@@ -41,13 +42,14 @@ body {
 
 .background::after {
     content: "";
+
     position: absolute;
     inset: 0;
 
     background:
         radial-gradient(
-            ellipse at 30% 60%,
-            rgba(255, 70, 190, 0.12),
+            ellipse at 25% 55%,
+            rgba(255, 70, 190, 0.13),
             transparent 45%
         ),
         radial-gradient(
@@ -55,6 +57,8 @@ body {
             rgba(255, 120, 210, 0.10),
             transparent 40%
         );
+
+    pointer-events: none;
 }
 
 /* =========================
@@ -119,23 +123,25 @@ body {
     position: absolute;
 
     /*
-        THICKER + LONGER BODY
+        Long + thick meteor
     */
+
     width: 380px;
-    height: 9px;
+    height: 10px;
 
     border-radius: 999px;
 
     /*
-        Long pink trail fading
-        into space.
+        Pink trail fading toward
+        the back of the meteor.
     */
+
     background: linear-gradient(
         to right,
-        rgba(255, 55, 185, 0),
-        rgba(255, 55, 185, 0.08) 15%,
-        rgba(255, 70, 195, 0.25) 40%,
-        rgba(255, 120, 215, 0.55) 70%,
+        rgba(255, 40, 180, 0),
+        rgba(255, 55, 190, 0.08) 15%,
+        rgba(255, 70, 200, 0.25) 40%,
+        rgba(255, 120, 220, 0.55) 70%,
         rgba(255, 220, 245, 0.95) 92%,
         white 100%
     );
@@ -146,8 +152,9 @@ body {
         0 0 45px rgba(255, 70, 195, 0.45);
 
     /*
-        TOP → DOWN + RIGHT
+        DOWN + RIGHT
     */
+
     transform: rotate(46deg);
 
     transform-origin: right center;
@@ -156,7 +163,7 @@ body {
 }
 
 /* =========================
-   SUPER LONG GLOW
+   SUPER LONG TRAIL
 ========================= */
 
 .meteor::before {
@@ -164,11 +171,8 @@ body {
 
     position: absolute;
 
-    /*
-        MASSIVE TRAIL
-    */
-    width: 650px;
-    height: 32px;
+    width: 700px;
+    height: 35px;
 
     right: 10px;
     top: 50%;
@@ -180,11 +184,11 @@ body {
     background: linear-gradient(
         to right,
         rgba(255, 40, 180, 0),
-        rgba(255, 50, 190, 0.03) 15%,
-        rgba(255, 60, 195, 0.10) 35%,
-        rgba(255, 80, 205, 0.25) 60%,
-        rgba(255, 120, 220, 0.45) 85%,
-        rgba(255, 170, 235, 0.5)
+        rgba(255, 45, 185, 0.02) 15%,
+        rgba(255, 60, 195, 0.08) 35%,
+        rgba(255, 80, 205, 0.18) 55%,
+        rgba(255, 110, 215, 0.35) 75%,
+        rgba(255, 160, 230, 0.5) 100%
     );
 
     filter: blur(14px);
@@ -201,11 +205,11 @@ body {
 
     position: absolute;
 
-    right: -5px;
+    right: -6px;
     top: 50%;
 
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
 
     transform: translateY(-50%);
 
@@ -293,7 +297,8 @@ main {
         0 20px 80px rgba(0, 0, 0, 0.7),
         0 0 60px rgba(255, 60, 190, 0.08);
 
-    animation: appear 1s ease forwards;
+    animation:
+        appear 1s ease forwards;
 }
 
 .profile h1 {
@@ -307,6 +312,7 @@ main {
 }
 
 @keyframes appear {
+
     from {
         opacity: 0;
         transform: translateY(20px);
