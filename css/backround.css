@@ -1,1 +1,70 @@
+/* =====================================================
+   SPACE BACKGROUND
+===================================================== */
 
+#background {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+
+            #3b1737 0%,
+
+            #210c20 35%,
+
+            #0d050f 70%,
+
+            #020103 100%
+        );
+}
+
+
+/* =====================================================
+   PINK SPACE GLOW
+===================================================== */
+
+#background::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        radial-gradient(
+            circle at 15% 45%,
+
+            rgba(
+                255,
+                40,
+                190,
+                0.18
+            ),
+
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 85% 25%,
+
+            rgba(
+                255,
+                90,
+                220,
+                0.15
+            ),
+
+            transparent 35%
+        );
+}
