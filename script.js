@@ -10,6 +10,7 @@ const starContainer =
 ========================= */
 
 function createStar() {
+
     const star =
         document.createElement("div");
 
@@ -49,7 +50,11 @@ function createStar() {
 }
 
 
-for (let i = 0; i < 180; i++) {
+/*
+    Lots of stars
+*/
+
+for (let i = 0; i < 220; i++) {
     createStar();
 }
 
@@ -59,6 +64,7 @@ for (let i = 0; i < 180; i++) {
 ========================= */
 
 function createMeteor() {
+
     const meteor =
         document.createElement("div");
 
@@ -66,37 +72,36 @@ function createMeteor() {
 
 
     /*
-       Start INSIDE the visible screen
-       instead of spawning off-screen.
+        SPAWN AT TOP
+        across the ENTIRE width.
     */
 
     const startX =
         Math.random() *
-        window.innerWidth;
+        (window.innerWidth + 400) -
+        400;
 
     const startY =
-        window.innerHeight -
-        Math.random() *
-        (window.innerHeight * 0.35);
+        -350;
 
 
     /*
-       Random length.
+        LONG METEOR
     */
 
     const length =
-        Math.random() * 100 + 150;
+        Math.random() * 180 + 240;
 
     meteor.style.width =
         `${length}px`;
 
 
     /*
-       Random speed.
+        Random speed
     */
 
     const duration =
-        Math.random() * 2 + 2;
+        Math.random() * 1.8 + 1.8;
 
 
     meteor.style.left =
@@ -104,6 +109,7 @@ function createMeteor() {
 
     meteor.style.top =
         `${startY}px`;
+
 
     meteor.style.animation =
         `meteorFly ${duration}s linear forwards`;
@@ -113,20 +119,27 @@ function createMeteor() {
 
 
     setTimeout(() => {
+
         meteor.remove();
+
     }, duration * 1000);
 }
 
 
 /* =========================
-   METEOR SPAWNING
+   MORE METEORS
 ========================= */
 
 function spawnMeteor() {
+
     createMeteor();
 
+    /*
+        Frequent spawning.
+    */
+
     const nextMeteor =
-        Math.random() * 700 + 400;
+        Math.random() * 450 + 200;
 
     setTimeout(
         spawnMeteor,
@@ -134,5 +147,7 @@ function spawnMeteor() {
     );
 }
 
+
+/* Start */
 
 spawnMeteor();
