@@ -1,38 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+const meteorContainer = document.getElementById("meteors");
+const starContainer = document.getElementById("stars");
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
 
-    <title>Ralkerie</title>
+/* =========================
+   MOVING STARS
+========================= */
 
-    <link rel="stylesheet" href="style.css">
-</head>
+function createStar() {
+    const star = document.createElement("div");
 
-<body>
+    star.className = "star";
 
-    <!-- Space background -->
-    <div class="background"></div>
+    const size = Math.random() * 2 + 1;
+    const duration = Math.random() * 8 + 5;
+    const delay = Math.random() * -10;
 
-    <!-- Moving stars -->
-    <div id="stars"></div>
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
 
-    <!-- Meteors -->
-    <div id="meteors"></div>
+    star.style.left = `${Math.random() * 100}vw`;
+    star.style.top = `${Math.random() * 100}vh`;
 
-    <!-- Main website -->
-    <main>
-        <section class="profile">
-            <h1>Ralkerie</h1>
-            <p>Coming soon...</p>
-        </section>
-    </main>
+    star.style.animationDuration = `${duration}s`;
+    star.style.animationDelay = `${delay}s`;
 
-    <script src="script.js"></script>
+    starContainer.appendChild(star);
+}
 
-</body>
-</html>
+for (let i = 220; i > 0; i--) {
+    createStar();
+}
+
+
+/* =========================
+   METEOR
+========================= */
+
+function createMeteor() {
+
+    const meteor = document.createElement("div");
+
+    meteor.className = "meteor";
+
+
+    /*
+        Long skinny meteors
+    */
+
+    const length =
+        350 + Math.random() * 250;
+
+    meteor.style.width =
+        `${length}px`;
+
+
+    /*
+        =========================
+        SPAWN AREA
+        =========================
+
+        ONLY THE LEFT SIDE.
+
+        0%   = far left
+        45%  = just left of center
+
+        NOTHING CAN SPAWN
+        ON THE RIGHT HALF.
+    */
+
+    const startX =
+        Math.random() * 45;
+
+
+    /*
+        ALWAYS ABOVE THE SCREEN.
+
+        They enter naturally from
+        above instead of appearing
+        in your view.
+    */
+
+    const startY =
+        -600 -
+        Math.random() * 300;
+
+
+    meteor.style.left =
+        `${startX}vw`;
+
+    meteor.style.top =
+        `${startY}px`;
+
+
+    /*
+        FAST
+    */
+
+    const duration =
+        1.2 +
+        Math.random() * 0.6;
+
+
+    meteor.style.animation =
+        `meteorFly ${duration}s linear forwards`;
+
+
+    meteorContainer.appendChild(meteor);
+
+
+    setTimeout(() => {
+        meteor.remove();
+    }, duration * 1000 + 200);
+}
+
+
+/* =========================
+   INFINITE METEORS
+========================= */
+
+function spawnMeteorForever() {
+
+    createMeteor();
+
+    const delay =
+        120 +
+        Math.random() * 220;
+
+    setTimeout(
+        spawnMeteorForever,
+        delay
+    );
+}
+
+
+/* =========================
+   START
+========================= */
+
+spawnMeteorForever();
