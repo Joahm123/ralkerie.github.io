@@ -1,5 +1,5 @@
 /* =====================================================
-   RALKERIE STARS — PERFORMANCE OPTIMIZED
+   RALKERIE STARS
 ===================================================== */
 
 (() => {
@@ -13,12 +13,7 @@
         return;
     }
 
-    const STAR_COUNT = 160;
-
-    /*
-       Create stars once.
-       CSS handles all movement.
-    */
+    const STAR_COUNT = 220;
 
     const fragment =
         document.createDocumentFragment();
@@ -28,40 +23,16 @@
         i < STAR_COUNT;
         i++
     ) {
+
         const star =
             document.createElement("div");
 
-        star.className = "star";
+        star.className =
+            "star";
 
         const size =
-            1 + Math.random() * 2.2;
-
-        /*
-           Random starting position.
-        */
-
-        star.style.left =
-            `${Math.random() * 100}vw`;
-
-        star.style.top =
-            `${Math.random() * 100}vh`;
-
-        /*
-           Slightly different speeds.
-        */
-
-        star.style.setProperty(
-            "--star-speed",
-            `${18 + Math.random() * 45}s`
-        );
-
-        /*
-           Different animation offsets
-           prevent them moving together.
-        */
-
-        star.style.animationDelay =
-            `${-Math.random() * 60}s`;
+            1 +
+            Math.random() * 2.4;
 
         star.style.width =
             `${size}px`;
@@ -69,9 +40,19 @@
         star.style.height =
             `${size}px`;
 
-        /*
-           Random sparkle timing.
-        */
+        star.style.left =
+            `${Math.random() * 100}vw`;
+
+        star.style.top =
+            `${Math.random() * 100}vh`;
+
+        star.style.setProperty(
+            "--star-speed",
+            `${18 + Math.random() * 45}s`
+        );
+
+        star.style.animationDelay =
+            `${-Math.random() * 60}s`;
 
         star.style.setProperty(
             "--sparkle-speed",
@@ -88,7 +69,7 @@
     );
 
     console.log(
-        "Ralkerie optimized stars loaded."
+        "Ralkerie stars loaded."
     );
 
 })();
