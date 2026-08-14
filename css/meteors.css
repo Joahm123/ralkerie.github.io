@@ -56,91 +56,73 @@
     top: 50%;
 
     width: 850px;
-    height: 30px;
+    height: 55px;
 
     transform: translateY(-50%);
 
     border-radius: 999px;
-
-    /*
-       Pink outer glow
-    */
 
     background:
         linear-gradient(
             to left,
 
             #ffffff 0%,
-
-            #ffecfb 5%,
-
-            #ffb5ed 15%,
-
-            #ff70d1 30%,
-
-            #ff3fc1 50%,
-
-            #ff35bd 70%,
-
+            #fff7fd 5%,
+            #ffd9f5 12%,
+            #ff9de0 25%,
+            #ff65cf 45%,
+            #ff3fc1 65%,
             rgba(255, 50, 190, 0.35) 88%,
-
             transparent 100%
         );
 
     /*
-       Thick near the meteor,
-       thin at the far end.
+       VERY THICK at the meteor,
+       gradually narrowing toward
+       the end.
     */
 
     clip-path:
         polygon(
-            0% 5%,
-            4% 4%,
-            10% 8%,
-            20% 15%,
-            35% 25%,
-            50% 35%,
-            65% 42%,
-            80% 47%,
+            0% 0%,
+            3% 0%,
+            8% 2%,
+            15% 7%,
+            25% 15%,
+            40% 25%,
+            55% 34%,
+            70% 42%,
+            85% 47%,
             100% 50%,
 
-            80% 53%,
-            65% 58%,
-            50% 65%,
-            35% 75%,
-            20% 85%,
-            10% 92%,
-            4% 96%,
-            0% 95%
+            85% 53%,
+            70% 58%,
+            55% 66%,
+            40% 75%,
+            25% 85%,
+            15% 93%,
+            8% 98%,
+            3% 100%,
+            0% 100%
         );
 
     box-shadow:
-        0 0 12px
-        rgba(255, 100, 215, 0.9),
+        0 0 15px
+        rgba(255, 100, 215, 0.95),
 
-        0 0 28px
-        rgba(255, 50, 195, 0.7),
+        0 0 35px
+        rgba(255, 50, 195, 0.8),
 
-        0 0 55px
-        rgba(255, 40, 190, 0.45);
+        0 0 65px
+        rgba(255, 40, 190, 0.5);
 
     filter: blur(1.5px);
 }
 
 
 /* =====================================================
-   WHITE HOT CENTER
+   WHITE CENTER
 ===================================================== */
-
-.meteor {
-    isolation: isolate;
-}
-
-
-/*
-   White core running through
-   the center of the pink trail.
-*/
 
 .meteor > .meteor-core {
     position: absolute;
@@ -148,8 +130,8 @@
     right: 4px;
     top: 50%;
 
-    width: 760px;
-    height: 10px;
+    width: 800px;
+    height: 18px;
 
     transform: translateY(-50%);
 
@@ -160,40 +142,37 @@
             to left,
 
             #ffffff 0%,
-            #ffffff 8%,
-
-            rgba(255,255,255,0.98) 20%,
-
-            rgba(255,255,255,0.9) 40%,
-
-            rgba(255,255,255,0.7) 60%,
-
-            rgba(255,255,255,0.3) 80%,
-
+            #ffffff 12%,
+            rgba(255,255,255,0.98) 30%,
+            rgba(255,255,255,0.9) 50%,
+            rgba(255,255,255,0.65) 70%,
+            rgba(255,255,255,0.25) 88%,
             transparent 100%
         );
 
     clip-path:
         polygon(
-            0% 10%,
-            8% 15%,
-            20% 25%,
-            40% 35%,
-            60% 42%,
-            80% 48%,
+            0% 0%,
+            8% 2%,
+            18% 8%,
+            30% 18%,
+            45% 30%,
+            60% 40%,
+            75% 46%,
             100% 50%,
 
-            80% 52%,
-            60% 58%,
-            40% 65%,
-            20% 75%,
-            8% 85%,
-            0% 90%
+            75% 54%,
+            60% 60%,
+            45% 70%,
+            30% 82%,
+            18% 92%,
+            8% 98%,
+            0% 100%
         );
 
     box-shadow:
-        0 0 8px #ffffff,
-        0 0 16px rgba(255,255,255,0.9);
+        0 0 10px #ffffff,
+        0 0 22px rgba(255,255,255,0.9);
 
     filter: blur(0.5px);
 
