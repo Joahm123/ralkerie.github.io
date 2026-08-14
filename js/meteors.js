@@ -1,13 +1,14 @@
 /* =====================================================
-   RALKERIE METEORS
+   RALKERIE METEORS — OPTIMIZED
 ===================================================== */
 
 (() => {
+    "use strict";
 
-    const meteorContainer =
+    const container =
         document.getElementById("meteors");
 
-    if (!meteorContainer) {
+    if (!container) {
         console.error("Meteor container not found.");
         return;
     }
@@ -17,43 +18,34 @@
        SETTINGS
     ================================================= */
 
+    const MAX_METEORS = 8;
+
+    const SPAWN_MIN = 900;
+    const SPAWN_MAX = 1600;
+
     const meteors = [];
 
-    const MAX_METEORS = 10;
+    let spawnTimer = null;
 
-    const SPAWN_MIN = 700;
-    const SPAWN_MAX = 1200;
-
-    let meteorSpawnTimer = null;
-
-    let meteorLastTime =
+    let lastTime =
         performance.now();
 
 
     /* =================================================
-       CREATE METEOR
+       CREATE METEOR POOL
     ================================================= */
 
-    function createMeteor(x, y) {
-
-        if (
-            meteors.length >=
-            MAX_METEORS
-        ) {
-            return;
-        }
-
+    for (
+        let i = 0;
+        i < MAX_METEORS;
+        i++
+    ) {
 
         const element =
             document.createElement("div");
 
         element.className =
             "meteor";
-
-
-        /*
-           White center of trail
-        */
 
         const core =
             document.createElement("div");
@@ -65,57 +57,61 @@
             core
         );
 
+        /*
+           Hide until needed.
+        */
 
-        const meteor = {
+        element.style.display =
+            "none";
 
-            element: element,
-
-            x: x,
-
-            y: y,
-
-            /*
-               Fast movement
-            */
-
-            speedX:
-                850 +
-                Math.random() * 350,
-
-            speedY:
-                550 +
-                Math.random() * 250
-        };
-
-
-        element.style.left =
-            `${meteor.x}px`;
-
-        element.style.top =
-            `${meteor.y}px`;
-
-
-        meteorContainer.appendChild(
+        container.appendChild(
             element
         );
 
 
-        meteors.push(
-            meteor
-        );
+        meteors.push({
+
+            element,
+
+            active: false,
+
+            x: 0,
+
+            y: 0,
+
+            speedX: 0,
+
+            speedY: 0
+        });
     }
 
 
     /* =================================================
-       SPAWN METEOR
+       GET AVAILABLE METEOR
+    ================================================= */
+
+    function getMeteor() {
+
+        for (
+            const meteor of meteors
+        ) {
+
+            if (
+                !meteor.active
+            ) {
+                return meteor;
+            }
+        }
+
+        return null;
+    }
+
+
+    /* =================================================
+       SPAWN
     ================================================= */
 
     function spawnMeteor() {
-
-        /*
-           Never spawn while the
-           browser tab is hidden.
-        */
 
         if (
             document.hidden
@@ -124,16 +120,11 @@
         }
 
 
-        /*
-           Don't exceed the limit.
-        */
+        const meteor =
+            getMeteor();
 
-        if (
-            meteors.length >=
-            MAX_METEORS
-        ) {
-            scheduleMeteor();
-
+        if (!meteor) {
+            scheduleSpawn();
             return;
         }
 
@@ -143,15 +134,10 @@
 
 
         /*
-           LEFT-BIASED SPAWN
-           
-           Meteors can start far
-           outside the left side,
-           but can still spawn
-           across the screen.
+           LEFT-BIASED SPAWN.
         */
 
-        const x =
+        meteor.x =
             -600 +
             Math.pow(
                 Math.random(),
@@ -161,22 +147,41 @@
 
 
         /*
-           Only spawn from ABOVE
-           the screen.
+           Always above screen.
         */
 
-        const y =
+        meteor.y =
             -150 -
             Math.random() * 350;
 
 
-        createMeteor(
-            x,
-            y
-        );
+        meteor.speedX =
+            850 +
+            Math.random() * 350;
 
 
-        scheduleMeteor();
+        meteor.speedY =
+            550 +
+            Math.random() * 250;
+
+
+        meteor.active =
+            true;
+
+
+        meteor.element.style.display =
+            "block";
+
+
+        meteor.element.style.transform =
+            `translate3d(
+                ${meteor.x}px,
+                ${meteor.y}px,
+                0
+            ) rotate(34deg)`;
+
+
+        scheduleSpawn();
     }
 
 
@@ -184,69 +189,40 @@
        SPAWN TIMER
     ================================================= */
 
-    function scheduleMeteor() {
+    function scheduleSpawn() {
 
         clearTimeout(
-            meteorSpawnTimer
+            spawnTimer
         );
 
 
-        const delay =
-            SPAWN_MIN +
-            Math.random() *
-            (
-                SPAWN_MAX -
-                SPAWN_MIN
-            );
-
-
-        meteorSpawnTimer =
+        spawnTimer =
             setTimeout(
                 spawnMeteor,
-                delay
+
+                SPAWN_MIN +
+                Math.random() *
+                (
+                    SPAWN_MAX -
+                    SPAWN_MIN
+                )
             );
     }
 
 
     /* =================================================
-       INITIAL METEORS
+       DESPAWN
     ================================================= */
 
-    function createInitialMeteors() {
+    function despawn(
+        meteor
+    ) {
 
-        const width =
-            window.innerWidth;
+        meteor.active =
+            false;
 
-
-        /*
-           Only four starting meteors.
-        */
-
-        for (
-            let i = 0;
-            i < 4;
-            i++
-        ) {
-
-            const x =
-                -600 +
-                Math.pow(
-                    Math.random(),
-                    1.6
-                ) *
-                (width + 400);
-
-
-            const y =
-                -150 -
-                Math.random() * 500;
-
-
-            createMeteor(
-                x,
-                y
-            );
-        }
+        meteor.element.style.display =
+            "none";
     }
 
 
@@ -254,19 +230,21 @@
        ANIMATION
     ================================================= */
 
-    function animate(now) {
+    function animate(
+        time
+    ) {
 
         /*
-           Don't accumulate time while
-           the tab is hidden.
+           Don't accumulate time
+           while tab is hidden.
         */
 
         if (
             document.hidden
         ) {
 
-            meteorLastTime =
-                now;
+            lastTime =
+                time;
 
             requestAnimationFrame(
                 animate
@@ -278,83 +256,73 @@
 
         let delta =
             (
-                now -
-                meteorLastTime
+                time -
+                lastTime
             ) / 1000;
 
 
         /*
-           Prevent huge jumps after
-           returning to the tab.
+           Protect against huge
+           jumps after lag.
         */
 
-        delta =
-            Math.min(
-                delta,
-                0.05
-            );
+        if (
+            delta > 0.05
+        ) {
+            delta = 0.05;
+        }
 
 
-        meteorLastTime =
-            now;
+        lastTime =
+            time;
 
 
-        /* ---------------------------------------------
-           MOVE METEORS
-        --------------------------------------------- */
+        const bottom =
+            window.innerHeight +
+            500;
+
 
         for (
-            let i =
-                meteors.length - 1;
-
-            i >= 0;
-
-            i--
+            const meteor of meteors
         ) {
 
-            const meteor =
-                meteors[i];
+            if (
+                !meteor.active
+            ) {
+                continue;
+            }
 
-
-            /*
-               Move RIGHT
-            */
 
             meteor.x +=
                 meteor.speedX *
                 delta;
 
 
-            /*
-               Move DOWN
-            */
-
             meteor.y +=
                 meteor.speedY *
                 delta;
 
 
-            meteor.element.style.left =
-                `${meteor.x}px`;
+            meteor.element.style.transform =
+                `translate3d(
+                    ${meteor.x}px,
+                    ${meteor.y}px,
+                    0
+                ) rotate(34deg)`;
 
-            meteor.element.style.top =
-                `${meteor.y}px`;
 
-
-            /* -----------------------------------------
-               DESPAWN OFFSCREEN
-            ----------------------------------------- */
+            /*
+               Remove completely offscreen
+               meteors from active use.
+            */
 
             if (
                 meteor.y >
-                window.innerHeight + 500
+                bottom
             ) {
 
-                meteor.element.remove();
-
-                meteors.splice(
-                    i,
-                    1
+                despawn(
+                    meteor
                 );
             }
         }
@@ -378,15 +346,11 @@
                 document.hidden
             ) {
 
-                /*
-                   Stop the spawn timer.
-                */
-
                 clearTimeout(
-                    meteorSpawnTimer
+                    spawnTimer
                 );
 
-                meteorSpawnTimer =
+                spawnTimer =
                     null;
 
                 return;
@@ -394,24 +358,19 @@
 
 
             /*
-               Reset animation clock
-               when returning.
+               Reset timing so meteors
+               don't jump when returning.
             */
 
-            meteorLastTime =
+            lastTime =
                 performance.now();
 
 
-            /*
-               Resume with ONE normal
-               spawn timer.
-            */
-
             if (
-                !meteorSpawnTimer
+                !spawnTimer
             ) {
 
-                scheduleMeteor();
+                scheduleSpawn();
             }
         }
     );
@@ -421,9 +380,7 @@
        START
     ================================================= */
 
-    createInitialMeteors();
-
-    scheduleMeteor();
+    scheduleSpawn();
 
     requestAnimationFrame(
         animate
@@ -431,7 +388,7 @@
 
 
     console.log(
-        "Ralkerie meteors loaded."
+        "Ralkerie optimized meteors loaded."
     );
 
 })();
