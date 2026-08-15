@@ -181,67 +181,62 @@
 
 
         /* =================================================
-           EYE OF CTHULHU BUTTON
+           EYE BUTTON
         ================================================= */
 
-        .eoc-button {
+        #eoc-button {
+
+            position: fixed;
+
+            top: 20px;
+            left: 24px;
 
             width: 36px;
-
             height: 36px;
 
-            padding: 4px;
+            padding: 5px;
 
-            margin-right: 3px;
+            z-index: 1001;
 
             display: flex;
 
             align-items: center;
-
             justify-content: center;
-
-            border: 0;
 
             background: #000000;
 
-            cursor: pointer;
-
-            image-rendering: pixelated;
+            border: 2px solid #1c1c1c;
 
             box-shadow:
-                inset 2px 2px 0 #222222,
-                inset -2px -2px 0 #000000;
+                3px 3px 0 #000000;
 
-            transition:
-                transform 0.12s ease;
+            cursor: pointer;
         }
 
 
-        .eoc-button:hover {
+        #eoc-button img {
 
-            background: #111111;
-
-            transform:
-                scale(1.08);
-        }
-
-
-        .eoc-button img {
-
-            width: 27px;
-
-            height: 27px;
+            width: 24px;
+            height: 24px;
 
             object-fit: contain;
 
             image-rendering: pixelated;
 
-            display: block;
+            pointer-events: none;
+        }
+
+
+        #eoc-button:hover {
+
+            background: #161616;
+
+            border-color: #ff72cf;
         }
 
 
         /* =================================================
-           EYE OF CTHULHU EASTER EGG
+           EYE OF CTHULHU
         ================================================= */
 
         #eoc-easter-egg {
@@ -251,30 +246,37 @@
             left: 50%;
             top: 50%;
 
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            height: 220px;
+
+            z-index: 9999;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            pointer-events: none;
+
+            cursor: pointer;
 
             transform:
                 translate(-50%, -50%)
                 scale(0);
 
-            opacity: 0;
-
-            z-index: 5000;
-
-            pointer-events: none;
-
-            image-rendering: pixelated;
-
             transition:
-                opacity 0.12s ease,
-                transform 0.18s ease;
+                transform 0.15s ease;
+
+            will-change:
+                left,
+                top,
+                transform;
         }
 
 
         #eoc-easter-egg.active {
 
-            opacity: 1;
+            pointer-events: auto;
 
             transform:
                 translate(-50%, -50%)
@@ -285,24 +287,152 @@
         #eoc-easter-egg img {
 
             width: 100%;
-
             height: 100%;
 
             object-fit: contain;
 
             image-rendering: pixelated;
 
-            display: block;
+            pointer-events: none;
+
+            user-select: none;
 
             filter:
                 drop-shadow(
                     0 0 8px
-                    rgba(255, 255, 255, 0.9)
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.8
+                    )
                 )
                 drop-shadow(
-                    0 0 20px
-                    rgba(255, 50, 180, 0.8)
+                    0 0 18px
+                    rgba(
+                        255,
+                        60,
+                        170,
+                        0.7
+                    )
                 );
+        }
+
+
+        /* =================================================
+           EYE HIT EFFECT
+        ================================================= */
+
+        .eoc-hit-burst {
+
+            position: fixed;
+
+            width: 1px;
+            height: 1px;
+
+            pointer-events: none;
+
+            z-index: 10000;
+        }
+
+
+        .eoc-hit-particle {
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            display: block;
+
+            background: #ff3b81;
+
+            border:
+                1px solid #ffb3d1;
+
+            box-shadow:
+                0 0 4px #ffffff,
+                0 0 10px #ff3b81,
+                0 0 18px
+                rgba(
+                    255,
+                    59,
+                    129,
+                    0.8
+                );
+
+            image-rendering: pixelated;
+
+            transform:
+                translate(-50%, -50%)
+                scale(1);
+
+            animation:
+                eoc-particle-burst
+                650ms
+                cubic-bezier(
+                    .15,
+                    .8,
+                    .25,
+                    1
+                )
+                forwards;
+        }
+
+
+        @keyframes eoc-particle-burst {
+
+            0% {
+
+                opacity: 1;
+
+                transform:
+                    translate(
+                        -50%,
+                        -50%
+                    )
+                    scale(1.3);
+            }
+
+
+            25% {
+
+                opacity: 1;
+
+                transform:
+                    translate(
+                        calc(
+                            -50% +
+                            var(--dx) *
+                            .35
+                        ),
+                        calc(
+                            -50% +
+                            var(--dy) *
+                            .35
+                        )
+                    )
+                    scale(1);
+            }
+
+
+            100% {
+
+                opacity: 0;
+
+                transform:
+                    translate(
+                        calc(
+                            -50% +
+                            var(--dx)
+                        ),
+                        calc(
+                            -50% +
+                            var(--dy)
+                        )
+                    )
+                    scale(.1);
+            }
         }
 
 
@@ -363,7 +493,6 @@
             flex-direction: column;
 
             align-items: center;
-
             justify-content: center;
 
             gap: 24px;
@@ -373,7 +502,7 @@
 
 
         /* =================================================
-           USERNAME
+           USERNAME PNG
         ================================================= */
 
         .username-png {
@@ -397,7 +526,7 @@
 
 
         /* =================================================
-           DISCORD
+           DISCORD CONTAINER
         ================================================= */
 
         .discord-card-container {
@@ -405,7 +534,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             width: 100%;
@@ -458,7 +586,7 @@
                 2px solid #ffffff;
 
             box-shadow:
-                6px 6px 0 #000000;
+                4px 4px 0 #000000;
 
             z-index: 10;
         }
@@ -481,7 +609,6 @@
         .discord-avatar {
 
             width: 62px;
-
             height: 62px;
 
             object-fit: cover;
@@ -604,7 +731,6 @@
         .spotify-art {
 
             width: 48px;
-
             height: 48px;
 
             object-fit: cover;
@@ -779,7 +905,6 @@
         .music-cover {
 
             width: 55px;
-
             height: 55px;
 
             flex-shrink: 0;
@@ -845,7 +970,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             min-height: 45px;
@@ -872,6 +996,135 @@
 
 
         /* =================================================
+           ABOUT
+        ================================================= */
+
+        .about-panel {
+
+            width:
+                min(
+                    650px,
+                    88vw
+                );
+
+            padding:
+                35px
+                40px;
+        }
+
+
+        .about-content {
+
+            margin-top: 10px;
+
+            text-align: center;
+        }
+
+
+        .about-text {
+
+            margin:
+                10px
+                auto;
+
+            max-width: 520px;
+
+            color: #bdbdbd;
+
+            font-size: 18px;
+
+            line-height: 1.5;
+        }
+
+
+        .about-divider {
+
+            width: 100%;
+
+            height: 2px;
+
+            margin:
+                25px
+                0;
+
+            background: #222222;
+        }
+
+
+        .about-facts {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap: 10px;
+
+            margin-top: 15px;
+        }
+
+
+        .about-fact {
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            min-height: 75px;
+
+            padding: 12px;
+
+            background: #080808;
+
+            border:
+                1px solid #292929;
+
+            box-shadow:
+                inset 2px 2px 0 #111111;
+
+            transition:
+                border-color .15s ease,
+                background .15s ease;
+        }
+
+
+        .about-fact:hover {
+
+            background: #101010;
+
+            border-color: #ff72cf;
+        }
+
+
+        .about-fact-label {
+
+            margin-bottom: 7px;
+
+            color: #ff72cf;
+
+            font-size: 11px;
+
+            letter-spacing: 2px;
+        }
+
+
+        .about-fact-value {
+
+            color: #ffffff;
+
+            font-size: 17px;
+        }
+
+
+        /* =================================================
            MOBILE
         ================================================= */
 
@@ -882,12 +1135,11 @@
                 top: 12px;
 
                 right: 12px;
-
-                left: 12px;
+                left: 60px;
 
                 max-width:
                     calc(
-                        100vw - 24px
+                        100vw - 72px
                     );
 
                 overflow-x: auto;
@@ -910,21 +1162,20 @@
             }
 
 
-            .eoc-button {
+            #eoc-button {
 
-                width: 32px;
+                top: 12px;
+                left: 12px;
 
-                height: 32px;
-
-                padding: 3px;
+                width: 36px;
+                height: 36px;
             }
 
 
-            .eoc-button img {
+            #eoc-easter-egg {
 
-                width: 24px;
-
-                height: 24px;
+                width: 180px;
+                height: 180px;
             }
 
 
@@ -961,14 +1212,13 @@
 
             .discord-live-card {
 
-                padding: 14px;
+                padding: 12px;
             }
 
 
             .discord-avatar {
 
                 width: 55px;
-
                 height: 55px;
             }
 
@@ -996,16 +1246,34 @@
             }
 
 
-            #eoc-easter-egg {
+            .about-panel {
 
-                width: 130px;
-
-                height: 130px;
+                padding:
+                    25px
+                    18px;
             }
+
+
+            .about-facts {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .about-text {
+
+                font-size: 16px;
+            }
+
         }
 
     </style>
 
+
+    <!-- =================================================
+         EXTERNAL CSS
+    ================================================= -->
 
     <link
         rel="stylesheet"
@@ -1026,6 +1294,7 @@
         rel="stylesheet"
         href="./css/main.css"
     >
+
 
 </head>
 
@@ -1050,8 +1319,25 @@
 
 
     <!-- =================================================
+         EYE OF CTHULHU BUTTON
+    ================================================= -->
+
+    <button
+        id="eoc-button"
+        type="button"
+        aria-label="Summon Eye of Cthulhu"
+    >
+
+        <img
+            src="./assets/images/eye-of-cthulhu.png"
+            alt=""
+        >
+
+    </button>
+
+
+    <!-- =================================================
          EYE OF CTHULHU
-         BIG EASTER EGG VERSION
     ================================================= -->
 
     <div
@@ -1061,7 +1347,7 @@
 
         <img
             src="./assets/images/eye-of-cthulhu.png"
-            alt=""
+            alt="Eye of Cthulhu"
         >
 
     </div>
@@ -1076,26 +1362,6 @@
         aria-label="Main navigation"
     >
 
-
-        <!-- EYE BUTTON -->
-
-        <button
-            id="eoc-button"
-            class="eoc-button"
-            type="button"
-            aria-label="???"
-        >
-
-            <img
-                src="./assets/images/eye-of-cthulhu.png"
-                alt=""
-            >
-
-        </button>
-
-
-        <!-- LIVE -->
-
         <button
             class="pixel-tab active"
             data-page="live"
@@ -1104,8 +1370,6 @@
             LIVE
         </button>
 
-
-        <!-- MUSIC -->
 
         <button
             class="pixel-tab"
@@ -1116,8 +1380,6 @@
         </button>
 
 
-        <!-- LINKS -->
-
         <button
             class="pixel-tab"
             data-page="links"
@@ -1126,8 +1388,6 @@
             LINKS
         </button>
 
-
-        <!-- TOOLS -->
 
         <button
             class="pixel-tab"
@@ -1138,8 +1398,6 @@
         </button>
 
 
-        <!-- ABOUT -->
-
         <button
             class="pixel-tab"
             data-page="about"
@@ -1147,7 +1405,6 @@
         >
             ABOUT
         </button>
-
 
     </nav>
 
@@ -1191,7 +1448,6 @@
 
                 </div>
 
-
             </div>
 
         </section>
@@ -1212,19 +1468,23 @@
                     MUSIC
                 </p>
 
+
                 <h1>
                     NOW PLAYING
                 </h1>
 
+
                 <div class="music-card">
 
                     <div class="music-cover"></div>
+
 
                     <div class="music-info">
 
                         <strong>
                             No song playing
                         </strong>
+
 
                         <span>
                             Spotify
@@ -1254,11 +1514,14 @@
                     RALKERIE
                 </p>
 
+
                 <h1>
                     LINKS
                 </h1>
 
+
                 <div class="link-grid">
+
 
                     <a
                         href="#"
@@ -1293,6 +1556,7 @@
                         OTHER
                     </a>
 
+
                 </div>
 
             </div>
@@ -1315,12 +1579,16 @@
                     RALKERIE
                 </p>
 
+
                 <h1>
                     TOOLS
                 </h1>
 
+
                 <p class="pixel-description">
+
                     Tools and projects will go here.
+
                 </p>
 
             </div>
@@ -1337,20 +1605,137 @@
             class="pixel-page"
         >
 
-            <div class="pixel-panel">
+            <div class="pixel-panel about-panel">
+
 
                 <p class="pixel-label">
                     RALKERIE
                 </p>
 
+
                 <h1>
-                    ABOUT
+                    ABOUT ME
                 </h1>
 
-                <p class="pixel-description">
-                    Welcome to my little corner
-                    of the internet.
-                </p>
+
+                <div class="about-content">
+
+
+                    <p class="about-text">
+                        Hey! I'm Ralkerie.
+                    </p>
+
+
+                    <p class="about-text">
+
+                        I'm a 14-year-old coder who
+                        loves making websites, games,
+                        and random projects.
+
+                    </p>
+
+
+                    <p class="about-text">
+
+                        I especially enjoy coding and
+                        experimenting with new ideas.
+
+                    </p>
+
+
+                    <div
+                        class="about-divider"
+                    ></div>
+
+
+                    <div
+                        class="about-facts"
+                    >
+
+
+                        <div
+                            class="about-fact"
+                        >
+
+                            <span
+                                class="about-fact-label"
+                            >
+                                AGE
+                            </span>
+
+
+                            <span
+                                class="about-fact-value"
+                            >
+                                14
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="about-fact"
+                        >
+
+                            <span
+                                class="about-fact-label"
+                            >
+                                BIRTHDAY
+                            </span>
+
+
+                            <span
+                                class="about-fact-value"
+                            >
+                                DECEMBER 29, 2011
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="about-fact"
+                        >
+
+                            <span
+                                class="about-fact-label"
+                            >
+                                I DO
+                            </span>
+
+
+                            <span
+                                class="about-fact-value"
+                            >
+                                CODING
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="about-fact"
+                        >
+
+                            <span
+                                class="about-fact-label"
+                            >
+                                FAVORITE ANIME
+                            </span>
+
+
+                            <span
+                                class="about-fact-value"
+                            >
+                                MACROSS DELTA
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -1372,11 +1757,11 @@
 
     <script src="./js/discord.js"></script>
 
-    <script src="./js/waveform.js"></script>
-
-    <!-- EYE OF CTHULHU EASTER EGG -->
-
     <script src="./js/eoc.js"></script>
+
+    <!-- Waveform loads after Discord -->
+
+    <script src="./js/waveform.js"></script>
 
 
 </body>
