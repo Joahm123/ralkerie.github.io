@@ -1,6 +1,15 @@
 /* =====================================================
-   RALKERIE WAVEFORM
-   WRAPS AROUND DISCORD CARD
+   RALKERIE
+   FOUR-SIDED AUDIO VISUALIZER BORDER
+
+   Bars wrap around the entire Discord box.
+
+   TOP    → vertical bars
+   RIGHT  → horizontal bars
+   BOTTOM → vertical bars
+   LEFT   → horizontal bars
+
+   The bars continuously move up/down.
 ===================================================== */
 
 (() => {
@@ -8,326 +17,418 @@
     "use strict";
 
 
-    const canvas =
+    /* =================================================
+       FIND WRAPPER
+    ================================================= */
+
+    const wrapper =
         document.getElementById(
-            "waveform-canvas"
+            "waveform-wrapper"
         );
 
 
-    if (!canvas) {
+    if (!wrapper) {
 
         console.error(
-            "Ralkerie: waveform canvas missing."
+            "Ralkerie: #waveform-wrapper not found."
         );
 
         return;
     }
 
 
-    const ctx =
-        canvas.getContext("2d");
+    /* =================================================
+       CREATE BORDER
+    ================================================= */
+
+    const border =
+        document.createElement("div");
 
 
-    if (!ctx) {
-
-        console.error(
-            "Ralkerie: waveform context failed."
-        );
-
-        return;
-    }
+    border.className =
+        "wave-border";
 
 
-    let width = 0;
-    let height = 0;
-
-    let dpr = 1;
-
-    let time = 0;
-
-    let lastTime =
-        performance.now();
+    wrapper.prepend(border);
 
 
     /* =================================================
-       RESIZE
+       SETTINGS
     ================================================= */
 
-    function resize() {
+    const BAR_WIDTH = 3;
 
-        dpr =
-            Math.min(
-                window.devicePixelRatio || 1,
-                2
-            );
+    const BAR_GAP = 7;
 
+    const MIN_HEIGHT = 4;
 
-        const rect =
-            canvas.getBoundingClientRect();
+    const MAX_HEIGHT = 24;
+
+    const SIDE_EXTRA = 18;
 
 
-        width =
-            rect.width;
-
-
-        height =
-            rect.height;
-
-
-        canvas.width =
-            width * dpr;
-
-
-        canvas.height =
-            height * dpr;
-
-
-        ctx.setTransform(
-            dpr,
-            0,
-            0,
-            dpr,
-            0,
-            0
-        );
-
-    }
-
-
-    window.addEventListener(
-        "resize",
-        resize
-    );
-
-
-    resize();
+    const bars = [];
 
 
     /* =================================================
-       WAVE FUNCTION
+       RANDOM NUMBER
     ================================================= */
 
-    function waveY(
-        x,
-        center
-    ) {
+    function random(min, max) {
 
-        const wave1 =
-            Math.sin(
-                x * 0.035 +
-                time * 3
-            );
-
-
-        const wave2 =
-            Math.sin(
-                x * 0.085 -
-                time * 4.2
-            );
-
-
-        const wave3 =
-            Math.sin(
-                x * 0.16 +
-                time * 2.1
-            );
-
-
-        const wave4 =
-            Math.sin(
-                x * 0.3 -
-                time * 5
-            );
-
-
-        const combined =
-            (
-                wave1 * 0.45 +
-                wave2 * 0.27 +
-                wave3 * 0.18 +
-                wave4 * 0.10
-            );
-
-
-        return center +
-            combined * 55;
-
+        return (
+            Math.random() *
+            (max - min)
+        ) + min;
     }
 
 
     /* =================================================
-       DRAW WAVE
+       CREATE TOP BARS
     ================================================= */
 
-    function draw() {
+    function createTopBars() {
 
-        ctx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
+        const width =
+            wrapper.clientWidth;
 
 
-        const center =
-            height / 2;
-
-
-        /*
-         * Pink glowing waveform
-         */
-
-        ctx.beginPath();
+        const count =
+            Math.floor(
+                width /
+                (BAR_WIDTH + BAR_GAP)
+            );
 
 
         for (
-            let x = 0;
-            x <= width;
-            x += 3
+            let i = 0;
+            i < count;
+            i++
         ) {
 
-            const y =
-                waveY(
-                    x,
-                    center
-                );
+            const bar =
+                document.createElement("span");
 
 
-            if (x === 0) {
+            bar.className =
+                "wave-bar top";
 
-                ctx.moveTo(
-                    x,
-                    y
-                );
 
-            } else {
+            const x =
+                i *
+                (BAR_WIDTH + BAR_GAP);
 
-                ctx.lineTo(
-                    x,
-                    y
-                );
 
-            }
+            bar.style.left =
+                `${x}px`;
 
+
+            bar.style.bottom =
+                `${SIDE_EXTRA}px`;
+
+
+            bar.style.height =
+                `${MAX_HEIGHT}px`;
+
+
+            border.appendChild(
+                bar
+            );
+
+
+            bars.push({
+
+                element: bar,
+
+                side: "top",
+
+                base: SIDE_EXTRA,
+
+                phase:
+                    Math.random() *
+                    Math.PI *
+                    2,
+
+                speed:
+                    random(
+                        1.5,
+                        4.5
+                    ),
+
+                amplitude:
+                    random(
+                        0.35,
+                        1
+                    )
+            });
         }
+    }
 
 
-        ctx.strokeStyle =
-            "rgba(255, 45, 181, 0.9)";
+    /* =================================================
+       CREATE BOTTOM BARS
+    ================================================= */
+
+    function createBottomBars() {
+
+        const width =
+            wrapper.clientWidth;
 
 
-        ctx.lineWidth = 5;
-
-        ctx.shadowBlur = 18;
-
-        ctx.shadowColor =
-            "#ff2db5";
-
-        ctx.stroke();
-
-
-        /*
-         * White thin center
-         */
-
-        ctx.beginPath();
+        const count =
+            Math.floor(
+                width /
+                (BAR_WIDTH + BAR_GAP)
+            );
 
 
         for (
-            let x = 0;
-            x <= width;
-            x += 3
+            let i = 0;
+            i < count;
+            i++
         ) {
 
-            const y =
-                waveY(
-                    x,
-                    center
-                );
+            const bar =
+                document.createElement("span");
 
 
-            if (x === 0) {
+            bar.className =
+                "wave-bar bottom";
 
-                ctx.moveTo(
-                    x,
-                    y
-                );
 
-            } else {
+            const x =
+                i *
+                (BAR_WIDTH + BAR_GAP);
 
-                ctx.lineTo(
-                    x,
-                    y
-                );
 
-            }
+            bar.style.left =
+                `${x}px`;
 
+
+            bar.style.top =
+                `${SIDE_EXTRA}px`;
+
+
+            bar.style.height =
+                `${MAX_HEIGHT}px`;
+
+
+            border.appendChild(
+                bar
+            );
+
+
+            bars.push({
+
+                element: bar,
+
+                side: "bottom",
+
+                base: SIDE_EXTRA,
+
+                phase:
+                    Math.random() *
+                    Math.PI *
+                    2,
+
+                speed:
+                    random(
+                        1.5,
+                        4.5
+                    ),
+
+                amplitude:
+                    random(
+                        0.35,
+                        1
+                    )
+            });
         }
+    }
 
 
-        ctx.strokeStyle =
-            "#ffffff";
+    /* =================================================
+       CREATE LEFT BARS
+    ================================================= */
 
-        ctx.lineWidth = 1.5;
+    function createLeftBars() {
 
-        ctx.shadowBlur = 8;
-
-        ctx.shadowColor =
-            "#ff72cf";
-
-        ctx.stroke();
+        const height =
+            wrapper.clientHeight;
 
 
-        /*
-         * Second quieter waveform
-         */
-
-        ctx.beginPath();
+        const count =
+            Math.floor(
+                height /
+                (BAR_WIDTH + BAR_GAP)
+            );
 
 
         for (
-            let x = 0;
-            x <= width;
-            x += 3
+            let i = 0;
+            i < count;
+            i++
         ) {
 
+            const bar =
+                document.createElement("span");
+
+
+            bar.className =
+                "wave-bar left";
+
+
             const y =
-                center +
-                Math.sin(
-                    x * 0.045 -
-                    time * 2.5
-                ) *
-                25;
+                i *
+                (BAR_WIDTH + BAR_GAP);
 
 
-            if (x === 0) {
+            bar.style.top =
+                `${y}px`;
 
-                ctx.moveTo(
-                    x,
-                    y
-                );
 
-            } else {
+            bar.style.right =
+                `${SIDE_EXTRA}px`;
 
-                ctx.lineTo(
-                    x,
-                    y
-                );
 
-            }
+            bar.style.width =
+                `${MAX_HEIGHT}px`;
 
+
+            border.appendChild(
+                bar
+            );
+
+
+            bars.push({
+
+                element: bar,
+
+                side: "left",
+
+                base: SIDE_EXTRA,
+
+                phase:
+                    Math.random() *
+                    Math.PI *
+                    2,
+
+                speed:
+                    random(
+                        1.5,
+                        4.5
+                    ),
+
+                amplitude:
+                    random(
+                        0.35,
+                        1
+                    )
+            });
         }
+    }
 
 
-        ctx.strokeStyle =
-            "rgba(255, 114, 207, 0.35)";
+    /* =================================================
+       CREATE RIGHT BARS
+    ================================================= */
 
-        ctx.lineWidth = 1;
+    function createRightBars() {
 
-        ctx.shadowBlur = 0;
+        const height =
+            wrapper.clientHeight;
 
-        ctx.stroke();
 
+        const count =
+            Math.floor(
+                height /
+                (BAR_WIDTH + BAR_GAP)
+            );
+
+
+        for (
+            let i = 0;
+            i < count;
+            i++
+        ) {
+
+            const bar =
+                document.createElement("span");
+
+
+            bar.className =
+                "wave-bar right";
+
+
+            const y =
+                i *
+                (BAR_WIDTH + BAR_GAP);
+
+
+            bar.style.top =
+                `${y}px`;
+
+
+            bar.style.left =
+                `${SIDE_EXTRA}px`;
+
+
+            bar.style.width =
+                `${MAX_HEIGHT}px`;
+
+
+            border.appendChild(
+                bar
+            );
+
+
+            bars.push({
+
+                element: bar,
+
+                side: "right",
+
+                base: SIDE_EXTRA,
+
+                phase:
+                    Math.random() *
+                    Math.PI *
+                    2,
+
+                speed:
+                    random(
+                        1.5,
+                        4.5
+                    ),
+
+                amplitude:
+                    random(
+                        0.35,
+                        1
+                    )
+            });
+        }
+    }
+
+
+    /* =================================================
+       BUILD
+    ================================================= */
+
+    function buildVisualizer() {
+
+        border.innerHTML = "";
+
+        bars.length = 0;
+
+
+        createTopBars();
+
+        createRightBars();
+
+        createBottomBars();
+
+        createLeftBars();
     }
 
 
@@ -335,27 +436,133 @@
        ANIMATION
     ================================================= */
 
-    function animate(now) {
-
-        let delta =
-            (now - lastTime) / 1000;
+    let startTime =
+        performance.now();
 
 
-        lastTime =
-            now;
+    function animate(time) {
+
+        const elapsed =
+            (
+                time -
+                startTime
+            ) / 1000;
 
 
-        if (delta > 0.05) {
+        for (
+            const bar of bars
+        ) {
 
-            delta = 0.05;
-        }
+            const wave =
+                (
+                    Math.sin(
+                        elapsed *
+                        bar.speed +
+                        bar.phase
+                    ) +
+                    1
+                ) / 2;
 
 
-        if (!document.hidden) {
+            const secondWave =
+                (
+                    Math.sin(
+                        elapsed *
+                        2.7 +
+                        bar.phase *
+                        1.7
+                    ) +
+                    1
+                ) / 2;
 
-            time += delta;
 
-            draw();
+            /*
+               Combine two waves so
+               the bars don't all move
+               in exactly the same way.
+            */
+
+            const amount =
+                (
+                    wave *
+                    0.7 +
+                    secondWave *
+                    0.3
+                );
+
+
+            const height =
+                MIN_HEIGHT +
+                (
+                    MAX_HEIGHT -
+                    MIN_HEIGHT
+                ) *
+                amount *
+                bar.amplitude;
+
+
+            /* =================================================
+               TOP
+            ================================================== */
+
+            if (
+                bar.side === "top"
+            ) {
+
+                bar.element.style.height =
+                    `${height}px`;
+
+                bar.element.style.transform =
+                    `translateY(${-height}px)`;
+            }
+
+
+            /* =================================================
+               BOTTOM
+            ================================================== */
+
+            else if (
+                bar.side === "bottom"
+            ) {
+
+                bar.element.style.height =
+                    `${height}px`;
+
+                bar.element.style.transform =
+                    `translateY(${height}px)`;
+            }
+
+
+            /* =================================================
+               LEFT
+            ================================================== */
+
+            else if (
+                bar.side === "left"
+            ) {
+
+                bar.element.style.width =
+                    `${height}px`;
+
+                bar.element.style.transform =
+                    `translateX(${-height}px)`;
+            }
+
+
+            /* =================================================
+               RIGHT
+            ================================================== */
+
+            else if (
+                bar.side === "right"
+            ) {
+
+                bar.element.style.width =
+                    `${height}px`;
+
+                bar.element.style.transform =
+                    `translateX(${height}px)`;
+            }
 
         }
 
@@ -363,22 +570,47 @@
         requestAnimationFrame(
             animate
         );
-
     }
 
 
-    document.addEventListener(
-        "visibilitychange",
+    /* =================================================
+       RESIZE
+    ================================================= */
+
+    let resizeTimer;
+
+
+    window.addEventListener(
+        "resize",
         () => {
 
-            lastTime =
-                performance.now();
+            clearTimeout(
+                resizeTimer
+            );
 
+
+            resizeTimer =
+                setTimeout(
+                    () => {
+
+                        buildVisualizer();
+
+                    },
+                    150
+                );
+
+        },
+        {
+            passive: true
         }
     );
 
 
-    draw();
+    /* =================================================
+       START
+    ================================================= */
+
+    buildVisualizer();
 
 
     requestAnimationFrame(
@@ -387,7 +619,8 @@
 
 
     console.log(
-        "Ralkerie waveform loaded."
+        "Ralkerie four-sided waveform loaded."
     );
+
 
 })();
