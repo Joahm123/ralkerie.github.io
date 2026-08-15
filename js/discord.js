@@ -7,6 +7,11 @@
 
     "use strict";
 
+
+    /* =================================================
+       SETTINGS
+    ================================================= */
+
     const USER_ID =
         "1044800788817510460";
 
@@ -16,27 +21,42 @@
 
     const REFRESH_TIME = 15000;
 
+
+    /* =================================================
+       CONTAINER
+    ================================================= */
+
     const container =
         document.getElementById(
             "discord-card-container"
         );
 
+
     if (!container) {
+
         console.error(
-            "Ralkerie: Discord container not found."
+            "Ralkerie: #discord-card-container not found."
         );
+
         return;
     }
 
 
+    console.log(
+        "Ralkerie Discord + Spotify sync ready."
+    );
+
+
     /* =================================================
-       ESCAPE
+       ESCAPE HTML
     ================================================= */
 
     function escapeHTML(value) {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         div.textContent =
             value == null
@@ -71,9 +91,12 @@
                 "clock-time"
             );
 
+
         if (clock) {
+
             clock.textContent =
                 getTime();
+
         }
     }
 
@@ -84,12 +107,19 @@
 
     function getGame(activities) {
 
-        if (!Array.isArray(activities)) {
+        if (
+            !Array.isArray(
+                activities
+            )
+        ) {
+
             return null;
         }
 
+
         for (
-            const activity of activities
+            const activity
+            of activities
         ) {
 
             if (
@@ -100,6 +130,7 @@
                 return activity;
             }
         }
+
 
         return null;
     }
@@ -125,6 +156,7 @@
             );
         }
 
+
         return (
             "https://cdn.discordapp.com/" +
             "embed/avatars/0.png"
@@ -133,26 +165,45 @@
 
 
     /* =================================================
-       SEND SPOTIFY DATA TO WAVEFORM
+       SPOTIFY SYNC
     ================================================= */
 
     function sendSpotifyData(data) {
 
+        /*
+         * Check whether Lanyard actually gave
+         * us Spotify information.
+         */
+
+        if (
+            !data
+        ) {
+
+            console.log(
+                "Ralkerie Spotify: no Lanyard data."
+            );
+
+            return;
+        }
+
+
         const spotify =
-            data &&
-            data.spotify
-                ? data.spotify
-                : null;
+            data.spotify;
 
 
         /*
-         * Not listening to Spotify.
+         * No Spotify currently.
          */
 
         if (
             !spotify ||
             !data.listening_to_spotify
         ) {
+
+            console.log(
+                "Ralkerie Spotify: not currently listening."
+            );
+
 
             window.dispatchEvent(
                 new CustomEvent(
@@ -162,6 +213,12 @@
 
                             playing: false,
 
+                            position: 0,
+
+                            duration: 0,
+
+                            trackId: null,
+
                             spotify: null
 
                         }
@@ -169,28 +226,30 @@
                 )
             );
 
+
             return;
         }
 
 
-        /*
-         * Lanyard gives us:
-         *
-         * timestamps.start
-         * timestamps.end
-         *
-         * This lets us calculate where the
-         * song currently is.
-         */
+        /* =================================================
+           TIMESTAMPS
+        ================================================= */
 
         const start =
             Number(
-                spotify.timestamps?.start || 0
+                spotify.timestamps &&
+                spotify.timestamps.start
+                    ? spotify.timestamps.start
+                    : 0
             );
+
 
         const end =
             Number(
-                spotify.timestamps?.end || 0
+                spotify.timestamps &&
+                spotify.timestamps.end
+                    ? spotify.timestamps.end
+                    : 0
             );
 
 
@@ -198,23 +257,34 @@
             Date.now();
 
 
+        /*
+         * Current playback position.
+         */
+
         let position =
-            start
+            start > 0
                 ? now - start
                 : 0;
 
 
+        /*
+         * Total duration.
+         */
+
         let duration =
-            end && start
+            end > start
                 ? end - start
                 : 0;
 
 
         /*
-         * Don't allow weird values.
+         * Sanity checks.
          */
 
-        if (position < 0) {
+        if (
+            position < 0
+        ) {
+
             position = 0;
         }
 
@@ -228,9 +298,62 @@
         }
 
 
-        /*
-         * Send everything to waveform.js.
-         */
+        /* =================================================
+           TRACK ID
+        ================================================= */
+
+        const trackId =
+            (
+                spotify.song ||
+                ""
+            ) +
+            "|" +
+            (
+                spotify.artist ||
+                ""
+            );
+
+
+        /* =================================================
+           LOG
+        ================================================= */
+
+        console.log(
+            "Ralkerie Spotify:",
+            spotify.song ||
+                "Unknown song"
+        );
+
+
+        console.log(
+            "Artist:",
+            spotify.artist ||
+                "Unknown artist"
+        );
+
+
+        console.log(
+            "Position:",
+            Math.floor(
+                position / 1000
+            ) +
+            "s / " +
+            Math.floor(
+                duration / 1000
+            ) +
+            "s"
+        );
+
+
+        console.log(
+            "Spotify timestamps:",
+            spotify.timestamps
+        );
+
+
+        /* =================================================
+           SEND TO WAVEFORM
+        ================================================= */
 
         window.dispatchEvent(
             new CustomEvent(
@@ -247,15 +370,7 @@
                             duration,
 
                         trackId:
-                            (
-                                spotify.song ||
-                                ""
-                            ) +
-                            "|" +
-                            (
-                                spotify.artist ||
-                                ""
-                            ),
+                            trackId,
 
                         spotify:
                             spotify
@@ -264,21 +379,11 @@
                 }
             )
         );
-
-
-        console.log(
-            "Ralkerie Spotify sync:",
-            spotify.song,
-            Math.floor(position / 1000) +
-                "s / " +
-                Math.floor(duration / 1000) +
-                "s"
-        );
     }
 
 
     /* =================================================
-       RENDER
+       RENDER DISCORD
     ================================================= */
 
     function renderDiscord(data) {
@@ -287,17 +392,22 @@
             !data ||
             !data.discord_user
         ) {
+
+            console.error(
+                "Ralkerie: invalid Discord data."
+            );
+
             return;
         }
 
 
         /*
-         * FIRST:
-         *
-         * Tell waveform about Spotify.
+         * SEND SPOTIFY DATA FIRST
          */
 
-        sendSpotifyData(data);
+        sendSpotifyData(
+            data
+        );
 
 
         const user =
@@ -317,7 +427,9 @@
 
 
         const avatar =
-            getAvatar(user);
+            getAvatar(
+                user
+            );
 
 
         /* =================================================
@@ -330,10 +442,13 @@
             );
 
 
-        let gameHTML = "";
+        let gameHTML =
+            "";
 
 
-        if (game) {
+        if (
+            game
+        ) {
 
             gameHTML = `
 
@@ -344,7 +459,9 @@
                     </div>
 
                     <div class="discord-activity-text">
-                        ${escapeHTML(game.name)}
+                        ${escapeHTML(
+                            game.name
+                        )}
                     </div>
 
                 </div>
@@ -354,10 +471,11 @@
 
 
         /* =================================================
-           SPOTIFY
+           SPOTIFY CARD
         ================================================= */
 
-        let spotifyHTML = "";
+        let spotifyHTML =
+            "";
 
 
         if (
@@ -389,6 +507,8 @@
                                         )}"
                                         alt="Album artwork"
                                         loading="eager"
+                                        width="48"
+                                        height="48"
                                     >
                                   `
                                 : ""
@@ -419,7 +539,7 @@
 
 
         /* =================================================
-           FIND EXISTING CARD
+           FIND CARD
         ================================================= */
 
         let card =
@@ -428,16 +548,28 @@
             );
 
 
-        if (!card) {
+        /*
+         * Create card only if necessary.
+         */
+
+        if (
+            !card
+        ) {
 
             card =
                 document.createElement(
                     "div"
                 );
 
+
             card.className =
                 "discord-live-card";
 
+
+            /*
+             * If waveform wrapper already
+             * exists, keep card inside it.
+             */
 
             const wrapper =
                 container.querySelector(
@@ -445,7 +577,9 @@
                 );
 
 
-            if (wrapper) {
+            if (
+                wrapper
+            ) {
 
                 wrapper.appendChild(
                     card
@@ -456,12 +590,17 @@
                 container.appendChild(
                     card
                 );
+
             }
         }
 
 
         /* =================================================
-           UPDATE ONLY CARD
+           UPDATE CARD CONTENT
+           
+           IMPORTANT:
+           We ONLY change card.innerHTML.
+           We NEVER remove the waveform wrapper.
         ================================================= */
 
         card.innerHTML = `
@@ -470,7 +609,9 @@
 
                 <img
                     class="discord-avatar"
-                    src="${avatar}"
+                    src="${escapeHTML(
+                        avatar
+                    )}"
                     alt="Discord avatar"
                     loading="eager"
                     width="64"
@@ -480,11 +621,15 @@
                 <div>
 
                     <div class="discord-name">
-                        ${escapeHTML(username)}
+                        ${escapeHTML(
+                            username
+                        )}
                     </div>
 
                     <div
-                        class="discord-status status-${escapeHTML(status)}"
+                        class="discord-status status-${escapeHTML(
+                            status
+                        )}"
                     >
                         ${escapeHTML(
                             status.toUpperCase()
@@ -495,9 +640,12 @@
 
             </div>
 
+
             ${gameHTML}
 
+
             ${spotifyHTML}
+
 
             <div class="local-clock">
 
@@ -522,7 +670,7 @@
 
 
     /* =================================================
-       ERROR
+       ERROR CARD
     ================================================= */
 
     function showError() {
@@ -533,12 +681,15 @@
             );
 
 
-        if (!card) {
+        if (
+            !card
+        ) {
 
             card =
                 document.createElement(
                     "div"
                 );
+
 
             card.className =
                 "discord-live-card";
@@ -550,7 +701,9 @@
                 );
 
 
-            if (wrapper) {
+            if (
+                wrapper
+            ) {
 
                 wrapper.appendChild(
                     card
@@ -561,6 +714,7 @@
                 container.appendChild(
                     card
                 );
+
             }
         }
 
@@ -586,6 +740,7 @@
 
             </div>
 
+
             <div class="local-clock">
 
                 <div
@@ -605,8 +760,8 @@
 
 
         /*
-         * Tell waveform that Spotify
-         * isn't available.
+         * Tell waveform Spotify isn't
+         * available.
          */
 
         window.dispatchEvent(
@@ -614,8 +769,17 @@
                 "ralkerie:spotify",
                 {
                     detail: {
+
                         playing: false,
+
+                        position: 0,
+
+                        duration: 0,
+
+                        trackId: null,
+
                         spotify: null
+
                     }
                 }
             )
@@ -627,20 +791,30 @@
 
 
     /* =================================================
-       LOAD
+       LOAD DISCORD
     ================================================= */
 
-    let loading = false;
+    let loading =
+        false;
 
 
     async function loadDiscord() {
 
-        if (loading) {
+        /*
+         * Don't allow two requests
+         * at the same time.
+         */
+
+        if (
+            loading
+        ) {
+
             return;
         }
 
 
-        loading = true;
+        loading =
+            true;
 
 
         try {
@@ -654,7 +828,9 @@
                 );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     "HTTP " +
@@ -665,6 +841,19 @@
 
             const result =
                 await response.json();
+
+
+            /* =================================================
+               DEBUG LANYARD DATA
+
+               This lets us see exactly what
+               Lanyard is sending.
+            ================================================= */
+
+            console.log(
+                "RALKERIE LANYARD DATA:",
+                result.data
+            );
 
 
             if (
@@ -684,7 +873,9 @@
             );
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             console.error(
                 "Ralkerie Discord error:",
@@ -698,21 +889,30 @@
                 );
 
 
-            if (!existingCard) {
+            /*
+             * Don't destroy a working card
+             * just because one refresh failed.
+             */
+
+            if (
+                !existingCard
+            ) {
 
                 showError();
             }
+        }
 
 
-        } finally {
+        finally {
 
-            loading = false;
+            loading =
+                false;
         }
     }
 
 
     /* =================================================
-       START
+       INITIAL LOAD
     ================================================= */
 
     loadDiscord();
@@ -737,9 +937,5 @@
         1000
     );
 
-
-    console.log(
-        "Ralkerie Discord + Spotify sync ready."
-    );
 
 })();
