@@ -1,13 +1,14 @@
 /* =====================================================
    RALKERIE DISCORD
-   STABLE + FAST VERSION
+   STABLE / LOW CPU VERSION
 
-   - Loads Discord immediately
-   - Keeps the same card alive
-   - Refreshes data every 10 seconds
-   - Never replaces the card
-   - Won't get stuck on Loading
-   - Local clock updates every second
+   - Loads Lanyard Discord data
+   - Does NOT constantly replace the card
+   - Keeps card dimensions stable
+   - Updates only changed content
+   - Local clock
+   - Spotify
+   - Game activity
 ===================================================== */
 
 (() => {
@@ -15,9 +16,9 @@
     "use strict";
 
 
-    /* =====================================================
+    /* =================================================
        SETTINGS
-    ===================================================== */
+    ================================================= */
 
     const USER_ID =
         "1044800788817510460";
@@ -26,10 +27,13 @@
         "https://api.lanyard.rest/v1/users/" +
         USER_ID;
 
+    const REFRESH_INTERVAL =
+        10000;
 
-    /* =====================================================
+
+    /* =================================================
        CONTAINER
-    ===================================================== */
+    ================================================= */
 
     const container =
         document.getElementById(
@@ -40,7 +44,7 @@
     if (!container) {
 
         console.error(
-            "Ralkerie: Discord container not found."
+            "Ralkerie Discord: container not found."
         );
 
         return;
@@ -48,13 +52,33 @@
 
 
     console.log(
-        "Ralkerie Discord starting..."
+        "Ralkerie Discord loaded."
     );
 
 
-    /* =====================================================
+    /* =================================================
+       ESCAPE HTML
+    ================================================= */
+
+    function escapeHTML(value) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            value == null
+                ? ""
+                : String(value);
+
+        return div.innerHTML;
+    }
+
+
+    /* =================================================
        CLOCK
-    ===================================================== */
+    ================================================= */
 
     function getTime() {
 
@@ -85,13 +109,19 @@
     }
 
 
-    /* =====================================================
+    /* =================================================
        FIND GAME
-    ===================================================== */
+    ================================================= */
 
-    function getGame(activities) {
+    function getGame(
+        activities
+    ) {
 
-        if (!Array.isArray(activities)) {
+        if (
+            !Array.isArray(
+                activities
+            )
+        ) {
 
             return null;
         }
@@ -121,18 +151,44 @@
     }
 
 
-    /* =====================================================
-       CREATE CARD
-    ===================================================== */
+    /* =================================================
+       GET AVATAR
+    ================================================= */
+
+    function getAvatar(
+        user
+    ) {
+
+        if (
+            user &&
+            user.avatar
+        ) {
+
+            return (
+                "https://cdn.discordapp.com/avatars/" +
+                user.id +
+                "/" +
+                user.avatar +
+                ".png?size=128"
+            );
+        }
+
+
+        return (
+            "https://cdn.discordapp.com/embed/avatars/0.png"
+        );
+    }
+
+
+    /* =================================================
+       CREATE CARD ONCE
+    ================================================= */
 
     function createCard() {
 
         /*
-         * IMPORTANT:
-         *
-         * Search the ENTIRE container.
-         *
-         * The waveform may wrap the card.
+         * If a card already exists,
+         * DO NOT create another one.
          */
 
         let card =
@@ -147,10 +203,6 @@
         }
 
 
-        /* =================================================
-           CREATE
-        ================================================= */
-
         card =
             document.createElement(
                 "div"
@@ -160,6 +212,12 @@
         card.className =
             "discord-live-card";
 
+
+        /*
+         * Fixed internal structure.
+         * The structure never gets replaced
+         * during Discord refreshes.
+         */
 
         card.innerHTML = `
 
@@ -171,13 +229,17 @@
                     alt="Discord avatar"
                 >
 
-                <div>
+                <div class="discord-user-info">
 
-                    <div class="discord-name">
+                    <div
+                        class="discord-name"
+                    >
                         Loading...
                     </div>
 
-                    <div class="discord-status status-offline">
+                    <div
+                        class="discord-status"
+                    >
                         LOADING
                     </div>
 
@@ -191,11 +253,15 @@
                 hidden
             >
 
-                <div class="discord-activity-title">
+                <div
+                    class="discord-activity-title"
+                >
                     PLAYING
                 </div>
 
-                <div class="discord-activity-text"></div>
+                <div
+                    class="discord-activity-text"
+                ></div>
 
             </div>
 
@@ -205,11 +271,15 @@
                 hidden
             >
 
-                <div class="discord-section-label">
+                <div
+                    class="discord-section-label"
+                >
                     SPOTIFY
                 </div>
 
-                <div class="spotify-row">
+                <div
+                    class="spotify-row"
+                >
 
                     <img
                         class="spotify-art"
@@ -219,9 +289,13 @@
 
                     <div>
 
-                        <div class="spotify-song"></div>
+                        <div
+                            class="spotify-song"
+                        ></div>
 
-                        <div class="spotify-artist"></div>
+                        <div
+                            class="spotify-artist"
+                        ></div>
 
                     </div>
 
@@ -239,7 +313,9 @@
                     ${getTime()}
                 </div>
 
-                <div class="clock-label">
+                <div
+                    class="clock-label"
+                >
                     LOCAL TIME
                 </div>
 
@@ -249,7 +325,11 @@
 
 
         /*
-         * Add directly to container.
+         * IMPORTANT:
+         * Append the card directly.
+         *
+         * The waveform script is responsible
+         * for its own wrapper.
          */
 
         container.appendChild(
@@ -261,23 +341,34 @@
     }
 
 
-    /* =====================================================
+    /* =================================================
        UPDATE CARD
-    ===================================================== */
+    ================================================= */
 
-    function updateCard(data) {
+    function updateDiscord(
+        data
+    ) {
+
+        if (
+            !data ||
+            !data.discord_user
+        ) {
+
+            return;
+        }
+
 
         const card =
             createCard();
 
 
-        /* =================================================
-           USER
-        ================================================= */
-
         const user =
-            data.discord_user || {};
+            data.discord_user;
 
+
+        /* =================================================
+           USERNAME
+        ================================================= */
 
         const username =
             user.global_name ||
@@ -300,6 +391,39 @@
 
 
         /* =================================================
+           AVATAR
+        ================================================= */
+
+        const avatarElement =
+            card.querySelector(
+                ".discord-avatar"
+            );
+
+
+        if (avatarElement) {
+
+            const avatar =
+                getAvatar(
+                    user
+                );
+
+
+            /*
+             * Only change src if necessary.
+             */
+
+            if (
+                avatarElement.src !==
+                avatar
+            ) {
+
+                avatarElement.src =
+                    avatar;
+            }
+        }
+
+
+        /* =================================================
            STATUS
         ================================================= */
 
@@ -316,53 +440,15 @@
 
         if (statusElement) {
 
-            statusElement.className =
-                "discord-status " +
-                `status-${status}`;
-
-
             statusElement.textContent =
                 status.toUpperCase();
-        }
 
 
-        /* =================================================
-           AVATAR
-        ================================================= */
-
-        let avatar =
-            "https://cdn.discordapp.com/embed/avatars/0.png";
-
-
-        if (
-            user.avatar &&
-            user.id
-        ) {
-
-            avatar =
-                "https://cdn.discordapp.com/avatars/" +
-                user.id +
-                "/" +
-                user.avatar +
-                ".png?size=256";
-        }
-
-
-        const avatarElement =
-            card.querySelector(
-                ".discord-avatar"
-            );
-
-
-        if (avatarElement) {
-
-            if (
-                avatarElement.src !== avatar
-            ) {
-
-                avatarElement.src =
-                    avatar;
-            }
+            statusElement.className =
+                "discord-status status-" +
+                escapeHTML(
+                    status
+                );
         }
 
 
@@ -376,7 +462,7 @@
             );
 
 
-        const activityBox =
+        const activity =
             card.querySelector(
                 ".discord-activity"
             );
@@ -390,22 +476,24 @@
 
         if (
             game &&
-            activityBox &&
+            activity &&
             activityText
         ) {
 
-            activityBox.hidden =
+            activity.hidden =
                 false;
 
 
             activityText.textContent =
-                game.name || "Unknown";
+                game.name ||
+                "Unknown";
+        }
 
-        } else if (
-            activityBox
+        else if (
+            activity
         ) {
 
-            activityBox.hidden =
+            activity.hidden =
                 true;
         }
 
@@ -427,57 +515,58 @@
             );
 
 
+        const spotifyArt =
+            card.querySelector(
+                ".spotify-art"
+            );
+
+
+        const spotifySong =
+            card.querySelector(
+                ".spotify-song"
+            );
+
+
+        const spotifyArtist =
+            card.querySelector(
+                ".spotify-artist"
+            );
+
+
         if (
             spotify &&
-            spotifyBox
+            spotifyBox &&
+            spotifyArt &&
+            spotifySong &&
+            spotifyArtist
         ) {
 
             spotifyBox.hidden =
                 false;
 
 
-            const art =
-                spotifyBox.querySelector(
-                    ".spotify-art"
-                );
+            spotifySong.textContent =
+                spotify.song ||
+                "Unknown song";
 
 
-            const song =
-                spotifyBox.querySelector(
-                    ".spotify-song"
-                );
+            spotifyArtist.textContent =
+                spotify.artist ||
+                "Unknown artist";
 
 
-            const artist =
-                spotifyBox.querySelector(
-                    ".spotify-artist"
-                );
+            if (
+                spotify.album_art_url &&
+                spotifyArt.src !==
+                spotify.album_art_url
+            ) {
 
-
-            if (art) {
-
-                art.src =
-                    spotify.album_art_url ||
-                    "";
+                spotifyArt.src =
+                    spotify.album_art_url;
             }
+        }
 
-
-            if (song) {
-
-                song.textContent =
-                    spotify.song ||
-                    "";
-            }
-
-
-            if (artist) {
-
-                artist.textContent =
-                    spotify.artist ||
-                    "";
-            }
-
-        } else if (
+        else if (
             spotifyBox
         ) {
 
@@ -486,26 +575,143 @@
         }
 
 
-        /* =================================================
-           CLOCK
-        ================================================= */
-
         updateClock();
     }
 
 
-    /* =====================================================
-       LOAD DISCORD
-    ===================================================== */
+    /* =================================================
+       LOADING STATE
+    ================================================= */
+
+    function showLoading() {
+
+        const card =
+            createCard();
+
+
+        const name =
+            card.querySelector(
+                ".discord-name"
+            );
+
+
+        const status =
+            card.querySelector(
+                ".discord-status"
+            );
+
+
+        if (name) {
+
+            name.textContent =
+                "Loading...";
+        }
+
+
+        if (status) {
+
+            status.textContent =
+                "LOADING";
+
+
+            status.className =
+                "discord-status";
+        }
+    }
+
+
+    /* =================================================
+       ERROR STATE
+    ================================================= */
+
+    function showError() {
+
+        const card =
+            createCard();
+
+
+        const name =
+            card.querySelector(
+                ".discord-name"
+            );
+
+
+        const status =
+            card.querySelector(
+                ".discord-status"
+            );
+
+
+        if (name) {
+
+            name.textContent =
+                "DISCORD";
+        }
+
+
+        if (status) {
+
+            status.textContent =
+                "UNAVAILABLE";
+
+
+            status.className =
+                "discord-status status-offline";
+        }
+
+
+        const activity =
+            card.querySelector(
+                ".discord-activity"
+            );
+
+
+        const spotify =
+            card.querySelector(
+                ".discord-spotify"
+            );
+
+
+        if (activity) {
+
+            activity.hidden =
+                true;
+        }
+
+
+        if (spotify) {
+
+            spotify.hidden =
+                true;
+        }
+    }
+
+
+    /* =================================================
+       FETCH DISCORD
+    ================================================= */
+
+    let loading =
+        false;
+
 
     async function loadDiscord() {
 
+        /*
+         * Prevent overlapping requests.
+         */
+
+        if (loading) {
+
+            return;
+        }
+
+
+        loading =
+            true;
+
+
         try {
-
-            console.log(
-                "Ralkerie: fetching Discord..."
-            );
-
 
             const response =
                 await fetch(
@@ -516,7 +722,9 @@
                 );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     "HTTP " +
@@ -530,7 +738,6 @@
 
 
             if (
-                !result ||
                 !result.success ||
                 !result.data
             ) {
@@ -541,17 +748,16 @@
             }
 
 
-            updateCard(
+            updateDiscord(
                 result.data
             );
 
 
-            console.log(
-                "Ralkerie: Discord updated."
-            );
+        }
 
-
-        } catch (error) {
+        catch (
+            error
+        ) {
 
             console.error(
                 "Ralkerie Discord error:",
@@ -559,86 +765,45 @@
             );
 
 
-            /*
-             * IMPORTANT:
-             *
-             * Don't destroy the card.
-             *
-             * Just show offline/unavailable.
-             */
+            showError();
 
-            const card =
-                createCard();
+        }
 
+        finally {
 
-            const name =
-                card.querySelector(
-                    ".discord-name"
-                );
-
-
-            const status =
-                card.querySelector(
-                    ".discord-status"
-                );
-
-
-            if (name) {
-
-                name.textContent =
-                    "DISCORD";
-            }
-
-
-            if (status) {
-
-                status.className =
-                    "discord-status status-offline";
-
-
-                status.textContent =
-                    "UNAVAILABLE";
-            }
-
-
-            updateClock();
+            loading =
+                false;
         }
     }
 
 
-    /* =====================================================
+    /* =================================================
        INITIAL CARD
-
-       Create it immediately so the page
-       never waits forever.
-    ===================================================== */
+    ================================================= */
 
     createCard();
 
 
-    updateClock();
-
-
-    /* =====================================================
-       FIRST DISCORD REQUEST
-    ===================================================== */
+    /* =================================================
+       LOAD
+    ================================================= */
 
     loadDiscord();
 
 
-    /* =====================================================
-       REFRESH EVERY 10 SECONDS
-    ===================================================== */
+    /* =================================================
+       REFRESH
+    ================================================= */
 
     setInterval(
         loadDiscord,
-        10000
+        REFRESH_INTERVAL
     );
 
 
-    /* =====================================================
-       CLOCK EVERY SECOND
-    ===================================================== */
+    /* =================================================
+       CLOCK
+    ================================================= */
 
     setInterval(
         updateClock,
@@ -646,8 +811,15 @@
     );
 
 
+    /* =================================================
+       INITIAL CLOCK
+    ================================================= */
+
+    updateClock();
+
+
     console.log(
-        "Ralkerie Discord ready."
+        "Ralkerie Discord stable system ready."
     );
 
 })();
