@@ -1,14 +1,14 @@
 /* =====================================================
    RALKERIE DISCORD
-   STABLE / LOW CPU VERSION
+   STABLE VERSION
 
-   - Loads Lanyard Discord data
-   - Does NOT constantly replace the card
-   - Keeps card dimensions stable
-   - Updates only changed content
-   - Local clock
+   - Lanyard Discord presence
    - Spotify
    - Game activity
+   - Local clock
+   - Refreshes every 15 seconds
+   - Does NOT create/remove waveform wrappers
+   - Does NOT show permanent "loading"
 ===================================================== */
 
 (() => {
@@ -27,8 +27,8 @@
         "https://api.lanyard.rest/v1/users/" +
         USER_ID;
 
-    const REFRESH_INTERVAL =
-        10000;
+    const REFRESH_TIME =
+        15000;
 
 
     /* =================================================
@@ -44,7 +44,7 @@
     if (!container) {
 
         console.error(
-            "Ralkerie Discord: container not found."
+            "Ralkerie: #discord-card-container not found."
         );
 
         return;
@@ -52,7 +52,7 @@
 
 
     console.log(
-        "Ralkerie Discord loaded."
+        "Ralkerie Discord system loaded."
     );
 
 
@@ -100,7 +100,6 @@
                 "clock-time"
             );
 
-
         if (clock) {
 
             clock.textContent =
@@ -113,14 +112,10 @@
        FIND GAME
     ================================================= */
 
-    function getGame(
-        activities
-    ) {
+    function getGame(activities) {
 
         if (
-            !Array.isArray(
-                activities
-            )
+            !Array.isArray(activities)
         ) {
 
             return null;
@@ -155,9 +150,7 @@
        GET AVATAR
     ================================================= */
 
-    function getAvatar(
-        user
-    ) {
+    function getAvatar(user) {
 
         if (
             user &&
@@ -175,179 +168,17 @@
 
 
         return (
-            "https://cdn.discordapp.com/embed/avatars/0.png"
+            "https://cdn.discordapp.com/" +
+            "embed/avatars/0.png"
         );
     }
 
 
     /* =================================================
-       CREATE CARD ONCE
+       RENDER CARD
     ================================================= */
 
-    function createCard() {
-
-        /*
-         * If a card already exists,
-         * DO NOT create another one.
-         */
-
-        let card =
-            container.querySelector(
-                ".discord-live-card"
-            );
-
-
-        if (card) {
-
-            return card;
-        }
-
-
-        card =
-            document.createElement(
-                "div"
-            );
-
-
-        card.className =
-            "discord-live-card";
-
-
-        /*
-         * Fixed internal structure.
-         * The structure never gets replaced
-         * during Discord refreshes.
-         */
-
-        card.innerHTML = `
-
-            <div class="discord-profile">
-
-                <img
-                    class="discord-avatar"
-                    src=""
-                    alt="Discord avatar"
-                >
-
-                <div class="discord-user-info">
-
-                    <div
-                        class="discord-name"
-                    >
-                        Loading...
-                    </div>
-
-                    <div
-                        class="discord-status"
-                    >
-                        LOADING
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="discord-activity"
-                hidden
-            >
-
-                <div
-                    class="discord-activity-title"
-                >
-                    PLAYING
-                </div>
-
-                <div
-                    class="discord-activity-text"
-                ></div>
-
-            </div>
-
-
-            <div
-                class="discord-spotify"
-                hidden
-            >
-
-                <div
-                    class="discord-section-label"
-                >
-                    SPOTIFY
-                </div>
-
-                <div
-                    class="spotify-row"
-                >
-
-                    <img
-                        class="spotify-art"
-                        src=""
-                        alt="Album artwork"
-                    >
-
-                    <div>
-
-                        <div
-                            class="spotify-song"
-                        ></div>
-
-                        <div
-                            class="spotify-artist"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="local-clock">
-
-                <div
-                    id="clock-time"
-                    class="clock-time"
-                >
-                    ${getTime()}
-                </div>
-
-                <div
-                    class="clock-label"
-                >
-                    LOCAL TIME
-                </div>
-
-            </div>
-
-        `;
-
-
-        /*
-         * IMPORTANT:
-         * Append the card directly.
-         *
-         * The waveform script is responsible
-         * for its own wrapper.
-         */
-
-        container.appendChild(
-            card
-        );
-
-
-        return card;
-    }
-
-
-    /* =================================================
-       UPDATE CARD
-    ================================================= */
-
-    function updateDiscord(
-        data
-    ) {
+    function renderDiscord(data) {
 
         if (
             !data ||
@@ -358,17 +189,9 @@
         }
 
 
-        const card =
-            createCard();
-
-
         const user =
             data.discord_user;
 
-
-        /* =================================================
-           USERNAME
-        ================================================= */
 
         const username =
             user.global_name ||
@@ -377,79 +200,13 @@
             "Unknown";
 
 
-        const nameElement =
-            card.querySelector(
-                ".discord-name"
-            );
-
-
-        if (nameElement) {
-
-            nameElement.textContent =
-                username;
-        }
-
-
-        /* =================================================
-           AVATAR
-        ================================================= */
-
-        const avatarElement =
-            card.querySelector(
-                ".discord-avatar"
-            );
-
-
-        if (avatarElement) {
-
-            const avatar =
-                getAvatar(
-                    user
-                );
-
-
-            /*
-             * Only change src if necessary.
-             */
-
-            if (
-                avatarElement.src !==
-                avatar
-            ) {
-
-                avatarElement.src =
-                    avatar;
-            }
-        }
-
-
-        /* =================================================
-           STATUS
-        ================================================= */
-
         const status =
             data.discord_status ||
             "offline";
 
 
-        const statusElement =
-            card.querySelector(
-                ".discord-status"
-            );
-
-
-        if (statusElement) {
-
-            statusElement.textContent =
-                status.toUpperCase();
-
-
-            statusElement.className =
-                "discord-status status-" +
-                escapeHTML(
-                    status
-                );
-        }
+        const avatar =
+            getAvatar(user);
 
 
         /* =================================================
@@ -462,39 +219,29 @@
             );
 
 
-        const activity =
-            card.querySelector(
-                ".discord-activity"
-            );
+        let gameHTML =
+            "";
 
 
-        const activityText =
-            card.querySelector(
-                ".discord-activity-text"
-            );
+        if (game) {
 
+            gameHTML = `
 
-        if (
-            game &&
-            activity &&
-            activityText
-        ) {
+                <div class="discord-activity">
 
-            activity.hidden =
-                false;
+                    <div class="discord-activity-title">
+                        PLAYING
+                    </div>
 
+                    <div class="discord-activity-text">
+                        ${escapeHTML(
+                            game.name
+                        )}
+                    </div>
 
-            activityText.textContent =
-                game.name ||
-                "Unknown";
-        }
+                </div>
 
-        else if (
-            activity
-        ) {
-
-            activity.hidden =
-                true;
+            `;
         }
 
 
@@ -502,77 +249,184 @@
            SPOTIFY
         ================================================= */
 
-        const spotify =
-            data.listening_to_spotify &&
-            data.spotify
-                ? data.spotify
-                : null;
-
-
-        const spotifyBox =
-            card.querySelector(
-                ".discord-spotify"
-            );
-
-
-        const spotifyArt =
-            card.querySelector(
-                ".spotify-art"
-            );
-
-
-        const spotifySong =
-            card.querySelector(
-                ".spotify-song"
-            );
-
-
-        const spotifyArtist =
-            card.querySelector(
-                ".spotify-artist"
-            );
+        let spotifyHTML =
+            "";
 
 
         if (
-            spotify &&
-            spotifyBox &&
-            spotifyArt &&
-            spotifySong &&
-            spotifyArtist
+            data.listening_to_spotify &&
+            data.spotify
         ) {
 
-            spotifyBox.hidden =
-                false;
+            const spotify =
+                data.spotify;
 
 
-            spotifySong.textContent =
-                spotify.song ||
-                "Unknown song";
+            spotifyHTML = `
+
+                <div class="discord-spotify">
+
+                    <div class="discord-section-label">
+                        SPOTIFY
+                    </div>
+
+                    <div class="spotify-row">
+
+                        ${
+                            spotify.album_art_url
+                                ? `
+                                    <img
+                                        class="spotify-art"
+                                        src="${escapeHTML(
+                                            spotify.album_art_url
+                                        )}"
+                                        alt="Album artwork"
+                                    >
+                                  `
+                                : ""
+                        }
+
+                        <div>
+
+                            <div class="spotify-song">
+                                ${escapeHTML(
+                                    spotify.song
+                                )}
+                            </div>
+
+                            <div class="spotify-artist">
+                                ${escapeHTML(
+                                    spotify.artist
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+        }
 
 
-            spotifyArtist.textContent =
-                spotify.artist ||
-                "Unknown artist";
+        /* =================================================
+           CREATE CARD
+           
+           IMPORTANT:
+           We replace ONLY the contents of the
+           Discord card itself.
+
+           We never touch its parent wrapper.
+        ================================================= */
+
+        let card =
+            container.querySelector(
+                ".discord-live-card"
+            );
 
 
-            if (
-                spotify.album_art_url &&
-                spotifyArt.src !==
-                spotify.album_art_url
-            ) {
+        if (!card) {
 
-                spotifyArt.src =
-                    spotify.album_art_url;
+            card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "discord-live-card";
+
+
+            /*
+             * If waveform already wrapped the
+             * card, append it to the wrapper.
+             *
+             * Otherwise append normally.
+             */
+
+            const wrapper =
+                container.querySelector(
+                    ".waveform-wrapper"
+                );
+
+
+            if (wrapper) {
+
+                wrapper.appendChild(
+                    card
+                );
+
+            } else {
+
+                container.appendChild(
+                    card
+                );
             }
         }
 
-        else if (
-            spotifyBox
-        ) {
 
-            spotifyBox.hidden =
-                true;
-        }
+        /* =================================================
+           UPDATE CARD CONTENT
+        ================================================= */
+
+        card.innerHTML = `
+
+            <div class="discord-profile">
+
+                <img
+                    class="discord-avatar"
+                    src="${avatar}"
+                    alt="Discord avatar"
+                    loading="eager"
+                    width="64"
+                    height="64"
+                >
+
+                <div>
+
+                    <div class="discord-name">
+                        ${escapeHTML(
+                            username
+                        )}
+                    </div>
+
+                    <div
+                        class="discord-status status-${escapeHTML(
+                            status
+                        )}"
+                    >
+                        ${escapeHTML(
+                            status.toUpperCase()
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            ${gameHTML}
+
+
+            ${spotifyHTML}
+
+
+            <div class="local-clock">
+
+                <div
+                    id="clock-time"
+                    class="clock-time"
+                >
+                    ${getTime()}
+                </div>
+
+                <div class="clock-label">
+                    LOCAL TIME
+                </div>
+
+            </div>
+
+        `;
 
 
         updateClock();
@@ -580,115 +434,99 @@
 
 
     /* =================================================
-       LOADING STATE
-    ================================================= */
-
-    function showLoading() {
-
-        const card =
-            createCard();
-
-
-        const name =
-            card.querySelector(
-                ".discord-name"
-            );
-
-
-        const status =
-            card.querySelector(
-                ".discord-status"
-            );
-
-
-        if (name) {
-
-            name.textContent =
-                "Loading...";
-        }
-
-
-        if (status) {
-
-            status.textContent =
-                "LOADING";
-
-
-            status.className =
-                "discord-status";
-        }
-    }
-
-
-    /* =================================================
-       ERROR STATE
+       ERROR CARD
     ================================================= */
 
     function showError() {
 
-        const card =
-            createCard();
-
-
-        const name =
-            card.querySelector(
-                ".discord-name"
+        let card =
+            container.querySelector(
+                ".discord-live-card"
             );
 
 
-        const status =
-            card.querySelector(
-                ".discord-status"
-            );
+        if (!card) {
+
+            card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "discord-live-card";
 
 
-        if (name) {
+            const wrapper =
+                container.querySelector(
+                    ".waveform-wrapper"
+                );
 
-            name.textContent =
-                "DISCORD";
+
+            if (wrapper) {
+
+                wrapper.appendChild(
+                    card
+                );
+
+            } else {
+
+                container.appendChild(
+                    card
+                );
+            }
         }
 
 
-        if (status) {
+        /*
+         * Do NOT replace the whole container.
+         * This prevents the waveform from being
+         * destroyed.
+         */
 
-            status.textContent =
-                "UNAVAILABLE";
+        card.innerHTML = `
 
+            <div class="discord-profile">
 
-            status.className =
-                "discord-status status-offline";
-        }
+                <div>
 
+                    <div class="discord-name">
+                        DISCORD
+                    </div>
 
-        const activity =
-            card.querySelector(
-                ".discord-activity"
-            );
+                    <div class="
+                        discord-status
+                        status-offline
+                    ">
+                        OFFLINE
+                    </div>
 
+                </div>
 
-        const spotify =
-            card.querySelector(
-                ".discord-spotify"
-            );
+            </div>
 
+            <div class="local-clock">
 
-        if (activity) {
+                <div
+                    id="clock-time"
+                    class="clock-time"
+                >
+                    ${getTime()}
+                </div>
 
-            activity.hidden =
-                true;
-        }
+                <div class="clock-label">
+                    LOCAL TIME
+                </div>
 
+            </div>
 
-        if (spotify) {
+        `;
 
-            spotify.hidden =
-                true;
-        }
+        updateClock();
     }
 
 
     /* =================================================
-       FETCH DISCORD
+       LOAD DISCORD
     ================================================= */
 
     let loading =
@@ -707,8 +545,7 @@
         }
 
 
-        loading =
-            true;
+        loading = true;
 
 
         try {
@@ -722,9 +559,7 @@
                 );
 
 
-            if (
-                !response.ok
-            ) {
+            if (!response.ok) {
 
                 throw new Error(
                     "HTTP " +
@@ -738,26 +573,29 @@
 
 
             if (
+                !result ||
                 !result.success ||
                 !result.data
             ) {
 
                 throw new Error(
-                    "Invalid Lanyard response"
+                    "Invalid Lanyard response."
                 );
             }
 
 
-            updateDiscord(
+            renderDiscord(
                 result.data
             );
 
 
+            console.log(
+                "Ralkerie Discord updated."
+            );
+
         }
 
-        catch (
-            error
-        ) {
+        catch (error) {
 
             console.error(
                 "Ralkerie Discord error:",
@@ -765,27 +603,32 @@
             );
 
 
-            showError();
+            /*
+             * Only show the error if we
+             * don't already have a card.
+             */
 
+            const existingCard =
+                container.querySelector(
+                    ".discord-live-card"
+                );
+
+
+            if (!existingCard) {
+
+                showError();
+            }
         }
 
         finally {
 
-            loading =
-                false;
+            loading = false;
         }
     }
 
 
     /* =================================================
-       INITIAL CARD
-    ================================================= */
-
-    createCard();
-
-
-    /* =================================================
-       LOAD
+       START
     ================================================= */
 
     loadDiscord();
@@ -797,7 +640,7 @@
 
     setInterval(
         loadDiscord,
-        REFRESH_INTERVAL
+        REFRESH_TIME
     );
 
 
@@ -811,15 +654,8 @@
     );
 
 
-    /* =================================================
-       INITIAL CLOCK
-    ================================================= */
-
-    updateClock();
-
-
     console.log(
-        "Ralkerie Discord stable system ready."
+        "Ralkerie Discord ready."
     );
 
 })();
