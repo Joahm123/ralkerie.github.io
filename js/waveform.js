@@ -1,18 +1,27 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   PERFORMANCE OPTIMIZED
+   GOOD LOOK + LOW CPU
 
-   - ~20 updates/sec instead of 60+
-   - Uses transform instead of width/height
-   - Fewer bars
-   - No continuous layout recalculation
-   - Pauses when tab is hidden
-   - Automatically rebuilds when Discord changes
+   - Four-sided wrap
+   - Bars touch the Discord card
+   - White -> pink gradient
+   - Strong glow
+   - Smooth enough at 20 updates/sec
+   - Transform-only animation
+   - No layout changes during animation
 ===================================================== */
 
 (() => {
 
     "use strict";
+
+    const container =
+        document.getElementById("discord-card-container");
+
+    if (!container) {
+        console.error("Ralkerie waveform: container not found.");
+        return;
+    }
 
 
     /* =================================================
@@ -20,53 +29,20 @@
     ================================================= */
 
     const BAR_SIZE = 3;
+    const GAP = 4;
 
-    const GAP = 6;
-
-    const MIN_SIZE = 0.25;
-
-    const MAX_SIZE = 9;
-
-    /*
-     * 50ms = 20 updates/sec.
-     *
-     * Visually still looks animated,
-     * but massively reduces CPU usage.
-     */
+    const MIN_SCALE = 0.35;
+    const MAX_SCALE = 10;
 
     const UPDATE_INTERVAL = 50;
 
 
-    /* =================================================
-       CONTAINER
-    ================================================= */
-
-    const container =
-        document.getElementById(
-            "discord-card-container"
-        );
-
-
-    if (!container) {
-
-        console.error(
-            "Ralkerie waveform: container not found."
-        );
-
-        return;
-    }
-
-
     let currentWrapper = null;
-
     let bars = [];
 
     let lastUpdate = 0;
-
+    let startTime = performance.now();
     let animationFrame = null;
-
-    let startTime =
-        performance.now();
 
 
     /* =================================================
@@ -76,9 +52,7 @@
     function createSide(side) {
 
         const element =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         element.className =
             `wave-side wave-side-${side}`;
@@ -98,21 +72,10 @@
     ) {
 
         const bar =
-            document.createElement(
-                "span"
-            );
+            document.createElement("span");
 
+        bar.className = "wave-bar";
 
-        bar.className =
-            "wave-bar";
-
-
-        /*
-         * Position only once.
-         *
-         * We never change left/top
-         * during animation.
-         */
 
         if (
             side === "top" ||
@@ -126,20 +89,17 @@
 
             bar.style.top =
                 `${position}px`;
-
         }
 
 
-        parent.appendChild(
-            bar
-        );
+        parent.appendChild(bar);
 
 
         return {
 
             element: bar,
 
-            side: side,
+            side,
 
             phase:
                 Math.random() *
@@ -147,14 +107,14 @@
                 2,
 
             speed:
-                1.2 +
+                1.4 +
                 Math.random() *
                 1.8,
 
             strength:
-                0.65 +
+                0.75 +
                 Math.random() *
-                0.35
+                0.25
 
         };
     }
@@ -193,21 +153,13 @@
             !left ||
             !right
         ) {
-
             return;
         }
 
 
-        /*
-         * Clear old bars.
-         */
-
         top.replaceChildren();
-
         bottom.replaceChildren();
-
         left.replaceChildren();
-
         right.replaceChildren();
 
 
@@ -278,14 +230,14 @@
 
 
         console.log(
-            "Optimized waveform bars:",
+            "Ralkerie waveform bars:",
             bars.length
         );
     }
 
 
     /* =================================================
-       ATTACH WAVEFORM
+       ATTACH
     ================================================= */
 
     function attachWaveform(card) {
@@ -294,10 +246,6 @@
             return;
         }
 
-
-        /*
-         * Already attached.
-         */
 
         if (
             card.parentElement &&
@@ -313,10 +261,6 @@
         }
 
 
-        /*
-         * Remove old waveform.
-         */
-
         if (
             currentWrapper &&
             currentWrapper.parentNode
@@ -328,18 +272,11 @@
 
 
         const wrapper =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         wrapper.className =
             "waveform-wrapper";
 
-
-        /* =================================================
-           FOUR SIDES
-        ================================================= */
 
         const top =
             createSide("top");
@@ -355,60 +292,36 @@
 
 
         wrapper.appendChild(top);
-
         wrapper.appendChild(bottom);
-
         wrapper.appendChild(left);
-
         wrapper.appendChild(right);
 
 
-        /*
-         * Put wrapper in container.
-         */
+        container.appendChild(wrapper);
 
-        container.appendChild(
-            wrapper
-        );
-
-
-        /*
-         * Put Discord card inside.
-         */
-
-        wrapper.appendChild(
-            card
-        );
+        wrapper.appendChild(card);
 
 
         currentWrapper =
             wrapper;
 
 
-        /*
-         * Wait until dimensions exist.
-         */
+        requestAnimationFrame(() => {
 
-        requestAnimationFrame(
-            () => {
+            if (
+                currentWrapper === wrapper
+            ) {
 
-                if (
-                    currentWrapper === wrapper
-                ) {
-
-                    buildBars(
-                        wrapper
-                    );
-
-                }
+                buildBars(wrapper);
 
             }
-        );
+
+        });
     }
 
 
     /* =================================================
-       FIND DISCORD CARD
+       FIND CARD
     ================================================= */
 
     function findCard() {
@@ -418,17 +331,11 @@
                 ".discord-live-card"
             );
 
-
         if (!card) {
-
             return;
-
         }
 
-
-        attachWaveform(
-            card
-        );
+        attachWaveform(card);
     }
 
 
@@ -441,27 +348,13 @@
         animationFrame = null;
 
 
-        /*
-         * Completely stop processing
-         * while tab is hidden.
-         */
-
         if (
             document.hidden
         ) {
 
             return;
-
         }
 
-
-        /*
-         * Throttle animation.
-
-         * Browser may call rAF at 60fps,
-         * but we only actually update
-         * the bars every 50ms.
-         */
 
         if (
             time - lastUpdate <
@@ -488,13 +381,8 @@
             ) / 1000;
 
 
-        /*
-         * Animate bars.
-         */
-
         for (
-            const data
-            of bars
+            const data of bars
         ) {
 
             const wave =
@@ -503,8 +391,7 @@
                         elapsed *
                         data.speed +
                         data.phase
-                    ) +
-                    1
+                    ) + 1
                 ) * 0.5;
 
 
@@ -512,66 +399,36 @@
                 (
                     Math.sin(
                         elapsed *
-                        3 +
-                        data.phase
-                    ) +
-                    1
+                        4.2 +
+                        data.phase *
+                        1.4
+                    ) + 1
                 ) * 0.5;
 
 
             const value =
-                wave * 0.75 +
-                secondary * 0.25;
+                wave * 0.72 +
+                secondary * 0.28;
 
-
-            /*
-             * Scale rather than changing
-             * width/height.
-
-             * This avoids layout work.
-             */
 
             const scale =
-                MIN_SIZE +
+                MIN_SCALE +
                 value *
-                MAX_SIZE *
+                MAX_SCALE *
                 data.strength;
 
 
-            const bar =
-                data.element;
-
-
             if (
-                data.side === "top"
-            ) {
-
-                bar.style.transform =
-                    `scaleY(${scale})`;
-
-            }
-
-            else if (
+                data.side === "top" ||
                 data.side === "bottom"
             ) {
 
-                bar.style.transform =
+                data.element.style.transform =
                     `scaleY(${scale})`;
 
-            }
+            } else {
 
-            else if (
-                data.side === "left"
-            ) {
-
-                bar.style.transform =
-                    `scaleX(${scale})`;
-
-            }
-
-            else {
-
-                bar.style.transform =
+                data.element.style.transform =
                     `scaleX(${scale})`;
 
             }
@@ -608,7 +465,6 @@
                     requestAnimationFrame(
                         animate
                     );
-
             }
 
         }
@@ -632,22 +488,19 @@
 
 
             resizeTimer =
-                setTimeout(
-                    () => {
+                setTimeout(() => {
 
-                        if (
+                    if (
+                        currentWrapper
+                    ) {
+
+                        buildBars(
                             currentWrapper
-                        ) {
+                        );
 
-                            buildBars(
-                                currentWrapper
-                            );
+                    }
 
-                        }
-
-                    },
-                    250
-                );
+                }, 250);
 
         },
         {
@@ -657,30 +510,24 @@
 
 
     /* =================================================
-       DISCORD OBSERVER
+       OBSERVER
     ================================================= */
 
     const observer =
-        new MutationObserver(
-            () => {
+        new MutationObserver(() => {
 
-                /*
-                 * Don't rebuild constantly.
-                 */
+            clearTimeout(
+                observer.timer
+            );
 
-                clearTimeout(
-                    observer.timer
+
+            observer.timer =
+                setTimeout(
+                    findCard,
+                    100
                 );
 
-
-                observer.timer =
-                    setTimeout(
-                        findCard,
-                        100
-                    );
-
-            }
-        );
+        });
 
 
     observer.observe(
@@ -699,37 +546,29 @@
     findCard();
 
 
-    /*
-     * Discord loads asynchronously,
-     * so check briefly.
-     */
-
     let attempts = 0;
 
 
     const finder =
-        setInterval(
-            () => {
+        setInterval(() => {
 
-                attempts++;
+            attempts++;
 
-                findCard();
+            findCard();
 
 
-                if (
-                    currentWrapper ||
-                    attempts >= 100
-                ) {
+            if (
+                currentWrapper ||
+                attempts >= 100
+            ) {
 
-                    clearInterval(
-                        finder
-                    );
+                clearInterval(
+                    finder
+                );
 
-                }
+            }
 
-            },
-            250
-        );
+        }, 250);
 
 
     /* =================================================
@@ -743,7 +582,7 @@
 
 
     console.log(
-        "Ralkerie optimized waveform ready."
+        "Ralkerie waveform ready."
     );
 
 })();
