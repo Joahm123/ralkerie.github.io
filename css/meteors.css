@@ -1,6 +1,7 @@
 /* =====================================================
    RALKERIE METEORS
-   LONG THICK PIXEL TRAILS
+   LONG TRAILS
+   FASTER MOVEMENT
    HEAD → DOWN RIGHT
    TRAIL → UP LEFT
 ===================================================== */
@@ -27,8 +28,8 @@
 .meteor-hitbox {
     position: absolute;
 
-    width: 180px;
-    height: 120px;
+    width: 220px;
+    height: 150px;
 
     pointer-events: auto;
 
@@ -39,7 +40,7 @@
 
 
 /* =====================================================
-   METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -67,17 +68,14 @@
 
     animation:
         meteor-fly
-        5.2s
+        4.2s
         linear
         forwards;
 }
 
 
 /* =====================================================
-   MAIN TRAIL
-
-   The meteor head is at the RIGHT.
-   Trail stretches toward the LEFT.
+   LONG MAIN TRAIL
 ===================================================== */
 
 .meteor::after {
@@ -88,7 +86,7 @@
     right: 4px;
     top: 50%;
 
-    width: 155px;
+    width: 210px;
     height: 5px;
 
     transform:
@@ -100,30 +98,49 @@
     background:
         linear-gradient(
             to left,
+
             #ffffff 0%,
-            #ffd6f3 8%,
-            #ff9be2 22%,
+
+            #ffffff 5%,
+
+            #ffd6f3 13%,
+
+            #ff9be2 25%,
+
             #ff63ca 48%,
+
             rgba(
                 255,
                 99,
                 202,
                 0.45
-            ) 75%,
-            transparent 100%
+            ) 72%,
+
+            rgba(
+                255,
+                99,
+                202,
+                0
+            ) 100%
         );
 
     box-shadow:
         0 0 4px #ffffff,
         0 0 8px #ff9be2,
-        0 0 15px #ff63ca;
+        0 0 15px #ff63ca,
+        0 0 25px rgba(
+            255,
+            99,
+            202,
+            0.45
+        );
 
     pointer-events: none;
 }
 
 
 /* =====================================================
-   SOFT OUTER GLOW
+   SOFT LONG GLOW
 ===================================================== */
 
 .meteor::before {
@@ -134,8 +151,8 @@
     right: 6px;
     top: 50%;
 
-    width: 150px;
-    height: 12px;
+    width: 205px;
+    height: 13px;
 
     transform:
         translateY(-50%)
@@ -146,24 +163,28 @@
     background:
         linear-gradient(
             to left,
+
             rgba(
                 255,
                 255,
                 255,
                 0.35
             ),
+
             rgba(
                 255,
                 155,
                 226,
-                0.25
+                0.28
             ),
+
             rgba(
                 255,
                 99,
                 202,
-                0.12
+                0.14
             ),
+
             transparent
         );
 
@@ -174,9 +195,7 @@
 
 
 /* =====================================================
-   MOVEMENT
-
-   DOWN + RIGHT
+   FASTER MOVEMENT
 ===================================================== */
 
 @keyframes meteor-fly {
@@ -191,19 +210,19 @@
         opacity: 0;
     }
 
-    7% {
+    5% {
         opacity: 1;
     }
 
-    88% {
+    92% {
         opacity: 1;
     }
 
     100% {
         transform:
             translate(
-                850px,
-                850px
+                1400px,
+                1400px
             );
 
         opacity: 0;
@@ -281,7 +300,7 @@
 
 
 /* =====================================================
-   GIF
+   POPUP GIF
 ===================================================== */
 
 .meteor-popup-gif {
@@ -292,6 +311,7 @@
     height: auto;
 
     max-width: 80vw;
+
     max-height: 70vh;
 
     image-rendering: pixelated;
@@ -349,8 +369,8 @@
 @media (max-width: 700px) {
 
     .meteor-hitbox {
-        width: 150px;
-        height: 100px;
+        width: 180px;
+        height: 120px;
     }
 
     .meteor {
@@ -359,13 +379,13 @@
     }
 
     .meteor::after {
-        width: 115px;
+        width: 150px;
         height: 4px;
     }
 
     .meteor::before {
-        width: 110px;
-        height: 9px;
+        width: 145px;
+        height: 10px;
     }
 
     .meteor-popup-gif {
