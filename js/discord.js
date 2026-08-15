@@ -3,18 +3,33 @@
 
     "use strict";
 
-    console.log("Ralkerie Discord loaded.");
+
+    /* =====================================================
+       SETTINGS
+    ===================================================== */
+
+    var USER_ID =
+        "1044800788817510460";
+
+
+    var API_URL =
+        "https://api.lanyard.rest/v1/users/" +
+        USER_ID;
+
+
+    var UPDATE_INTERVAL =
+        10000;
 
 
     /* =====================================================
-       FIND LIVE SECTION
+       FIND LIVE PAGE
     ===================================================== */
 
-    var liveSection =
+    var livePage =
         document.getElementById("live");
 
 
-    if (!liveSection) {
+    if (!livePage) {
 
         console.error(
             "Ralkerie Discord: #live not found."
@@ -24,229 +39,27 @@
     }
 
 
-    /* =====================================================
-       FIND THE EXISTING PANEL
-    ===================================================== */
-
-    var panel =
-        liveSection.querySelector(
-            ".pixel-panel"
-        );
-
-
-    if (!panel) {
-
-        console.error(
-            "Ralkerie Discord: .pixel-panel not found."
-        );
-
-        return;
-    }
+    console.log(
+        "Ralkerie Discord system loaded."
+    );
 
 
     /* =====================================================
-       CREATE DISCORD CONTENT
+       CLOCK
     ===================================================== */
 
-    panel.innerHTML = `
+    function getLocalTime() {
 
-        <div class="discord-live-card">
-
-            <div class="discord-profile">
-
-                <img
-                    id="discord-avatar"
-                    class="discord-avatar"
-                    src=""
-                    alt="Discord avatar"
-                >
-
-                <div class="discord-user">
-
-                    <div
-                        id="discord-name"
-                        class="discord-name"
-                    >
-                        Loading...
-                    </div>
-
-                    <div
-                        id="discord-status"
-                        class="discord-status"
-                    >
-                        CONNECTING
-                    </div>
-
-                </div>
-
-            </div>
+        var now =
+            new Date();
 
 
-            <div class="discord-activity">
-
-                <div
-                    id="discord-activity-title"
-                    class="discord-activity-title"
-                >
-                    LOADING
-                </div>
-
-                <div
-                    id="discord-activity-text"
-                    class="discord-activity-text"
-                >
-                    Checking Discord...
-                </div>
-
-            </div>
-
-
-            <div
-                id="discord-spotify"
-                class="discord-spotify hidden"
-            >
-
-                <div class="discord-section-label">
-                    LISTENING ON SPOTIFY
-                </div>
-
-                <div class="spotify-row">
-
-                    <img
-                        id="spotify-art"
-                        class="spotify-art"
-                        src=""
-                        alt="Album art"
-                    >
-
-                    <div>
-
-                        <div
-                            id="spotify-song"
-                            class="spotify-song"
-                        >
-                            —
-                        </div>
-
-                        <div
-                            id="spotify-artist"
-                            class="spotify-artist"
-                        >
-                            —
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    /* =====================================================
-       HELPER
-    ===================================================== */
-
-    function get(id) {
-
-        return document.getElementById(id);
-
-    }
-
-
-    /* =====================================================
-       LOAD DISCORD
-    ===================================================== */
-
-    function loadDiscord() {
-
-        console.log(
-            "Checking Discord..."
-        );
-
-
-        fetch(
-            "/api/discord",
+        return now.toLocaleTimeString(
+            undefined,
             {
-                cache: "no-store"
-            }
-        )
-
-        .then(
-            function (response) {
-
-                console.log(
-                    "Discord API status:",
-                    response.status
-                );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "HTTP " +
-                        response.status
-                    );
-
-                }
-
-
-                return response.json();
-
-            }
-        )
-
-        .then(
-            function (response) {
-
-                console.log(
-                    "Discord API:",
-                    response
-                );
-
-
-                if (
-                    !response.success ||
-                    !response.data
-                ) {
-
-                    throw new Error(
-                        "Invalid Discord data"
-                    );
-
-                }
-
-
-                updateDiscord(
-                    response.data
-                );
-
-            }
-        )
-
-        .catch(
-            function (error) {
-
-                console.error(
-                    "Ralkerie Discord:",
-                    error
-                );
-
-
-                get(
-                    "discord-name"
-                ).textContent =
-                    "Discord unavailable";
-
-
-                get(
-                    "discord-status"
-                ).textContent =
-                    "ERROR";
-
+                hour: "numeric",
+                minute: "2-digit",
+                second: "2-digit"
             }
         );
 
@@ -254,13 +67,17 @@
 
 
     /* =====================================================
-       UPDATE
+       CREATE DISCORD CARD
     ===================================================== */
 
-    function updateDiscord(data) {
+    function createCard(data) {
 
         var user =
-            data.discord_user || {};
+            data.discord_user;
+
+
+        var activities =
+            data.activities || [];
 
 
         var status =
@@ -268,61 +85,105 @@
             "offline";
 
 
-        /* USERNAME */
+        /* ================================================
+           AVATAR
+        ================================================ */
 
-        get(
-            "discord-name"
-        ).textContent =
-            user.global_name ||
-            user.username ||
-            "Ralk";
+        var avatarURL;
 
 
-        /* STATUS */
+        if (user.avatar) {
 
-        get(
-            "discord-status"
-        ).textContent =
-            status.toUpperCase();
-
-
-        get(
-            "discord-status"
-        ).className =
-            "discord-status status-" +
-            status;
-
-
-        /* AVATAR */
-
-        if (
-            user.id &&
-            user.avatar
-        ) {
-
-            var extension =
-                user.avatar.indexOf("a_") === 0
-                    ? "gif"
-                    : "png";
-
-
-            get(
-                "discord-avatar"
-            ).src =
+            avatarURL =
                 "https://cdn.discordapp.com/avatars/" +
                 user.id +
                 "/" +
                 user.avatar +
-                "." +
-                extension +
-                "?size=256";
+                ".png?size=256";
+
+        } else {
+
+            avatarURL =
+                "https://cdn.discordapp.com/embed/avatars/0.png";
 
         }
 
 
-        /* =================================================
+        /* ================================================
+           DISPLAY NAME
+        ================================================ */
+
+        var displayName =
+            user.global_name ||
+            user.display_name ||
+            user.username ||
+            "Unknown";
+
+
+        /* ================================================
+           STATUS
+        ================================================ */
+
+        var statusText =
+            status.toUpperCase();
+
+
+        var statusClass =
+            "status-" +
+            status;
+
+
+        /* ================================================
+           ACTIVITY
+        ================================================ */
+
+        var activityHTML = "";
+
+
+        if (activities.length > 0) {
+
+            var activity =
+                activities.find(
+                    function (item) {
+
+                        return item.type === 0;
+
+                    }
+                );
+
+
+            if (activity) {
+
+                activityHTML = `
+
+                    <div class="discord-activity">
+
+                        <div class="discord-activity-title">
+                            PLAYING
+                        </div>
+
+                        <div class="discord-activity-text">
+                            ${escapeHTML(
+                                activity.name ||
+                                "Unknown"
+                            )}
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* ================================================
            SPOTIFY
-        ================================================= */
+        ================================================ */
+
+        var spotifyHTML = "";
+
 
         if (
             data.listening_to_spotify &&
@@ -333,137 +194,303 @@
                 data.spotify;
 
 
-            get(
-                "discord-spotify"
-            ).classList.remove(
-                "hidden"
+            spotifyHTML = `
+
+                <div class="discord-spotify">
+
+                    <div class="discord-section-label">
+                        SPOTIFY
+                    </div>
+
+                    <div class="spotify-row">
+
+                        <img
+                            class="spotify-art"
+                            src="${escapeAttribute(
+                                spotify.album_art_url
+                            )}"
+                            alt="Album artwork"
+                        >
+
+                        <div>
+
+                            <div class="spotify-song">
+                                ${escapeHTML(
+                                    spotify.song ||
+                                    "Unknown song"
+                                )}
+                            </div>
+
+                            <div class="spotify-artist">
+                                ${escapeHTML(
+                                    spotify.artist ||
+                                    "Unknown artist"
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* ================================================
+           CLOCK
+        ================================================ */
+
+        var clockHTML = `
+
+            <div class="local-clock">
+
+                <div
+                    id="clock-time"
+                    class="clock-time"
+                >
+                    ${getLocalTime()}
+                </div>
+
+                <div class="clock-label">
+                    LOCAL TIME
+                </div>
+
+            </div>
+
+        `;
+
+
+        /* ================================================
+           CARD
+        ================================================ */
+
+        livePage.innerHTML = `
+
+            <div class="discord-live-card">
+
+                <div class="discord-profile">
+
+                    <img
+                        class="discord-avatar"
+                        src="${escapeAttribute(
+                            avatarURL
+                        )}"
+                        alt="Discord avatar"
+                    >
+
+                    <div>
+
+                        <div class="discord-name">
+                            ${escapeHTML(
+                                displayName
+                            )}
+                        </div>
+
+                        <div
+                            class="
+                                discord-status
+                                ${statusClass}
+                            "
+                        >
+                            ${escapeHTML(
+                                statusText
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                ${activityHTML}
+
+
+                ${spotifyHTML}
+
+
+                ${clockHTML}
+
+            </div>
+
+        `;
+
+
+        startClock();
+
+    }
+
+
+    /* =====================================================
+       CLOCK UPDATE
+    ===================================================== */
+
+    var clockInterval =
+        null;
+
+
+    function startClock() {
+
+        if (clockInterval) {
+
+            clearInterval(
+                clockInterval
+            );
+
+        }
+
+
+        function updateClock() {
+
+            var clock =
+                document.getElementById(
+                    "clock-time"
+                );
+
+
+            if (!clock) {
+
+                return;
+            }
+
+
+            clock.textContent =
+                getLocalTime();
+
+        }
+
+
+        updateClock();
+
+
+        clockInterval =
+            setInterval(
+                updateClock,
+                1000
+            );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(value) {
+
+        var div =
+            document.createElement(
+                "div"
             );
 
 
-            get(
-                "spotify-art"
-            ).src =
-                spotify.album_art_url ||
-                "";
+        div.textContent =
+            value == null
+                ? ""
+                : String(value);
 
 
-            get(
-                "spotify-song"
-            ).textContent =
-                spotify.song ||
-                "Unknown song";
+        return div.innerHTML;
+
+    }
 
 
-            get(
-                "spotify-artist"
-            ).textContent =
-                spotify.artist ||
-                "Unknown artist";
+    /* =====================================================
+       ESCAPE ATTRIBUTE
+    ===================================================== */
 
-        } else {
+    function escapeAttribute(value) {
 
-            get(
-                "discord-spotify"
-            ).classList.add(
-                "hidden"
+        return escapeHTML(
+            value
+        ).replace(
+            /"/g,
+            "&quot;"
+        );
+
+    }
+
+
+    /* =====================================================
+       LOAD DISCORD
+    ===================================================== */
+
+    function loadDiscord() {
+
+        fetch(API_URL)
+
+            .then(
+                function (response) {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Lanyard HTTP " +
+                            response.status
+                        );
+
+                    }
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                function (result) {
+
+                    if (
+                        !result.success ||
+                        !result.data
+                    ) {
+
+                        throw new Error(
+                            "Invalid Lanyard response."
+                        );
+
+                    }
+
+
+                    createCard(
+                        result.data
+                    );
+
+                }
+            )
+
+            .catch(
+                function (error) {
+
+                    console.error(
+                        "Ralkerie Discord error:",
+                        error
+                    );
+
+
+                    livePage.innerHTML = `
+
+                        <div class="pixel-panel">
+
+                            <p class="pixel-label">
+                                RALKERIE
+                            </p>
+
+                            <h1>
+                                LIVE
+                            </h1>
+
+                            <p class="pixel-description">
+                                Discord unavailable
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
             );
-
-        }
-
-
-        /* =================================================
-           ACTIVITIES
-        ================================================= */
-
-        var activities =
-            data.activities || [];
-
-
-        var activity = null;
-
-
-        for (
-            var i = 0;
-            i < activities.length;
-            i++
-        ) {
-
-            if (
-                activities[i].type !== 4
-            ) {
-
-                activity =
-                    activities[i];
-
-                break;
-            }
-
-        }
-
-
-        if (activity) {
-
-            var type =
-                "ACTIVITY";
-
-
-            if (
-                activity.type === 0
-            ) {
-
-                type =
-                    "PLAYING";
-
-            } else if (
-                activity.type === 1
-            ) {
-
-                type =
-                    "STREAMING";
-
-            } else if (
-                activity.type === 2
-            ) {
-
-                type =
-                    "LISTENING";
-
-            } else if (
-                activity.type === 3
-            ) {
-
-                type =
-                    "WATCHING";
-
-            }
-
-
-            get(
-                "discord-activity-title"
-            ).textContent =
-                type;
-
-
-            get(
-                "discord-activity-text"
-            ).textContent =
-                activity.name ||
-                "Unknown";
-
-        } else {
-
-            get(
-                "discord-activity-title"
-            ).textContent =
-                "NOTHING PLAYING";
-
-
-            get(
-                "discord-activity-text"
-            ).textContent =
-                "No current activity";
-
-        }
 
     }
 
@@ -475,13 +502,13 @@
     loadDiscord();
 
 
-    /*
-       Update every 15 seconds
-    */
+    /* =====================================================
+       REFRESH DISCORD DATA
+    ===================================================== */
 
     setInterval(
         loadDiscord,
-        15000
+        UPDATE_INTERVAL
     );
 
 
