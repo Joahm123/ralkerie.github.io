@@ -1,19 +1,19 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   CLEAN + LOW CPU VERSION
+   FOUR-SIDED GLOWING EQUALIZER
 
-   - Does NOT resize the Discord card
-   - Four-sided waveform
-   - Individual visible bars
+   - Wraps around the Discord card
+   - White + pink glow
    - Smooth animation
-   - ~20 visual updates/sec
-   - Pauses when tab is hidden
-   - Automatically handles Discord refreshing
+   - CPU-conscious
+   - Does NOT resize the Discord card
 ===================================================== */
 
 (() => {
 
     "use strict";
+
+    console.log("Ralkerie waveform starting...");
 
 
     /* =================================================
@@ -21,18 +21,18 @@
     ================================================= */
 
     const BAR_WIDTH = 3;
+    const BAR_HEIGHT = 3;
 
-    const BAR_GAP = 4;
+    const GAP = 5;
 
-    const MIN_HEIGHT = 2;
+    const MIN_SIZE = 1;
+    const MAX_SIZE = 14;
 
-    const MAX_HEIGHT = 13;
-
-    const UPDATE_INTERVAL = 50;
+    const UPDATE_INTERVAL = 45;
 
 
     /* =================================================
-       FIND DISCORD CONTAINER
+       CONTAINER
     ================================================= */
 
     const container =
@@ -51,24 +51,16 @@
     }
 
 
-    /* =================================================
-       STATE
-    ================================================= */
-
-    let currentCard = null;
-
-    let waveform = null;
+    let currentWrapper = null;
 
     let bars = [];
 
     let lastUpdate = 0;
 
-    let startTime =
-        performance.now();
-
     let animationFrame = null;
 
-    let rebuildTimer = null;
+    let startTime =
+        performance.now();
 
 
     /* =================================================
@@ -77,17 +69,13 @@
 
     function createSide(side) {
 
-        const element =
-            document.createElement(
-                "div"
-            );
+        const sideElement =
+            document.createElement("div");
 
-
-        element.className =
+        sideElement.className =
             `wave-side wave-side-${side}`;
 
-
-        return element;
+        return sideElement;
     }
 
 
@@ -102,18 +90,15 @@
     ) {
 
         const bar =
-            document.createElement(
-                "span"
-            );
-
+            document.createElement("span");
 
         bar.className =
             "wave-bar";
 
 
-        /* =============================================
-           HORIZONTAL SIDES
-        ============================================= */
+        /*
+         * Horizontal sides
+         */
 
         if (
             side === "top" ||
@@ -126,9 +111,9 @@
         }
 
 
-        /* =============================================
-           VERTICAL SIDES
-        ============================================= */
+        /*
+         * Vertical sides
+         */
 
         else {
 
@@ -138,9 +123,7 @@
         }
 
 
-        parent.appendChild(
-            bar
-        );
+        parent.appendChild(bar);
 
 
         return {
@@ -156,150 +139,13 @@
 
             speed:
                 1.3 +
-                Math.random() *
-                1.7,
+                Math.random() * 1.8,
 
             strength:
-                0.65 +
-                Math.random() *
-                0.35
+                0.75 +
+                Math.random() * 0.25
+
         };
-    }
-
-
-    /* =================================================
-       CREATE WAVEFORM
-    ================================================= */
-
-    function createWaveform() {
-
-        if (!currentCard) {
-
-            return;
-        }
-
-
-        /*
-         * Remove previous waveform.
-         */
-
-        if (waveform) {
-
-            waveform.remove();
-
-            waveform = null;
-
-        }
-
-
-        /*
-         * Make card the positioning reference.
-         */
-
-        if (
-            getComputedStyle(
-                currentCard
-            ).position === "static"
-        ) {
-
-            currentCard.style.position =
-                "relative";
-
-        }
-
-
-        /* =================================================
-           WAVEFORM OVERLAY
-        ================================================= */
-
-        waveform =
-            document.createElement(
-                "div"
-            );
-
-
-        waveform.className =
-            "discord-waveform-overlay";
-
-
-        /* =================================================
-           FOUR SIDES
-        ================================================= */
-
-        const top =
-            createSide(
-                "top"
-            );
-
-
-        const bottom =
-            createSide(
-                "bottom"
-            );
-
-
-        const left =
-            createSide(
-                "left"
-            );
-
-
-        const right =
-            createSide(
-                "right"
-            );
-
-
-        waveform.appendChild(
-            top
-        );
-
-
-        waveform.appendChild(
-            bottom
-        );
-
-
-        waveform.appendChild(
-            left
-        );
-
-
-        waveform.appendChild(
-            right
-        );
-
-
-        /*
-         * IMPORTANT:
-         *
-         * The waveform is INSIDE the card,
-         * but position:absolute means it
-         * takes up ZERO layout space.
-         */
-
-        currentCard.appendChild(
-            waveform
-        );
-
-
-        /*
-         * Wait for dimensions.
-         */
-
-        requestAnimationFrame(
-            () => {
-
-                if (
-                    currentCard
-                ) {
-
-                    buildBars();
-
-                }
-
-            }
-        );
     }
 
 
@@ -307,37 +153,25 @@
        BUILD BARS
     ================================================= */
 
-    function buildBars() {
-
-        if (
-            !currentCard ||
-            !waveform
-        ) {
-
-            return;
-        }
-
+    function buildBars(wrapper) {
 
         const top =
-            waveform.querySelector(
+            wrapper.querySelector(
                 ".wave-side-top"
             );
 
-
         const bottom =
-            waveform.querySelector(
+            wrapper.querySelector(
                 ".wave-side-bottom"
             );
 
-
         const left =
-            waveform.querySelector(
+            wrapper.querySelector(
                 ".wave-side-left"
             );
 
-
         const right =
-            waveform.querySelector(
+            wrapper.querySelector(
                 ".wave-side-right"
             );
 
@@ -353,42 +187,30 @@
         }
 
 
-        /*
-         * Remove existing bars.
-         */
-
         top.replaceChildren();
-
         bottom.replaceChildren();
-
         left.replaceChildren();
-
         right.replaceChildren();
 
 
         bars = [];
 
 
-        /*
-         * Read card size once.
-         */
-
         const width =
-            currentCard.clientWidth;
-
+            wrapper.clientWidth;
 
         const height =
-            currentCard.clientHeight;
+            wrapper.clientHeight;
 
 
-        /* =================================================
-           TOP + BOTTOM
-        ================================================= */
+        /*
+         * TOP + BOTTOM
+         */
 
         for (
             let x = 0;
             x < width;
-            x += BAR_WIDTH + BAR_GAP
+            x += BAR_WIDTH + GAP
         ) {
 
             bars.push(
@@ -399,7 +221,6 @@
                 )
             );
 
-
             bars.push(
                 createBar(
                     bottom,
@@ -407,18 +228,17 @@
                     x
                 )
             );
-
         }
 
 
-        /* =================================================
-           LEFT + RIGHT
-        ================================================= */
+        /*
+         * LEFT + RIGHT
+         */
 
         for (
             let y = 0;
             y < height;
-            y += BAR_WIDTH + BAR_GAP
+            y += BAR_HEIGHT + GAP
         ) {
 
             bars.push(
@@ -429,7 +249,6 @@
                 )
             );
 
-
             bars.push(
                 createBar(
                     right,
@@ -437,7 +256,6 @@
                     y
                 )
             );
-
         }
 
 
@@ -449,7 +267,120 @@
 
 
     /* =================================================
-       FIND DISCORD CARD
+       ATTACH
+    ================================================= */
+
+    function attachWaveform(card) {
+
+        if (!card) {
+            return;
+        }
+
+
+        /*
+         * Already attached.
+         */
+
+        if (
+            card.parentElement &&
+            card.parentElement.classList.contains(
+                "waveform-wrapper"
+            )
+        ) {
+
+            currentWrapper =
+                card.parentElement;
+
+            return;
+        }
+
+
+        /*
+         * Remove previous wrapper.
+         */
+
+        if (
+            currentWrapper &&
+            currentWrapper.parentNode
+        ) {
+
+            currentWrapper.remove();
+
+        }
+
+
+        /*
+         * Wrapper
+         */
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "waveform-wrapper";
+
+
+        /*
+         * Four sides
+         */
+
+        const top =
+            createSide("top");
+
+        const bottom =
+            createSide("bottom");
+
+        const left =
+            createSide("left");
+
+        const right =
+            createSide("right");
+
+
+        wrapper.appendChild(top);
+        wrapper.appendChild(bottom);
+        wrapper.appendChild(left);
+        wrapper.appendChild(right);
+
+
+        /*
+         * Put wrapper into Discord container.
+         */
+
+        container.appendChild(wrapper);
+
+
+        /*
+         * Move card inside wrapper.
+         */
+
+        wrapper.appendChild(card);
+
+
+        currentWrapper =
+            wrapper;
+
+
+        /*
+         * Wait for layout.
+         */
+
+        requestAnimationFrame(() => {
+
+            if (
+                currentWrapper === wrapper
+            ) {
+
+                buildBars(wrapper);
+
+            }
+
+        });
+    }
+
+
+    /* =================================================
+       FIND CARD
     ================================================= */
 
     function findCard() {
@@ -461,49 +392,11 @@
 
 
         if (!card) {
-
             return;
-
         }
 
 
-        /*
-         * Same card already connected.
-         */
-
-        if (
-            currentCard === card &&
-            waveform &&
-            waveform.parentElement === card
-        ) {
-
-            return;
-
-        }
-
-
-        /*
-         * Discord created a new card.
-         */
-
-        if (waveform) {
-
-            waveform.remove();
-
-            waveform = null;
-
-        }
-
-
-        bars = [];
-
-
-        currentCard =
-            card;
-
-
-        createWaveform();
-
+        attachWaveform(card);
     }
 
 
@@ -516,26 +409,10 @@
         animationFrame = null;
 
 
-        /*
-         * Stop completely when hidden.
-         */
-
-        if (
-            document.hidden
-        ) {
-
+        if (document.hidden) {
             return;
-
         }
 
-
-        /*
-         * Throttle updates.
-
-         * requestAnimationFrame still runs,
-         * but DOM transforms only update
-         * about 20 times per second.
-         */
 
         if (
             time - lastUpdate <
@@ -548,7 +425,6 @@
                 );
 
             return;
-
         }
 
 
@@ -563,23 +439,13 @@
             ) / 1000;
 
 
-        /* =================================================
-           ANIMATE BARS
-        ================================================= */
+        /*
+         * Animate bars.
+         */
 
         for (
-            let i = 0;
-            i < bars.length;
-            i++
+            const data of bars
         ) {
-
-            const data =
-                bars[i];
-
-
-            /*
-             * Main wave.
-             */
 
             const wave =
                 (
@@ -587,45 +453,31 @@
                         elapsed *
                         data.speed +
                         data.phase
-                    ) +
-                    1
+                    ) + 1
                 ) * 0.5;
 
 
-            /*
-             * Secondary movement.
-             */
-
-            const secondary =
+            const secondWave =
                 (
                     Math.sin(
                         elapsed *
-                        3.2 +
+                        2.7 +
                         data.phase *
                         1.4
-                    ) +
-                    1
+                    ) + 1
                 ) * 0.5;
 
 
-            /*
-             * Mix waves.
-             */
-
             const value =
                 wave * 0.78 +
-                secondary * 0.22;
+                secondWave * 0.22;
 
-
-            /*
-             * Calculate bar size.
-             */
 
             const size =
-                MIN_HEIGHT +
+                MIN_SIZE +
                 (
-                    MAX_HEIGHT -
-                    MIN_HEIGHT
+                    MAX_SIZE -
+                    MIN_SIZE
                 ) *
                 value *
                 data.strength;
@@ -635,9 +487,9 @@
                 data.element;
 
 
-            /* =================================================
-               TOP
-            ================================================= */
+            /*
+             * TOP
+             */
 
             if (
                 data.side === "top"
@@ -649,9 +501,9 @@
             }
 
 
-            /* =================================================
-               BOTTOM
-            ================================================= */
+            /*
+             * BOTTOM
+             */
 
             else if (
                 data.side === "bottom"
@@ -663,9 +515,9 @@
             }
 
 
-            /* =================================================
-               LEFT
-            ================================================= */
+            /*
+             * LEFT
+             */
 
             else if (
                 data.side === "left"
@@ -677,19 +529,16 @@
             }
 
 
-            /* =================================================
-               RIGHT
-            ================================================= */
+            /*
+             * RIGHT
+             */
 
-            else if (
-                data.side === "right"
-            ) {
+            else {
 
                 bar.style.transform =
                     `scaleX(${size})`;
 
             }
-
         }
 
 
@@ -697,76 +546,7 @@
             requestAnimationFrame(
                 animate
             );
-
     }
-
-
-    /* =================================================
-       RESIZE
-    ================================================= */
-
-    window.addEventListener(
-        "resize",
-        () => {
-
-            clearTimeout(
-                rebuildTimer
-            );
-
-
-            rebuildTimer =
-                setTimeout(
-                    () => {
-
-                        if (
-                            currentCard
-                        ) {
-
-                            buildBars();
-
-                        }
-
-                    },
-                    300
-                );
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    /* =================================================
-       DISCORD MUTATION OBSERVER
-    ================================================= */
-
-    const observer =
-        new MutationObserver(
-            () => {
-
-                clearTimeout(
-                    observer.timer
-                );
-
-
-                observer.timer =
-                    setTimeout(
-                        findCard,
-                        150
-                    );
-
-            }
-        );
-
-
-    observer.observe(
-        container,
-        {
-            childList: true,
-            subtree: true
-        }
-    );
 
 
     /* =================================================
@@ -779,7 +559,6 @@
 
             startTime =
                 performance.now();
-
 
             lastUpdate = 0;
 
@@ -801,43 +580,107 @@
 
 
     /* =================================================
-       INITIAL LOAD
+       RESIZE
+    ================================================= */
+
+    let resizeTimer = null;
+
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            clearTimeout(
+                resizeTimer
+            );
+
+
+            resizeTimer =
+                setTimeout(() => {
+
+                    if (
+                        currentWrapper
+                    ) {
+
+                        buildBars(
+                            currentWrapper
+                        );
+
+                    }
+
+                }, 300);
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /* =================================================
+       DISCORD OBSERVER
+    ================================================= */
+
+    const observer =
+        new MutationObserver(() => {
+
+            clearTimeout(
+                observer.timer
+            );
+
+
+            observer.timer =
+                setTimeout(
+                    findCard,
+                    150
+                );
+
+        });
+
+
+    observer.observe(
+        container,
+        {
+            childList: true,
+            subtree: true
+        }
+    );
+
+
+    /* =================================================
+       INITIAL
     ================================================= */
 
     findCard();
 
 
-    /* =================================================
-       DISCORD LOAD RETRY
-    ================================================= */
+    /*
+     * Discord can load asynchronously.
+     */
 
     let attempts = 0;
 
 
     const finder =
-        setInterval(
-            () => {
+        setInterval(() => {
 
-                attempts++;
+            attempts++;
 
-
-                findCard();
+            findCard();
 
 
-                if (
-                    currentCard ||
-                    attempts >= 80
-                ) {
+            if (
+                currentWrapper ||
+                attempts >= 80
+            ) {
 
-                    clearInterval(
-                        finder
-                    );
+                clearInterval(
+                    finder
+                );
 
-                }
+            }
 
-            },
-            250
-        );
+        }, 250);
 
 
     /* =================================================
