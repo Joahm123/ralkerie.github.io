@@ -1,13 +1,20 @@
 /* =====================================================
-   RALKERIE STARS
+   RALKERIE STAR BACKGROUND
+===================================================== */
+
+
+/* =====================================================
+   STAR CONTAINER
 ===================================================== */
 
 #stars {
+
     position: fixed;
 
     inset: 0;
 
     width: 100vw;
+
     height: 100vh;
 
     overflow: hidden;
@@ -25,6 +32,7 @@
 ===================================================== */
 
 .star {
+
     position: absolute;
 
     display: block;
@@ -34,18 +42,33 @@
     background:
         radial-gradient(
             circle,
-            #ffffff 0%,
-            #ffffff 30%,
-            #ffb8e9 55%,
-            #ff69d2 75%,
-            #ff3fbd 100%
+
+            #ff69d2 0%,
+
+            #ff55c9 35%,
+
+            #ff8dde 55%,
+
+            #ffffff 78%,
+
+            #ffffff 100%
         );
 
     box-shadow:
+
         0 0 2px #ffffff,
+
         0 0 4px #ffffff,
+
         0 0 7px #ff8ddd,
-        0 0 11px rgba(255, 60, 195, 0.75);
+
+        0 0 11px
+        rgba(
+            255,
+            60,
+            195,
+            0.75
+        );
 
     opacity: 0.85;
 
@@ -53,43 +76,74 @@
 
     will-change: transform;
 
-    contain: layout paint;
+    contain:
+        layout
+        paint;
 }
 
 
 /* =====================================================
-   SPARKLE
+   STAR SPARKLE
 ===================================================== */
-
-.star:nth-child(3n) {
-    animation:
-        starSparkle 1.8s ease-in-out infinite;
-}
-
-.star:nth-child(3n + 1) {
-    animation:
-        starSparkle 2.7s ease-in-out infinite;
-}
-
-.star:nth-child(3n + 2) {
-    animation:
-        starSparkle 3.4s ease-in-out infinite;
-}
-
 
 @keyframes starSparkle {
 
     0% {
+
         opacity: 0.35;
     }
 
     50% {
+
         opacity: 1;
     }
 
     100% {
+
         opacity: 0.35;
     }
+}
+
+
+/* =====================================================
+   SPARKLE CLASS
+===================================================== */
+
+.star {
+
+    animation:
+        starSparkle
+        2s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   EXTRA RANDOM-LOOKING TIMING
+===================================================== */
+
+.star:nth-child(3n) {
+
+    animation-duration: 1.4s;
+}
+
+
+.star:nth-child(4n) {
+
+    animation-duration: 2.8s;
+}
+
+
+.star:nth-child(7n) {
+
+    animation-duration: 1.9s;
+}
+
+
+.star:nth-child(11n) {
+
+    animation-duration: 3.2s;
 }
 
 
@@ -102,7 +156,10 @@
 ) {
 
     .star {
+
         animation: none;
+
         opacity: 0.8;
     }
+
 }
