@@ -1,12 +1,13 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   LOW CPU + FULL EDGE COVERAGE
+   STABLE + LOW CPU
 
-   - Keeps the existing wrapper
-   - Covers the entire perimeter
-   - No gaps around corners
-   - ~20 updates/sec
-   - Transform-only animation
+   - Wraps the Discord card correctly
+   - No flashing
+   - No rebuilding every Discord refresh
+   - Smooth waveform
+   - White/pink glow
+   - Only transforms are animated
    - Pauses when tab is hidden
 ===================================================== */
 
@@ -20,19 +21,12 @@
     ================================================= */
 
     const BAR_SIZE = 3;
+    const GAP = 5;
 
-    /*
-     * Smaller gap = fewer missing spots.
-     */
-    const GAP = 3;
+    const MIN_SCALE = 0.15;
+    const MAX_SCALE = 7;
 
-    const STEP = BAR_SIZE + GAP;
-
-    const MIN_SCALE = 0.35;
-
-    const MAX_SCALE = 6;
-
-    const UPDATE_INTERVAL = 50;
+    const UPDATE_INTERVAL = 45;
 
 
     /* =================================================
@@ -55,17 +49,13 @@
     }
 
 
-    /* =================================================
-       STATE
-    ================================================= */
-
-    let currentWrapper = null;
+    let wrapper = null;
 
     let bars = [];
 
-    let lastUpdate = 0;
-
     let animationFrame = null;
+
+    let lastUpdate = 0;
 
     let startTime =
         performance.now();
@@ -75,15 +65,15 @@
        CREATE SIDE
     ================================================= */
 
-    function createSide(side) {
+    function createSide(name) {
 
-        const element =
+        const side =
             document.createElement("div");
 
-        element.className =
-            `wave-side wave-side-${side}`;
+        side.className =
+            `wave-side wave-side-${name}`;
 
-        return element;
+        return side;
     }
 
 
@@ -100,14 +90,9 @@
         const bar =
             document.createElement("span");
 
-
         bar.className =
             "wave-bar";
 
-
-        /*
-         * Position the bar once.
-         */
 
         if (
             side === "top" ||
@@ -126,7 +111,10 @@
 
 
         /*
-         * Random animation properties.
+         * Random animation values are generated
+         * ONCE and never regenerated.
+         *
+         * This prevents flashing.
          */
 
         const data = {
@@ -141,15 +129,12 @@
                 2,
 
             speed:
-                1.4 +
-                Math.random() *
-                1.6,
+                1.0 +
+                Math.random() * 1.5,
 
             strength:
-                0.75 +
-                Math.random() *
-                0.25
-
+                0.65 +
+                Math.random() * 0.35
         };
 
 
@@ -160,10 +145,10 @@
 
 
     /* =================================================
-       BUILD BARS
+       BUILD WAVEFORM
     ================================================= */
 
-    function buildBars(wrapper) {
+    function buildWaveform() {
 
         if (!wrapper) {
             return;
@@ -203,16 +188,17 @@
 
 
         /*
-         * Remove old bars.
+         * Only build if there are no bars.
+         *
+         * This is important.
+         *
+         * Discord refreshing must NOT
+         * destroy and recreate the bars.
          */
 
-        top.replaceChildren();
-        bottom.replaceChildren();
-        left.replaceChildren();
-        right.replaceChildren();
-
-
-        bars = [];
+        if (bars.length > 0) {
+            return;
+        }
 
 
         const width =
@@ -231,14 +217,18 @@
         }
 
 
+        const step =
+            BAR_SIZE + GAP;
+
+
         /* =================================================
-           TOP + BOTTOM
+           TOP
         ================================================= */
 
         for (
             let x = 0;
             x <= width;
-            x += STEP
+            x += step
         ) {
 
             bars.push(
@@ -246,112 +236,66 @@
                     top,
                     "top",
                     x
-                )
-            );
-
-
-            bars.push(
-                createBar(
-                    bottom,
-                    "bottom",
-                    x
-                )
-            );
-        }
-
-
-        /*
-         * Force a final bar at the far right.
-         *
-         * This fixes the missing-end problem.
-         */
-
-        if (
-            width % STEP !== 0
-        ) {
-
-            bars.push(
-                createBar(
-                    top,
-                    "top",
-                    Math.max(
-                        0,
-                        width - BAR_SIZE
-                    )
-                )
-            );
-
-
-            bars.push(
-                createBar(
-                    bottom,
-                    "bottom",
-                    Math.max(
-                        0,
-                        width - BAR_SIZE
-                    )
                 )
             );
         }
 
 
         /* =================================================
-           LEFT + RIGHT
+           BOTTOM
+        ================================================= */
+
+        for (
+            let x = 0;
+            x <= width;
+            x += step
+        ) {
+
+            bars.push(
+                createBar(
+                    bottom,
+                    "bottom",
+                    x
+                )
+            );
+        }
+
+
+        /* =================================================
+           LEFT
         ================================================= */
 
         for (
             let y = 0;
             y <= height;
-            y += STEP
+            y += step
         ) {
 
             bars.push(
                 createBar(
                     left,
                     "left",
-                    y
-                )
-            );
-
-
-            bars.push(
-                createBar(
-                    right,
-                    "right",
                     y
                 )
             );
         }
 
 
-        /*
-         * Force a final bar at the bottom.
-         */
+        /* =================================================
+           RIGHT
+        ================================================= */
 
-        if (
-            height % STEP !== 0
+        for (
+            let y = 0;
+            y <= height;
+            y += step
         ) {
-
-            bars.push(
-                createBar(
-                    left,
-                    "left",
-                    Math.max(
-                        0,
-                        height - BAR_SIZE
-                    )
-                )
-            );
-
 
             bars.push(
                 createBar(
                     right,
                     "right",
-                    Math.max(
-                        0,
-                        height - BAR_SIZE
-                    )
+                    y
                 )
             );
         }
@@ -368,7 +312,13 @@
        ATTACH
     ================================================= */
 
-    function attachWaveform(card) {
+    function attach() {
+
+        const card =
+            container.querySelector(
+                ".discord-live-card"
+            );
+
 
         if (!card) {
             return;
@@ -376,7 +326,7 @@
 
 
         /*
-         * Already wrapped.
+         * Already correctly wrapped.
          */
 
         if (
@@ -386,45 +336,43 @@
             )
         ) {
 
-            currentWrapper =
+            wrapper =
                 card.parentElement;
 
             /*
-             * Rebuild in case the Discord
-             * card changed size.
+             * Give the browser a frame to finish
+             * sizing before creating bars.
              */
 
-            requestAnimationFrame(
-                () => {
+            if (bars.length === 0) {
 
-                    if (
-                        currentWrapper
-                        === card.parentElement
-                    ) {
-
-                        buildBars(
-                            currentWrapper
-                        );
-
-                    }
-
-                }
-            );
+                requestAnimationFrame(
+                    buildWaveform
+                );
+            }
 
             return;
         }
 
 
         /*
-         * Remove an old wrapper if one exists.
+         * Remove an old wrapper ONLY if it is
+         * actually ours.
          */
 
-        if (
-            currentWrapper &&
-            currentWrapper.parentNode
-        ) {
+        const oldWrapper =
+            container.querySelector(
+                ".waveform-wrapper"
+            );
 
-            currentWrapper.remove();
+
+        if (oldWrapper) {
+
+            /*
+             * Preserve the card.
+             */
+
+            oldWrapper.replaceWith(card);
         }
 
 
@@ -432,7 +380,7 @@
            CREATE WRAPPER
         ================================================= */
 
-        const wrapper =
+        wrapper =
             document.createElement(
                 "div"
             );
@@ -441,10 +389,6 @@
         wrapper.className =
             "waveform-wrapper";
 
-
-        /* =================================================
-           CREATE SIDES
-        ================================================= */
 
         const top =
             createSide("top");
@@ -466,65 +410,26 @@
 
 
         /*
-         * Put wrapper into container.
+         * Put wrapper exactly where the card was.
          */
 
-        container.appendChild(
-            wrapper
-        );
+        container.appendChild(wrapper);
+
+        wrapper.appendChild(card);
 
 
-        /*
-         * Put Discord card inside.
-         */
+        bars = [];
 
-        wrapper.appendChild(
-            card
-        );
-
-
-        currentWrapper =
-            wrapper;
-
-
-        /*
-         * Build after layout exists.
-         */
 
         requestAnimationFrame(
             () => {
 
-                if (
-                    currentWrapper === wrapper
-                ) {
-
-                    buildBars(wrapper);
-
-                }
+                requestAnimationFrame(
+                    buildWaveform
+                );
 
             }
         );
-    }
-
-
-    /* =================================================
-       FIND DISCORD CARD
-    ================================================= */
-
-    function findCard() {
-
-        const card =
-            container.querySelector(
-                ".discord-live-card"
-            );
-
-
-        if (!card) {
-            return;
-        }
-
-
-        attachWaveform(card);
     }
 
 
@@ -537,21 +442,10 @@
         animationFrame = null;
 
 
-        /*
-         * Stop completely when hidden.
-         */
-
-        if (
-            document.hidden
-        ) {
-
+        if (document.hidden) {
             return;
         }
 
-
-        /*
-         * 20 FPS update rate.
-         */
 
         if (
             time - lastUpdate <
@@ -578,15 +472,11 @@
             ) / 1000;
 
 
-        /* =================================================
-           ANIMATE BARS
-        ================================================= */
-
         for (
             const data of bars
         ) {
 
-            const primary =
+            const wave =
                 (
                     Math.sin(
                         elapsed *
@@ -608,8 +498,8 @@
 
 
             const value =
-                primary * 0.78 +
-                secondary * 0.22;
+                wave * 0.72 +
+                secondary * 0.28;
 
 
             const scale =
@@ -620,7 +510,7 @@
 
 
             /*
-             * Only transform changes.
+             * Top/bottom bars grow vertically.
              */
 
             if (
@@ -631,7 +521,13 @@
                 data.element.style.transform =
                     `scaleY(${scale})`;
 
-            } else {
+            }
+
+            /*
+             * Left/right bars grow horizontally.
+             */
+
+            else {
 
                 data.element.style.transform =
                     `scaleX(${scale})`;
@@ -644,6 +540,124 @@
                 animate
             );
     }
+
+
+    /* =================================================
+       RESIZE
+    ================================================= */
+
+    let resizeTimer = null;
+
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            clearTimeout(
+                resizeTimer
+            );
+
+
+            resizeTimer =
+                setTimeout(
+                    () => {
+
+                        /*
+                         * Rebuild only on actual
+                         * browser resize.
+                         *
+                         * Discord refreshes won't
+                         * cause this.
+                         */
+
+                        if (wrapper) {
+
+                            bars = [];
+
+
+                            const sides =
+                                wrapper.querySelectorAll(
+                                    ".wave-side"
+                                );
+
+
+                            sides.forEach(
+                                side =>
+                                    side.replaceChildren()
+                            );
+
+
+                            buildWaveform();
+                        }
+
+                    },
+                    300
+                );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /* =================================================
+       MUTATION OBSERVER
+    ================================================= */
+
+    let observerTimer = null;
+
+
+    const observer =
+        new MutationObserver(
+            () => {
+
+                /*
+                 * Discord updates the INSIDE
+                 * of the card every 15 seconds.
+                 *
+                 * Never rebuild the waveform
+                 * because of that.
+                 */
+
+                clearTimeout(
+                    observerTimer
+                );
+
+
+                observerTimer =
+                    setTimeout(
+                        () => {
+
+                            const card =
+                                container.querySelector(
+                                    ".discord-live-card"
+                                );
+
+
+                            if (
+                                card &&
+                                (!wrapper ||
+                                card.parentElement !== wrapper)
+                            ) {
+
+                                attach();
+                            }
+
+                        },
+                        250
+                    );
+            }
+        );
+
+
+    observer.observe(
+        container,
+        {
+            childList: true,
+            subtree: true
+        }
+    );
 
 
     /* =================================================
@@ -676,87 +690,14 @@
 
 
     /* =================================================
-       RESIZE
+       START
     ================================================= */
 
-    let resizeTimer = null;
-
-
-    window.addEventListener(
-        "resize",
-        () => {
-
-            clearTimeout(
-                resizeTimer
-            );
-
-
-            resizeTimer =
-                setTimeout(
-                    () => {
-
-                        if (
-                            currentWrapper
-                        ) {
-
-                            buildBars(
-                                currentWrapper
-                            );
-
-                        }
-
-                    },
-                    300
-                );
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    /* =================================================
-       DISCORD OBSERVER
-    ================================================= */
-
-    const observer =
-        new MutationObserver(
-            () => {
-
-                clearTimeout(
-                    observer.timer
-                );
-
-
-                observer.timer =
-                    setTimeout(
-                        findCard,
-                        150
-                    );
-
-            }
-        );
-
-
-    observer.observe(
-        container,
-        {
-            childList: true,
-            subtree: true
-        }
-    );
-
-
-    /* =================================================
-       INITIAL
-    ================================================= */
-
-    findCard();
+    attach();
 
 
     /*
-     * Discord loads asynchronously.
+     * Discord can appear asynchronously.
      */
 
     let attempts = 0;
@@ -769,18 +710,17 @@
                 attempts++;
 
 
-                findCard();
+                attach();
 
 
                 if (
-                    currentWrapper ||
-                    attempts >= 100
+                    wrapper ||
+                    attempts >= 80
                 ) {
 
                     clearInterval(
                         finder
                     );
-
                 }
 
             },
@@ -789,7 +729,7 @@
 
 
     /* =================================================
-       START
+       START ANIMATION
     ================================================= */
 
     animationFrame =
@@ -799,7 +739,7 @@
 
 
     console.log(
-        "Ralkerie waveform ready."
+        "Ralkerie stable waveform ready."
     );
 
 })();
