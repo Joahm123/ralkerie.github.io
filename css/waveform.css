@@ -1,6 +1,14 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FLAT AGAINST THE DISCORD BOX
+   EXACT FOUR-SIDED BOX WRAP
+
+   The flat/base of every bar touches the
+   Discord card itself.
+
+   TOP    = bars grow UP
+   BOTTOM = bars grow DOWN
+   LEFT   = bars grow LEFT
+   RIGHT  = bars grow RIGHT
 ===================================================== */
 
 
@@ -12,7 +20,9 @@
 
     position: relative;
 
-    width: min(620px, 90vw);
+    width: 100%;
+
+    height: auto;
 
     z-index: 20;
 
@@ -20,9 +30,7 @@
 
 
 /* =====================================================
-   WAVEFORM BORDER
-
-   Sits DIRECTLY on the edge of the box.
+   WAVE BORDER
 ===================================================== */
 
 .wave-border {
@@ -39,13 +47,97 @@
 
     z-index: 30;
 
+}
+
+
+/* =====================================================
+   INDIVIDUAL SIDES
+
+   These are extremely thin strips sitting
+   exactly on the card edges.
+===================================================== */
+
+.wave-side {
+
+    position: absolute;
+
+    pointer-events: none;
+
     overflow: visible;
 
 }
 
 
 /* =====================================================
-   ALL WAVE BARS
+   TOP
+===================================================== */
+
+.wave-side-top {
+
+    left: 0;
+
+    right: 0;
+
+    top: 0;
+
+    height: 1px;
+
+}
+
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.wave-side-bottom {
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 1px;
+
+}
+
+
+/* =====================================================
+   LEFT
+===================================================== */
+
+.wave-side-left {
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 1px;
+
+}
+
+
+/* =====================================================
+   RIGHT
+===================================================== */
+
+.wave-side-right {
+
+    right: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 1px;
+
+}
+
+
+/* =====================================================
+   BARS
 ===================================================== */
 
 .wave-bar {
@@ -53,6 +145,10 @@
     position: absolute;
 
     display: block;
+
+    margin: 0;
+
+    padding: 0;
 
     background:
         linear-gradient(
@@ -62,9 +158,11 @@
 
             #ffffff 18%,
 
-            #ffd9f4 38%,
+            #ffe0f5 38%,
 
-            #ff8bdd 62%,
+            #ff9de0 60%,
+
+            #ff63ca 82%,
 
             #ff2db5 100%
         );
@@ -73,106 +171,111 @@
 
         0 0 3px #ffffff,
 
-        0 0 6px #ff9bdd,
+        0 0 6px #ffb0e7,
 
-        0 0 10px
+        0 0 10px #ff5bc6,
+
+        0 0 15px
         rgba(
             255,
             45,
             181,
-            0.9
+            0.7
         );
 
-    border-radius: 1px;
-
     opacity: 0.95;
+
+    border-radius: 1px;
 
     pointer-events: none;
 
     will-change:
         width,
         height;
-
 }
 
 
 /* =====================================================
    TOP BARS
 
-   FLAT SIDE IS AGAINST THE BOX.
-   They grow UPWARD.
+   BASE = BOTTOM
+
+   They grow upward.
 ===================================================== */
 
-.wave-bar.wave-top {
+.wave-side-top .wave-bar {
 
-    bottom: 100%;
+    bottom: 0;
 
-    transform-origin: bottom center;
+    width: 3px;
 
+    height: 4px;
+
+    transform-origin:
+        center bottom;
 }
 
 
 /* =====================================================
    BOTTOM BARS
 
-   FLAT SIDE IS AGAINST THE BOX.
-   They grow DOWNWARD.
+   BASE = TOP
+
+   They grow downward.
 ===================================================== */
 
-.wave-bar.wave-bottom {
+.wave-side-bottom .wave-bar {
 
-    top: 100%;
+    top: 0;
 
-    transform-origin: top center;
+    width: 3px;
 
+    height: 4px;
+
+    transform-origin:
+        center top;
 }
 
 
 /* =====================================================
    LEFT BARS
 
-   FLAT SIDE IS AGAINST THE BOX.
-   They grow LEFT.
+   BASE = RIGHT
+
+   They grow toward the LEFT.
 ===================================================== */
 
-.wave-bar.wave-left {
+.wave-side-left .wave-bar {
 
-    right: 100%;
+    right: 0;
 
-    transform-origin: right center;
+    width: 4px;
 
+    height: 3px;
+
+    transform-origin:
+        right center;
 }
 
 
 /* =====================================================
    RIGHT BARS
 
-   FLAT SIDE IS AGAINST THE BOX.
-   They grow RIGHT.
+   BASE = LEFT
+
+   They grow toward the RIGHT.
 ===================================================== */
 
-.wave-bar.wave-right {
+.wave-side-right .wave-bar {
 
-    left: 100%;
+    left: 0;
 
-    transform-origin: left center;
+    width: 4px;
 
-}
+    height: 3px;
 
-
-/* =====================================================
-   DISCORD CARD
-
-   Keeps the waveform attached to the
-   actual box.
-===================================================== */
-
-.discord-live-card {
-
-    position: relative;
-
-    z-index: 10;
-
+    transform-origin:
+        left center;
 }
 
 
@@ -182,10 +285,31 @@
 
 @media (max-width: 700px) {
 
-    .waveform-wrapper {
+    .wave-side-top,
+    .wave-side-bottom {
 
-        width: 92vw;
+        height: 1px;
+    }
 
+
+    .wave-side-left,
+    .wave-side-right {
+
+        width: 1px;
+    }
+
+
+    .wave-side-top .wave-bar,
+    .wave-side-bottom .wave-bar {
+
+        width: 2px;
+    }
+
+
+    .wave-side-left .wave-bar,
+    .wave-side-right .wave-bar {
+
+        height: 2px;
     }
 
 }
