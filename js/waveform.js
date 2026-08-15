@@ -1,27 +1,18 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   GOOD LOOK + LOW CPU
+   STABLE VERSION
 
-   - Four-sided wrap
-   - Bars touch the Discord card
-   - White -> pink gradient
-   - Strong glow
-   - Smooth enough at 20 updates/sec
-   - Transform-only animation
-   - No layout changes during animation
+   IMPORTANT:
+   - NEVER moves the Discord card
+   - NEVER wraps the Discord card
+   - Waveform lives INSIDE the card
+   - Discord can refresh safely
+   - Low CPU
 ===================================================== */
 
 (() => {
 
     "use strict";
-
-    const container =
-        document.getElementById("discord-card-container");
-
-    if (!container) {
-        console.error("Ralkerie waveform: container not found.");
-        return;
-    }
 
 
     /* =================================================
@@ -29,20 +20,44 @@
     ================================================= */
 
     const BAR_SIZE = 3;
-    const GAP = 4;
+    const GAP = 5;
 
-    const MIN_SCALE = 0.35;
-    const MAX_SCALE = 10;
+    const MIN_SCALE = 0.15;
+    const MAX_SCALE = 8;
 
-    const UPDATE_INTERVAL = 50;
+    const UPDATE_INTERVAL = 70;
 
 
-    let currentWrapper = null;
+    /* =================================================
+       CONTAINER
+    ================================================= */
+
+    const container =
+        document.getElementById(
+            "discord-card-container"
+        );
+
+
+    if (!container) {
+
+        console.error(
+            "Ralkerie waveform: Discord container not found."
+        );
+
+        return;
+    }
+
+
+    let currentCard = null;
+
     let bars = [];
 
     let lastUpdate = 0;
-    let startTime = performance.now();
-    let animationFrame = null;
+
+    let animationRunning = false;
+
+    let startTime =
+        performance.now();
 
 
     /* =================================================
@@ -51,13 +66,14 @@
 
     function createSide(side) {
 
-        const element =
+        const sideElement =
             document.createElement("div");
 
-        element.className =
-            `wave-side wave-side-${side}`;
+        sideElement.className =
+            "wave-side wave-side-" +
+            side;
 
-        return element;
+        return sideElement;
     }
 
 
@@ -74,7 +90,8 @@
         const bar =
             document.createElement("span");
 
-        bar.className = "wave-bar";
+        bar.className =
+            "wave-bar";
 
 
         if (
@@ -83,23 +100,25 @@
         ) {
 
             bar.style.left =
-                `${position}px`;
+                position + "px";
 
         } else {
 
             bar.style.top =
-                `${position}px`;
+                position + "px";
         }
 
 
-        parent.appendChild(bar);
+        parent.appendChild(
+            bar
+        );
 
 
         return {
 
             element: bar,
 
-            side,
+            side: side,
 
             phase:
                 Math.random() *
@@ -107,70 +126,93 @@
                 2,
 
             speed:
-                1.4 +
+                1.5 +
                 Math.random() *
-                1.8,
+                1.5,
 
             strength:
-                0.75 +
+                0.65 +
                 Math.random() *
-                0.25
-
+                0.35
         };
     }
 
 
     /* =================================================
-       BUILD BARS
+       BUILD WAVEFORM
     ================================================= */
 
-    function buildBars(wrapper) {
+    function buildWaveform(card) {
 
-        const top =
-            wrapper.querySelector(
-                ".wave-side-top"
-            );
-
-        const bottom =
-            wrapper.querySelector(
-                ".wave-side-bottom"
-            );
-
-        const left =
-            wrapper.querySelector(
-                ".wave-side-left"
-            );
-
-        const right =
-            wrapper.querySelector(
-                ".wave-side-right"
-            );
-
-
-        if (
-            !top ||
-            !bottom ||
-            !left ||
-            !right
-        ) {
+        if (!card) {
             return;
         }
 
 
-        top.replaceChildren();
-        bottom.replaceChildren();
-        left.replaceChildren();
-        right.replaceChildren();
+        /*
+         * Remove ONLY the waveform.
+         * NEVER remove or replace the card.
+         */
+
+        const oldWaveform =
+            card.querySelector(
+                ".ralkerie-waveform"
+            );
 
 
-        bars = [];
+        if (oldWaveform) {
+
+            oldWaveform.remove();
+        }
+
+
+        const waveform =
+            document.createElement("div");
+
+
+        waveform.className =
+            "ralkerie-waveform";
+
+
+        const top =
+            createSide("top");
+
+        const bottom =
+            createSide("bottom");
+
+        const left =
+            createSide("left");
+
+        const right =
+            createSide("right");
+
+
+        waveform.appendChild(top);
+        waveform.appendChild(bottom);
+        waveform.appendChild(left);
+        waveform.appendChild(right);
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The waveform is now INSIDE
+         * the Discord card.
+         */
+
+        card.appendChild(
+            waveform
+        );
 
 
         const width =
-            wrapper.clientWidth;
+            card.clientWidth;
 
         const height =
-            wrapper.clientHeight;
+            card.clientHeight;
+
+
+        bars = [];
 
 
         /* =================================================
@@ -190,6 +232,7 @@
                     x
                 )
             );
+
 
             bars.push(
                 createBar(
@@ -219,6 +262,7 @@
                 )
             );
 
+
             bars.push(
                 createBar(
                     right,
@@ -229,94 +273,15 @@
         }
 
 
+        currentCard =
+            card;
+
+
         console.log(
-            "Ralkerie waveform bars:",
-            bars.length
+            "Ralkerie waveform:",
+            bars.length,
+            "bars"
         );
-    }
-
-
-    /* =================================================
-       ATTACH
-    ================================================= */
-
-    function attachWaveform(card) {
-
-        if (!card) {
-            return;
-        }
-
-
-        if (
-            card.parentElement &&
-            card.parentElement.classList.contains(
-                "waveform-wrapper"
-            )
-        ) {
-
-            currentWrapper =
-                card.parentElement;
-
-            return;
-        }
-
-
-        if (
-            currentWrapper &&
-            currentWrapper.parentNode
-        ) {
-
-            currentWrapper.remove();
-
-        }
-
-
-        const wrapper =
-            document.createElement("div");
-
-        wrapper.className =
-            "waveform-wrapper";
-
-
-        const top =
-            createSide("top");
-
-        const bottom =
-            createSide("bottom");
-
-        const left =
-            createSide("left");
-
-        const right =
-            createSide("right");
-
-
-        wrapper.appendChild(top);
-        wrapper.appendChild(bottom);
-        wrapper.appendChild(left);
-        wrapper.appendChild(right);
-
-
-        container.appendChild(wrapper);
-
-        wrapper.appendChild(card);
-
-
-        currentWrapper =
-            wrapper;
-
-
-        requestAnimationFrame(() => {
-
-            if (
-                currentWrapper === wrapper
-            ) {
-
-                buildBars(wrapper);
-
-            }
-
-        });
     }
 
 
@@ -331,11 +296,35 @@
                 ".discord-live-card"
             );
 
+
         if (!card) {
+
+            currentCard = null;
+            bars = [];
+
             return;
         }
 
-        attachWaveform(card);
+
+        /*
+         * If this exact card already has
+         * our waveform, don't rebuild it.
+         */
+
+        if (
+            card === currentCard &&
+            card.querySelector(
+                ".ralkerie-waveform"
+            )
+        ) {
+
+            return;
+        }
+
+
+        buildWaveform(
+            card
+        );
     }
 
 
@@ -345,12 +334,11 @@
 
     function animate(time) {
 
-        animationFrame = null;
-
-
         if (
             document.hidden
         ) {
+
+            animationRunning = false;
 
             return;
         }
@@ -361,10 +349,9 @@
             UPDATE_INTERVAL
         ) {
 
-            animationFrame =
-                requestAnimationFrame(
-                    animate
-                );
+            requestAnimationFrame(
+                animate
+            );
 
             return;
         }
@@ -391,24 +378,26 @@
                         elapsed *
                         data.speed +
                         data.phase
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
-            const secondary =
+            const second =
                 (
                     Math.sin(
                         elapsed *
-                        4.2 +
+                        3.1 +
                         data.phase *
                         1.4
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
             const value =
-                wave * 0.72 +
-                secondary * 0.28;
+                wave * 0.78 +
+                second * 0.22;
 
 
             const scale =
@@ -418,27 +407,36 @@
                 data.strength;
 
 
+            /*
+             * Only transform changes.
+             * No width.
+             * No height.
+             * No layout.
+             */
+
             if (
                 data.side === "top" ||
                 data.side === "bottom"
             ) {
 
                 data.element.style.transform =
-                    `scaleY(${scale})`;
+                    "scaleY(" +
+                    scale +
+                    ")";
 
             } else {
 
                 data.element.style.transform =
-                    `scaleX(${scale})`;
-
+                    "scaleX(" +
+                    scale +
+                    ")";
             }
         }
 
 
-        animationFrame =
-            requestAnimationFrame(
-                animate
-            );
+        requestAnimationFrame(
+            animate
+        );
     }
 
 
@@ -453,20 +451,22 @@
             startTime =
                 performance.now();
 
-            lastUpdate = 0;
+            lastUpdate =
+                0;
 
 
             if (
                 !document.hidden &&
-                !animationFrame
+                !animationRunning
             ) {
 
-                animationFrame =
-                    requestAnimationFrame(
-                        animate
-                    );
-            }
+                animationRunning =
+                    true;
 
+                requestAnimationFrame(
+                    animate
+                );
+            }
         }
     );
 
@@ -488,19 +488,21 @@
 
 
             resizeTimer =
-                setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                    if (
-                        currentWrapper
-                    ) {
+                        if (
+                            currentCard
+                        ) {
 
-                        buildBars(
-                            currentWrapper
-                        );
+                            buildWaveform(
+                                currentCard
+                            );
+                        }
 
-                    }
-
-                }, 250);
+                    },
+                    300
+                );
 
         },
         {
@@ -510,37 +512,29 @@
 
 
     /* =================================================
-       OBSERVER
+       OBSERVE ONLY CARD CREATION
     ================================================= */
 
     const observer =
-        new MutationObserver(() => {
+        new MutationObserver(
+            () => {
 
-            clearTimeout(
-                observer.timer
-            );
+                findCard();
 
-
-            observer.timer =
-                setTimeout(
-                    findCard,
-                    100
-                );
-
-        });
+            }
+        );
 
 
     observer.observe(
         container,
         {
-            childList: true,
-            subtree: true
+            childList: true
         }
     );
 
 
     /* =================================================
-       INITIAL
+       START
     ================================================= */
 
     findCard();
@@ -550,39 +544,40 @@
 
 
     const finder =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            attempts++;
+                findCard();
 
-            findCard();
-
-
-            if (
-                currentWrapper ||
-                attempts >= 100
-            ) {
-
-                clearInterval(
-                    finder
-                );
-
-            }
-
-        }, 250);
+                attempts++;
 
 
-    /* =================================================
-       START
-    ================================================= */
+                if (
+                    currentCard ||
+                    attempts > 60
+                ) {
 
-    animationFrame =
-        requestAnimationFrame(
-            animate
+                    clearInterval(
+                        finder
+                    );
+                }
+
+            },
+            250
         );
 
 
+    animationRunning =
+        true;
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+
     console.log(
-        "Ralkerie waveform ready."
+        "Ralkerie stable waveform ready."
     );
 
 })();
