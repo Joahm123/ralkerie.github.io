@@ -1,120 +1,374 @@
 /* =====================================================
-   LONG THICK METEOR TRAIL
+   RALKERIE METEORS
+   LONG THICK PIXEL TRAILS
    HEAD → DOWN RIGHT
    TRAIL → UP LEFT
 ===================================================== */
 
-.meteor::after {
+#meteors {
+    position: fixed;
+    inset: 0;
 
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+
+/* =====================================================
+   HITBOX
+===================================================== */
+
+.meteor-hitbox {
+    position: absolute;
+
+    width: 180px;
+    height: 120px;
+
+    pointer-events: auto;
+
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+
+/* =====================================================
+   METEOR
+===================================================== */
+
+.meteor {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 9px;
+    height: 9px;
+
+    background: #ffffff;
+
+    border-radius: 1px;
+
+    transform-origin: center;
+
+    box-shadow:
+        0 0 4px #ffffff,
+        0 0 8px #ffffff,
+        0 0 14px #ff9be2,
+        0 0 22px #ff63ca;
+
+    pointer-events: none;
+
+    animation:
+        meteor-fly
+        5.2s
+        linear
+        forwards;
+}
+
+
+/* =====================================================
+   MAIN TRAIL
+
+   The meteor head is at the RIGHT.
+   Trail stretches toward the LEFT.
+===================================================== */
+
+.meteor::after {
     content: "";
 
     position: absolute;
 
-    right: 3px;
+    right: 4px;
     top: 50%;
 
     width: 155px;
     height: 5px;
 
     transform:
-        translateY(-50%);
+        translateY(-50%)
+        rotate(46deg);
 
     transform-origin: right center;
 
     background:
         linear-gradient(
             to left,
-
-            /* bright near head */
             #ffffff 0%,
-
-            #ffffff 7%,
-
-            #ffd6f3 16%,
-
-            #ff9be2 30%,
-
-            #ff63ca 52%,
-
+            #ffd6f3 8%,
+            #ff9be2 22%,
+            #ff63ca 48%,
             rgba(
                 255,
                 99,
                 202,
-                0.55
-            ) 72%,
-
-            rgba(
-                255,
-                99,
-                202,
-                0
-            ) 100%
+                0.45
+            ) 75%,
+            transparent 100%
         );
 
     box-shadow:
         0 0 4px #ffffff,
         0 0 8px #ff9be2,
-        0 0 14px #ff63ca,
-        0 0 22px rgba(
-            255,
-            99,
-            202,
-            0.55
-        );
+        0 0 15px #ff63ca;
 
     pointer-events: none;
 }
 
 
 /* =====================================================
-   BIG SOFT GLOW BEHIND TRAIL
+   SOFT OUTER GLOW
 ===================================================== */
 
 .meteor::before {
-
     content: "";
 
     position: absolute;
 
-    right: 5px;
+    right: 6px;
     top: 50%;
 
-    width: 145px;
-    height: 11px;
+    width: 150px;
+    height: 12px;
 
     transform:
-        translateY(-50%);
+        translateY(-50%)
+        rotate(46deg);
+
+    transform-origin: right center;
 
     background:
         linear-gradient(
             to left,
-
             rgba(
                 255,
                 255,
                 255,
                 0.35
             ),
-
             rgba(
                 255,
                 155,
                 226,
-                0.30
+                0.25
             ),
-
             rgba(
                 255,
                 99,
                 202,
-                0.16
+                0.12
             ),
-
             transparent
         );
 
-    filter:
-        blur(4px);
+    filter: blur(4px);
 
     pointer-events: none;
+}
+
+
+/* =====================================================
+   MOVEMENT
+
+   DOWN + RIGHT
+===================================================== */
+
+@keyframes meteor-fly {
+
+    0% {
+        transform:
+            translate(
+                0,
+                0
+            );
+
+        opacity: 0;
+    }
+
+    7% {
+        opacity: 1;
+    }
+
+    88% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(
+                850px,
+                850px
+            );
+
+        opacity: 0;
+    }
+}
+
+
+/* =====================================================
+   POPUP
+===================================================== */
+
+.meteor-popup {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.75
+        );
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    z-index: 5000;
+
+    transition:
+        opacity 0.15s ease;
+}
+
+
+.meteor-popup.visible {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   POPUP BOX
+===================================================== */
+
+.meteor-popup-box {
+    position: relative;
+
+    padding: 12px;
+
+    background: #050505;
+
+    border:
+        2px solid #ffffff;
+
+    box-shadow:
+        6px 6px 0 #000000,
+        0 0 20px rgba(
+            255,
+            99,
+            202,
+            0.5
+        );
+}
+
+
+/* =====================================================
+   GIF
+===================================================== */
+
+.meteor-popup-gif {
+    display: block;
+
+    width: 320px;
+
+    height: auto;
+
+    max-width: 80vw;
+    max-height: 70vh;
+
+    image-rendering: pixelated;
+}
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
+.meteor-popup-close {
+    position: absolute;
+
+    top: -14px;
+    right: -14px;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border:
+        2px solid #ffffff;
+
+    background: #000000;
+
+    color: #ffffff;
+
+    font-family:
+        "AndyB",
+        Arial,
+        sans-serif;
+
+    font-size: 22px;
+
+    line-height: 26px;
+
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+
+.meteor-popup-close:hover {
+    background: #ff63ca;
+
+    color: #000000;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .meteor-hitbox {
+        width: 150px;
+        height: 100px;
+    }
+
+    .meteor {
+        width: 7px;
+        height: 7px;
+    }
+
+    .meteor::after {
+        width: 115px;
+        height: 4px;
+    }
+
+    .meteor::before {
+        width: 110px;
+        height: 9px;
+    }
+
+    .meteor-popup-gif {
+        width: 260px;
+    }
 }
