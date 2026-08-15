@@ -13,14 +13,22 @@
     <title>Ralkerie</title>
 
 
-    <!-- Terraria font -->
+    <!-- =================================================
+         TERRARIA FONT
+    ================================================== -->
+
     <style>
 
         @font-face {
             font-family: "AndyB";
-            src: url("./assets/fonts/ANDYB.TTF") format("truetype");
+
+            src:
+                url("./assets/fonts/ANDYB.TTF")
+                format("truetype");
+
             font-weight: normal;
             font-style: normal;
+
             font-display: swap;
         }
 
@@ -33,16 +41,22 @@
             box-sizing: border-box;
         }
 
+
         html,
         body {
+
             width: 100%;
             height: 100%;
+
             margin: 0;
             padding: 0;
         }
 
+
         body {
+
             background: #050505;
+
             color: #ffffff;
 
             font-family:
@@ -61,7 +75,9 @@
         ================================================= */
 
         #stars {
+
             position: fixed;
+
             inset: 0;
 
             width: 100vw;
@@ -72,8 +88,11 @@
             pointer-events: none;
         }
 
+
         #meteors {
+
             position: fixed;
+
             inset: 0;
 
             width: 100vw;
@@ -82,6 +101,8 @@
             z-index: 1;
 
             pointer-events: none;
+
+            overflow: hidden;
         }
 
 
@@ -90,6 +111,7 @@
         ================================================= */
 
         .pixel-tabs {
+
             position: fixed;
 
             top: 20px;
@@ -98,6 +120,7 @@
             display: flex;
 
             flex-direction: row;
+
             align-items: center;
 
             gap: 4px;
@@ -108,7 +131,8 @@
 
             background: #000000;
 
-            border: 2px solid #1c1c1c;
+            border:
+                2px solid #1c1c1c;
 
             box-shadow:
                 3px 3px 0 #000000;
@@ -118,19 +142,23 @@
 
 
         .pixel-tab {
+
             display: inline-flex;
 
             align-items: center;
             justify-content: center;
 
             height: 36px;
+
             min-width: 68px;
 
-            padding: 0 13px;
+            padding:
+                0 13px;
 
             border: 0;
 
             background: #000000;
+
             color: #ffffff;
 
             font-family:
@@ -149,11 +177,13 @@
 
 
         .pixel-tab:hover {
+
             background: #161616;
         }
 
 
         .pixel-tab.active {
+
             background: #0b0b0b;
 
             box-shadow:
@@ -167,6 +197,7 @@
         ================================================= */
 
         main {
+
             position: relative;
 
             width: 100vw;
@@ -181,6 +212,7 @@
         ================================================= */
 
         .pixel-page {
+
             position: fixed;
 
             inset: 0;
@@ -201,6 +233,7 @@
 
 
         .pixel-page.active {
+
             display: flex;
         }
 
@@ -210,6 +243,7 @@
         ================================================= */
 
         .live-content {
+
             display: flex;
 
             flex-direction: column;
@@ -228,6 +262,7 @@
         ================================================= */
 
         .username-png {
+
             display: block;
 
             width: 280px;
@@ -251,6 +286,7 @@
         ================================================= */
 
         .discord-card-container {
+
             display: flex;
 
             align-items: center;
@@ -265,10 +301,12 @@
         ================================================= */
 
         .discord-live-card {
-            width: min(
-                620px,
-                90vw
-            );
+
+            width:
+                min(
+                    620px,
+                    90vw
+                );
 
             padding: 24px;
 
@@ -293,6 +331,7 @@
         ================================================= */
 
         .discord-profile {
+
             display: flex;
 
             align-items: center;
@@ -302,6 +341,7 @@
 
 
         .discord-avatar {
+
             width: 76px;
             height: 76px;
 
@@ -315,12 +355,15 @@
 
 
         .discord-name {
+
             font-size: 28px;
+
             color: #ffffff;
         }
 
 
         .discord-status {
+
             margin-top: 5px;
 
             font-size: 14px;
@@ -328,18 +371,25 @@
 
 
         .status-online {
+
             color: #7cff7c;
         }
 
+
         .status-idle {
+
             color: #ffd65c;
         }
 
+
         .status-dnd {
+
             color: #ff6666;
         }
 
+
         .status-offline {
+
             color: #888888;
         }
 
@@ -349,6 +399,7 @@
         ================================================= */
 
         .discord-activity {
+
             margin-top: 24px;
 
             padding-top: 18px;
@@ -359,6 +410,7 @@
 
 
         .discord-activity-title {
+
             font-size: 13px;
 
             color: #ff72cf;
@@ -368,6 +420,7 @@
 
 
         .discord-activity-text {
+
             margin-top: 6px;
 
             font-size: 22px;
@@ -381,6 +434,7 @@
         ================================================= */
 
         .discord-spotify {
+
             margin-top: 20px;
 
             padding-top: 18px;
@@ -391,6 +445,7 @@
 
 
         .discord-section-label {
+
             font-size: 13px;
 
             color: #ff72cf;
@@ -400,6 +455,7 @@
 
 
         .spotify-row {
+
             display: flex;
 
             align-items: center;
@@ -411,6 +467,7 @@
 
 
         .spotify-art {
+
             width: 58px;
             height: 58px;
 
@@ -421,6 +478,7 @@
 
 
         .spotify-song {
+
             font-size: 18px;
 
             color: #ffffff;
@@ -428,6 +486,7 @@
 
 
         .spotify-artist {
+
             margin-top: 3px;
 
             font-size: 14px;
@@ -441,6 +500,7 @@
         ================================================= */
 
         .local-clock {
+
             margin-top: 24px;
 
             padding-top: 18px;
@@ -453,6 +513,7 @@
 
 
         .clock-time {
+
             font-size: 32px;
 
             line-height: 1;
@@ -465,6 +526,7 @@
 
 
         .clock-label {
+
             margin-top: 6px;
 
             font-size: 12px;
@@ -480,6 +542,7 @@
         ================================================= */
 
         .pixel-panel {
+
             position: relative;
 
             width:
@@ -509,6 +572,7 @@
 
 
         .pixel-label {
+
             margin:
                 0 0 8px;
 
@@ -519,6 +583,7 @@
 
 
         .pixel-panel h1 {
+
             margin:
                 0 0 15px;
 
@@ -539,6 +604,7 @@
 
 
         .pixel-description {
+
             margin: 0;
 
             color: #bdbdbd;
@@ -554,6 +620,7 @@
         ================================================= */
 
         .music-card {
+
             display: flex;
 
             align-items: center;
@@ -574,6 +641,7 @@
 
 
         .music-cover {
+
             width: 55px;
             height: 55px;
 
@@ -587,6 +655,7 @@
 
 
         .music-info {
+
             display: flex;
 
             flex-direction: column;
@@ -596,6 +665,7 @@
 
 
         .music-info strong {
+
             color: #ffffff;
 
             font-size: 17px;
@@ -603,6 +673,7 @@
 
 
         .music-info span {
+
             color: #888888;
 
             font-size: 15px;
@@ -614,6 +685,7 @@
         ================================================= */
 
         .link-grid {
+
             display: grid;
 
             grid-template-columns:
@@ -632,6 +704,7 @@
 
 
         .pixel-link {
+
             display: flex;
 
             align-items: center;
@@ -653,6 +726,7 @@
 
 
         .pixel-link:hover {
+
             background: #171717;
 
             border-color: #ffffff;
@@ -666,7 +740,9 @@
         @media (max-width: 700px) {
 
             .pixel-tabs {
+
                 top: 12px;
+
                 right: 12px;
                 left: 12px;
 
@@ -683,6 +759,7 @@
 
 
             .pixel-tab {
+
                 min-width: 55px;
 
                 height: 32px;
@@ -695,6 +772,7 @@
 
 
             .pixel-page {
+
                 padding:
                     80px
                     15px
@@ -703,6 +781,7 @@
 
 
             .pixel-panel {
+
                 width: 92vw;
 
                 padding:
@@ -712,6 +791,7 @@
 
 
             .discord-live-card {
+
                 width: 92vw;
 
                 padding: 18px;
@@ -719,11 +799,13 @@
 
 
             .username-png {
+
                 width: 220px;
             }
 
 
             .link-grid {
+
                 grid-template-columns:
                     1fr;
             }
@@ -731,6 +813,16 @@
         }
 
     </style>
+
+
+    <!-- =================================================
+         BACKGROUND CSS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="./css/background.css"
+    >
 
 
     <!-- =================================================
@@ -750,7 +842,7 @@
 
     <!-- =================================================
          BACKGROUND
-    ================================================= -->
+    ================================================== -->
 
     <div
         id="stars"
@@ -766,7 +858,7 @@
 
     <!-- =================================================
          NAVIGATION
-    ================================================= -->
+    ================================================== -->
 
     <nav
         class="pixel-tabs"
@@ -781,6 +873,7 @@
             LIVE
         </button>
 
+
         <button
             class="pixel-tab"
             data-page="music"
@@ -788,6 +881,7 @@
         >
             MUSIC
         </button>
+
 
         <button
             class="pixel-tab"
@@ -797,6 +891,7 @@
             LINKS
         </button>
 
+
         <button
             class="pixel-tab"
             data-page="tools"
@@ -804,6 +899,7 @@
         >
             TOOLS
         </button>
+
 
         <button
             class="pixel-tab"
@@ -818,14 +914,14 @@
 
     <!-- =================================================
          MAIN
-    ================================================= -->
+    ================================================== -->
 
     <main>
 
 
         <!-- =================================================
              LIVE
-        ================================================= -->
+        ================================================== -->
 
         <section
             id="live"
@@ -835,7 +931,7 @@
             <div class="live-content">
 
 
-                <!-- YOUR PNG -->
+                <!-- USERNAME -->
 
                 <img
                     class="username-png"
@@ -866,7 +962,7 @@
 
         <!-- =================================================
              MUSIC
-        ================================================= -->
+        ================================================== -->
 
         <section
             id="music"
@@ -879,19 +975,23 @@
                     MUSIC
                 </p>
 
+
                 <h1>
                     NOW PLAYING
                 </h1>
 
+
                 <div class="music-card">
 
                     <div class="music-cover"></div>
+
 
                     <div class="music-info">
 
                         <strong>
                             No song playing
                         </strong>
+
 
                         <span>
                             Spotify
@@ -908,7 +1008,7 @@
 
         <!-- =================================================
              LINKS
-        ================================================= -->
+        ================================================== -->
 
         <section
             id="links"
@@ -921,11 +1021,14 @@
                     RALKERIE
                 </p>
 
+
                 <h1>
                     LINKS
                 </h1>
 
+
                 <div class="link-grid">
+
 
                     <a
                         href="#"
@@ -933,6 +1036,7 @@
                     >
                         DISCORD
                     </a>
+
 
                     <a
                         href="https://github.com/Joahm123/ralkerie.github.io"
@@ -943,6 +1047,7 @@
                         GITHUB
                     </a>
 
+
                     <a
                         href="#"
                         class="pixel-link"
@@ -950,12 +1055,14 @@
                         SPOTIFY
                     </a>
 
+
                     <a
                         href="#"
                         class="pixel-link"
                     >
                         OTHER
                     </a>
+
 
                 </div>
 
@@ -966,7 +1073,7 @@
 
         <!-- =================================================
              TOOLS
-        ================================================= -->
+        ================================================== -->
 
         <section
             id="tools"
@@ -979,9 +1086,11 @@
                     RALKERIE
                 </p>
 
+
                 <h1>
                     TOOLS
                 </h1>
+
 
                 <p class="pixel-description">
                     Tools and projects will go here.
@@ -994,7 +1103,7 @@
 
         <!-- =================================================
              ABOUT
-        ================================================= -->
+        ================================================== -->
 
         <section
             id="about"
@@ -1007,9 +1116,11 @@
                     RALKERIE
                 </p>
 
+
                 <h1>
                     ABOUT
                 </h1>
+
 
                 <p class="pixel-description">
                     Welcome to my little corner
@@ -1026,7 +1137,7 @@
 
     <!-- =================================================
          JAVASCRIPT
-    ================================================= -->
+    ================================================== -->
 
     <script src="./js/stars.js"></script>
 
