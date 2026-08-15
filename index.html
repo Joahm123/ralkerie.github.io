@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -132,22 +132,46 @@
             class="pixel-page active"
         >
 
-            <!-- Discord.js replaces this
-                 with the live Discord card -->
+            <div class="live-content">
 
-            <div class="pixel-panel">
 
-                <p class="pixel-label">
-                    RALKERIE
-                </p>
+                <!-- =====================================
+                     USERNAME PNG
+                ====================================== -->
 
-                <h1>
-                    LIVE
-                </h1>
+                <img
+                    class="username-png"
+                    src="./assets/images/username.png"
+                    alt="Ralkerie"
+                >
 
-                <p class="pixel-description">
-                    Loading Discord...
-                </p>
+
+                <!-- =====================================
+                     DISCORD CARD CONTAINER
+                ====================================== -->
+
+                <div
+                    id="discord-card-container"
+                    class="discord-card-container"
+                >
+
+                    <div class="pixel-panel">
+
+                        <p class="pixel-label">
+                            RALKERIE
+                        </p>
+
+                        <h1>
+                            LIVE
+                        </h1>
+
+                        <p class="pixel-description">
+                            Loading Discord...
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -331,35 +355,18 @@
          JAVASCRIPT
     ================================================== -->
 
-    <script
-        src="./js/stars.js"
-    ></script>
+    <script src="./js/stars.js"></script>
 
+    <script src="./js/meteors.js"></script>
 
-    <script
-        src="./js/meteors.js"
-    ></script>
+    <script src="./js/waveform.js"></script>
 
+    <script src="./js/main.js"></script>
 
-    <script
-        src="./js/waveform.js"
-    ></script>
-
-
-    <script
-        src="./js/main.js"
-    ></script>
-
-
-    <!-- Discord.js also creates
-         and updates the local clock -->
-
-    <script
-        src="./js/discord.js"
-    ></script>
+    <script src="./js/discord.js"></script>
 
 
 </body>
 
 </html>
-```
+
