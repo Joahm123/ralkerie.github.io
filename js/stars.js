@@ -1,27 +1,45 @@
 /* =====================================================
    RALKERIE STARS
-   LEFT-HEAVY + CONTINUOUS RESPAWN
+   PERFORMANCE OPTIMIZED CANVAS VERSION
+
+   - One canvas instead of 320 DOM elements
+   - Much lower RAM usage
+   - Much lower DOM overhead
+   - Single animation loop
+   - Automatically pauses when tab is hidden
 ===================================================== */
 
 (() => {
 
     "use strict";
 
+    const container = document.getElementById("stars");
+
+    if (!container) {
+        console.error("Ralkerie: #stars not found.");
+        return;
+    }
 
     /* =================================================
-       STAR CONTAINER
+       CANVAS
     ================================================= */
 
-    const starContainer =
-        document.getElementById("stars");
+    const canvas = document.createElement("canvas");
 
+    canvas.style.position = "absolute";
+    canvas.style.inset = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.pointerEvents = "none";
 
-    if (!starContainer) {
+    container.appendChild(canvas);
 
-        console.error(
-            "Ralkerie: #stars not found."
-        );
+    const ctx = canvas.getContext("2d", {
+        alpha: true
+    });
 
+    if (!ctx) {
+        console.error("Ralkerie: Canvas unavailable.");
         return;
     }
 
@@ -30,125 +48,193 @@
        SETTINGS
     ================================================= */
 
-    const STAR_COUNT = 320;
+    const DESKTOP_STARS = 180;
+    const MOBILE_STARS = 100;
 
     const stars = [];
+
+    let width = 0;
+    let height = 0;
+
+    let dpr = 1;
+
+
+    /* =================================================
+       RESIZE
+    ================================================= */
+
+    function resizeCanvas() {
+
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        /*
+         * Limit DPR.
+
+         * 4K/high-DPI displays can otherwise
+         * make the canvas extremely expensive.
+         */
+
+        dpr = Math.min(
+            window.devicePixelRatio || 1,
+            1.5
+        );
+
+        canvas.width =
+            Math.floor(width * dpr);
+
+        canvas.height =
+            Math.floor(height * dpr);
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+    }
+
+
+    /* =================================================
+       STAR COUNT
+    ================================================= */
+
+    const starCount =
+        width <= 700
+            ? MOBILE_STARS
+            : DESKTOP_STARS;
 
 
     /* =================================================
        CREATE STARS
     ================================================= */
 
-    for (
-        let i = 0;
-        i < STAR_COUNT;
-        i++
-    ) {
+    function createStars() {
 
-        const star =
-            document.createElement("div");
+        stars.length = 0;
 
-
-        star.className =
-            "star";
-
-
-        /*
-           Pixel-sized stars.
-        */
-
-        const size =
-            Math.random() < 0.8
-                ? 1 + Math.random()
-                : 2 + Math.random();
-
-
-        star.style.width =
-            `${size}px`;
-
-
-        star.style.height =
-            `${size}px`;
-
-
-        /*
-           LEFT-HEAVY DISTRIBUTION
-
-           70% of stars:
-           left 55% of screen
-
-           30%:
-           entire screen
-        */
-
-        let x;
-
-
-        if (
-            Math.random() < 0.70
+        for (
+            let i = 0;
+            i < starCount;
+            i++
         ) {
 
-            x =
+            const size =
+                Math.random() < 0.85
+                    ? 1
+                    : 2;
+
+
+            let x;
+
+            /*
+             * Keep the same left-heavy
+             * distribution.
+             */
+
+            if (
+                Math.random() < 0.70
+            ) {
+
+                x =
+                    Math.random() *
+                    width *
+                    0.55;
+
+            } else {
+
+                x =
+                    Math.random() *
+                    width;
+            }
+
+
+            const y =
                 Math.random() *
-                (
-                    window.innerWidth *
-                    0.55
-                );
+                height;
+
+
+            stars.push({
+
+                x,
+
+                y,
+
+                size,
+
+                speed:
+                    10 +
+                    Math.random() * 30,
+
+                phase:
+                    Math.random() *
+                    Math.PI *
+                    2,
+
+                twinkle:
+                    1 +
+                    Math.random() * 2
+
+            });
+        }
+    }
+
+
+    /* =================================================
+       DRAW STAR
+    ================================================= */
+
+    function drawStar(star, time) {
+
+        const sparkle =
+            0.65 +
+            Math.sin(
+                time *
+                0.001 *
+                star.twinkle +
+                star.phase
+            ) *
+            0.25;
+
+
+        ctx.globalAlpha =
+            sparkle;
+
+
+        /*
+         * Small stars don't need expensive
+         * gradients or multiple box shadows.
+         */
+
+        if (
+            star.size <= 1
+        ) {
+
+            ctx.fillStyle =
+                "#ffd8f4";
+
+            ctx.fillRect(
+                Math.round(star.x),
+                Math.round(star.y),
+                1,
+                1
+            );
 
         } else {
 
-            x =
-                Math.random() *
-                window.innerWidth;
+            ctx.fillStyle =
+                "#ffffff";
+
+            ctx.fillRect(
+                Math.round(star.x),
+                Math.round(star.y),
+                2,
+                2
+            );
+
         }
-
-
-        const y =
-            Math.random() *
-            window.innerHeight;
-
-
-        const speed =
-            18 +
-            Math.random() * 55;
-
-
-        const data = {
-
-            element: star,
-
-            x: x,
-
-            y: y,
-
-            speed: speed
-        };
-
-
-        /*
-           IMPORTANT:
-
-           We use transform for movement,
-           so don't use left/top for the
-           animation.
-        */
-
-        star.style.transform =
-            `translate3d(
-                ${x}px,
-                ${y}px,
-                0
-            )`;
-
-
-        starContainer.appendChild(
-            star
-        );
-
-
-        stars.push(
-            data
-        );
     }
 
 
@@ -159,10 +245,20 @@
     let lastTime =
         performance.now();
 
+    let animationFrame = null;
 
-    function updateStars(
-        time
-    ) {
+
+    function animate(time) {
+
+        if (
+            document.hidden
+        ) {
+
+            animationFrame = null;
+
+            return;
+        }
+
 
         let delta =
             (
@@ -171,115 +267,89 @@
             ) / 1000;
 
 
-        lastTime =
-            time;
+        lastTime = time;
 
 
         /*
-           Prevent giant jumps after
-           lag or switching tabs.
-        */
+         * Prevent huge jumps.
+         */
 
-        if (
-            delta > 0.05
+        delta =
+            Math.min(
+                delta,
+                0.05
+            );
+
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        for (
+            const star of stars
         ) {
 
-            delta = 0.05;
-        }
+            star.x +=
+                star.speed *
+                delta;
 
 
-        const width =
-            window.innerWidth;
-
-
-        const height =
-            window.innerHeight;
-
-
-        /*
-           Only animate while visible.
-        */
-
-        if (
-            !document.hidden
-        ) {
-
-            for (
-                const star of stars
+            if (
+                star.x >
+                width + 5
             ) {
 
-                /*
-                   Move right.
-                */
+                star.x = -5;
 
-                star.x +=
-                    star.speed *
-                    delta;
-
-
-                /*
-                   STAR LEFT THE SCREEN
-                   -------------------
-
-                   Immediately respawn
-                   on the LEFT.
-                */
-
-                if (
-                    star.x >
-                    width + 10
-                ) {
-
-                    star.x =
-                        -10;
-
-
-                    /*
-                       New random Y.
-                    */
-
-                    star.y =
-                        Math.random() *
-                        height;
-                }
-
-
-                /*
-                   Apply position.
-                */
-
-                star.element.style.transform =
-                    `translate3d(
-                        ${star.x}px,
-                        ${star.y}px,
-                        0
-                    )`;
+                star.y =
+                    Math.random() *
+                    height;
             }
+
+
+            drawStar(
+                star,
+                time
+            );
         }
 
 
-        requestAnimationFrame(
-            updateStars
-        );
+        ctx.globalAlpha = 1;
+
+
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
     }
 
 
     /* =================================================
-       TAB SWITCH FIX
+       VISIBILITY
     ================================================= */
 
     document.addEventListener(
         "visibilitychange",
         () => {
 
-            /*
-               Reset the animation clock
-               so stars don't teleport after
-               returning to the tab.
-            */
-
             lastTime =
                 performance.now();
+
+
+            if (
+                !document.hidden &&
+                !animationFrame
+            ) {
+
+                animationFrame =
+                    requestAnimationFrame(
+                        animate
+                    );
+            }
 
         }
     );
@@ -289,33 +359,28 @@
        RESIZE
     ================================================= */
 
+    let resizeTimer = null;
+
     window.addEventListener(
         "resize",
         () => {
 
-            const height =
-                window.innerHeight;
+            clearTimeout(
+                resizeTimer
+            );
 
 
-            for (
-                const star of stars
-            ) {
+            resizeTimer =
+                setTimeout(
+                    () => {
 
-                /*
-                   Keep stars inside the
-                   new screen height.
-                */
+                        resizeCanvas();
 
-                if (
-                    star.y >
-                    height
-                ) {
+                        createStars();
 
-                    star.y =
-                        Math.random() *
-                        height;
-                }
-            }
+                    },
+                    150
+                );
 
         },
         {
@@ -328,13 +393,18 @@
        START
     ================================================= */
 
-    requestAnimationFrame(
-        updateStars
-    );
+    resizeCanvas();
+
+    createStars();
+
+    animationFrame =
+        requestAnimationFrame(
+            animate
+        );
 
 
     console.log(
-        "Ralkerie stars loaded."
+        "Ralkerie optimized stars loaded."
     );
 
 })();
