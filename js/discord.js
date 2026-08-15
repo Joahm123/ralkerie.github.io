@@ -1,15 +1,9 @@
-
+```javascript
 (function () {
 
     "use strict";
 
-
-    /* =====================================================
-       SETTINGS
-    ===================================================== */
-
-    var API_URL =
-        "/api/discord";
+    console.log("Ralkerie Discord loaded.");
 
 
     /* =====================================================
@@ -31,10 +25,30 @@
 
 
     /* =====================================================
-       CREATE LIVE CARD
+       FIND THE EXISTING PANEL
     ===================================================== */
 
-    liveSection.innerHTML = `
+    var panel =
+        liveSection.querySelector(
+            ".pixel-panel"
+        );
+
+
+    if (!panel) {
+
+        console.error(
+            "Ralkerie Discord: .pixel-panel not found."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       CREATE DISCORD CONTENT
+    ===================================================== */
+
+    panel.innerHTML = `
 
         <div class="discord-live-card">
 
@@ -68,10 +82,7 @@
             </div>
 
 
-            <div
-                id="discord-activity"
-                class="discord-activity"
-            >
+            <div class="discord-activity">
 
                 <div
                     id="discord-activity-title"
@@ -147,29 +158,106 @@
 
 
     /* =====================================================
-       UPDATE DISCORD
+       LOAD DISCORD
     ===================================================== */
 
-    function updateDiscord(response) {
+    function loadDiscord() {
 
-        if (
-            !response ||
-            !response.success ||
-            !response.data
-        ) {
-
-            console.error(
-                "Invalid Discord response:",
-                response
-            );
-
-            return;
-        }
+        console.log(
+            "Checking Discord..."
+        );
 
 
-        var data =
-            response.data;
+        fetch(
+            "/api/discord",
+            {
+                cache: "no-store"
+            }
+        )
 
+        .then(
+            function (response) {
+
+                console.log(
+                    "Discord API status:",
+                    response.status
+                );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "HTTP " +
+                        response.status
+                    );
+
+                }
+
+
+                return response.json();
+
+            }
+        )
+
+        .then(
+            function (response) {
+
+                console.log(
+                    "Discord API:",
+                    response
+                );
+
+
+                if (
+                    !response.success ||
+                    !response.data
+                ) {
+
+                    throw new Error(
+                        "Invalid Discord data"
+                    );
+
+                }
+
+
+                updateDiscord(
+                    response.data
+                );
+
+            }
+        )
+
+        .catch(
+            function (error) {
+
+                console.error(
+                    "Ralkerie Discord:",
+                    error
+                );
+
+
+                get(
+                    "discord-name"
+                ).textContent =
+                    "Discord unavailable";
+
+
+                get(
+                    "discord-status"
+                ).textContent =
+                    "ERROR";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE
+    ===================================================== */
+
+    function updateDiscord(data) {
 
         var user =
             data.discord_user || {};
@@ -180,32 +268,32 @@
             "offline";
 
 
-        /* =================================================
-           USERNAME
-        ================================================= */
+        /* USERNAME */
 
-        get("discord-name").textContent =
+        get(
+            "discord-name"
+        ).textContent =
             user.global_name ||
             user.username ||
             "Ralk";
 
 
-        /* =================================================
-           STATUS
-        ================================================= */
+        /* STATUS */
 
-        get("discord-status").textContent =
+        get(
+            "discord-status"
+        ).textContent =
             status.toUpperCase();
 
 
-        get("discord-status").className =
+        get(
+            "discord-status"
+        ).className =
             "discord-status status-" +
             status;
 
 
-        /* =================================================
-           AVATAR
-        ================================================= */
+        /* AVATAR */
 
         if (
             user.id &&
@@ -218,7 +306,9 @@
                     : "png";
 
 
-            get("discord-avatar").src =
+            get(
+                "discord-avatar"
+            ).src =
                 "https://cdn.discordapp.com/avatars/" +
                 user.id +
                 "/" +
@@ -270,7 +360,6 @@
                 spotify.artist ||
                 "Unknown artist";
 
-
         } else {
 
             get(
@@ -287,12 +376,10 @@
         ================================================= */
 
         var activities =
-            data.activities ||
-            [];
+            data.activities || [];
 
 
-        var activity =
-            null;
+        var activity = null;
 
 
         for (
@@ -300,10 +387,6 @@
             i < activities.length;
             i++
         ) {
-
-            /*
-               Type 4 is custom status.
-            */
 
             if (
                 activities[i].type !== 4
@@ -320,7 +403,7 @@
 
         if (activity) {
 
-            var activityType =
+            var type =
                 "ACTIVITY";
 
 
@@ -328,36 +411,29 @@
                 activity.type === 0
             ) {
 
-                activityType =
+                type =
                     "PLAYING";
 
             } else if (
                 activity.type === 1
             ) {
 
-                activityType =
+                type =
                     "STREAMING";
 
             } else if (
                 activity.type === 2
             ) {
 
-                activityType =
+                type =
                     "LISTENING";
 
             } else if (
                 activity.type === 3
             ) {
 
-                activityType =
+                type =
                     "WATCHING";
-
-            } else if (
-                activity.type === 5
-            ) {
-
-                activityType =
-                    "COMPETING";
 
             }
 
@@ -365,15 +441,14 @@
             get(
                 "discord-activity-title"
             ).textContent =
-                activityType;
+                type;
 
 
             get(
                 "discord-activity-text"
             ).textContent =
                 activity.name ||
-                "Unknown activity";
-
+                "Unknown";
 
         } else {
 
@@ -394,75 +469,15 @@
 
 
     /* =====================================================
-       LOAD DISCORD
-    ===================================================== */
-
-    function loadDiscord() {
-
-        fetch(
-            API_URL,
-            {
-                cache: "no-store"
-            }
-        )
-
-        .then(
-            function (response) {
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "HTTP " +
-                        response.status
-                    );
-
-                }
-
-                return response.json();
-
-            }
-        )
-
-        .then(
-            function (data) {
-
-                updateDiscord(
-                    data
-                );
-
-            }
-        )
-
-        .catch(
-            function (error) {
-
-                console.error(
-                    "Ralkerie Discord error:",
-                    error
-                );
-
-
-                get(
-                    "discord-status"
-                ).textContent =
-                    "UNAVAILABLE";
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       INITIAL LOAD
+       START
     ===================================================== */
 
     loadDiscord();
 
 
-    /* =====================================================
-       REFRESH
-    ===================================================== */
+    /*
+       Update every 15 seconds
+    */
 
     setInterval(
         loadDiscord,
@@ -471,4 +486,4 @@
 
 
 })();
-
+```
