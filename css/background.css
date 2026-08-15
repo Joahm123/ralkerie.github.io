@@ -1,14 +1,5 @@
 /* =====================================================
-   RALKERIE STAR BACKGROUND
-
-   IMPORTANT:
-   stars.js controls transform/position.
-   This file ONLY controls appearance.
-===================================================== */
-
-
-/* =====================================================
-   STAR CONTAINER
+   RALKERIE STARS
 ===================================================== */
 
 #stars {
@@ -32,7 +23,7 @@
 
 
 /* =====================================================
-   STARS
+   STAR
 ===================================================== */
 
 .star {
@@ -83,14 +74,21 @@
     contain:
         layout
         paint;
+
+    animation:
+        starSparkle
+        2.2s
+        ease-in-out
+        infinite;
 }
 
 
 /* =====================================================
-   SPARKLE
+   STAR SPARKLE
 
-   ONLY opacity is animated.
-   transform is left to stars.js.
+   IMPORTANT:
+   This does NOT animate transform.
+   stars.js controls transform.
 ===================================================== */
 
 @keyframes starSparkle {
@@ -110,18 +108,8 @@
 }
 
 
-.star {
-
-    animation:
-        starSparkle
-        2.2s
-        ease-in-out
-        infinite;
-}
-
-
 /* =====================================================
-   RANDOM-ISH VARIATION
+   RANDOM STAR SPEEDS
 ===================================================== */
 
 .star:nth-child(3n) {
