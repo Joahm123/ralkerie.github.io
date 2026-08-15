@@ -1,13 +1,14 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   OVERLAY VERSION
+   CLEAN + LOW CPU VERSION
 
-   IMPORTANT:
-   - Does NOT wrap the Discord card
-   - Does NOT change card dimensions
-   - Waveform sits around the existing card
-   - Low CPU usage
-   - Smooth enough to look good
+   - Does NOT resize the Discord card
+   - Four-sided waveform
+   - Individual visible bars
+   - Smooth animation
+   - ~20 visual updates/sec
+   - Pauses when tab is hidden
+   - Automatically handles Discord refreshing
 ===================================================== */
 
 (() => {
@@ -21,17 +22,17 @@
 
     const BAR_WIDTH = 3;
 
-    const BAR_GAP = 5;
+    const BAR_GAP = 4;
 
     const MIN_HEIGHT = 2;
 
-    const MAX_HEIGHT = 16;
+    const MAX_HEIGHT = 13;
 
     const UPDATE_INTERVAL = 50;
 
 
     /* =================================================
-       CONTAINER
+       FIND DISCORD CONTAINER
     ================================================= */
 
     const container =
@@ -50,6 +51,10 @@
     }
 
 
+    /* =================================================
+       STATE
+    ================================================= */
+
     let currentCard = null;
 
     let waveform = null;
@@ -63,6 +68,8 @@
 
     let animationFrame = null;
 
+    let rebuildTimer = null;
+
 
     /* =================================================
        CREATE SIDE
@@ -71,10 +78,14 @@
     function createSide(side) {
 
         const element =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         element.className =
             `wave-side wave-side-${side}`;
+
 
         return element;
     }
@@ -91,11 +102,18 @@
     ) {
 
         const bar =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
+
 
         bar.className =
             "wave-bar";
 
+
+        /* =============================================
+           HORIZONTAL SIDES
+        ============================================= */
 
         if (
             side === "top" ||
@@ -105,7 +123,14 @@
             bar.style.left =
                 `${position}px`;
 
-        } else {
+        }
+
+
+        /* =============================================
+           VERTICAL SIDES
+        ============================================= */
+
+        else {
 
             bar.style.top =
                 `${position}px`;
@@ -113,7 +138,9 @@
         }
 
 
-        parent.appendChild(bar);
+        parent.appendChild(
+            bar
+        );
 
 
         return {
@@ -129,62 +156,165 @@
 
             speed:
                 1.3 +
-                Math.random() * 1.7,
+                Math.random() *
+                1.7,
 
             strength:
-                0.7 +
-                Math.random() * 0.3
+                0.65 +
+                Math.random() *
+                0.35
         };
     }
 
 
     /* =================================================
-       BUILD WAVEFORM
+       CREATE WAVEFORM
     ================================================= */
 
-    function buildWaveform() {
+    function createWaveform() {
 
         if (!currentCard) {
+
             return;
         }
 
 
-        if (!waveform) {
+        /*
+         * Remove previous waveform.
+         */
 
-            waveform =
-                document.createElement("div");
+        if (waveform) {
 
-            waveform.className =
-                "discord-waveform-overlay";
+            waveform.remove();
 
+            waveform = null;
 
-            const top =
-                createSide("top");
-
-            const bottom =
-                createSide("bottom");
-
-            const left =
-                createSide("left");
-
-            const right =
-                createSide("right");
+        }
 
 
-            waveform.appendChild(top);
-            waveform.appendChild(bottom);
-            waveform.appendChild(left);
-            waveform.appendChild(right);
+        /*
+         * Make card the positioning reference.
+         */
+
+        if (
+            getComputedStyle(
+                currentCard
+            ).position === "static"
+        ) {
+
+            currentCard.style.position =
+                "relative";
+
+        }
 
 
-            /*
-             * Put waveform directly inside
-             * the Discord card.
-             */
+        /* =================================================
+           WAVEFORM OVERLAY
+        ================================================= */
 
-            currentCard.appendChild(
-                waveform
+        waveform =
+            document.createElement(
+                "div"
             );
+
+
+        waveform.className =
+            "discord-waveform-overlay";
+
+
+        /* =================================================
+           FOUR SIDES
+        ================================================= */
+
+        const top =
+            createSide(
+                "top"
+            );
+
+
+        const bottom =
+            createSide(
+                "bottom"
+            );
+
+
+        const left =
+            createSide(
+                "left"
+            );
+
+
+        const right =
+            createSide(
+                "right"
+            );
+
+
+        waveform.appendChild(
+            top
+        );
+
+
+        waveform.appendChild(
+            bottom
+        );
+
+
+        waveform.appendChild(
+            left
+        );
+
+
+        waveform.appendChild(
+            right
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The waveform is INSIDE the card,
+         * but position:absolute means it
+         * takes up ZERO layout space.
+         */
+
+        currentCard.appendChild(
+            waveform
+        );
+
+
+        /*
+         * Wait for dimensions.
+         */
+
+        requestAnimationFrame(
+            () => {
+
+                if (
+                    currentCard
+                ) {
+
+                    buildBars();
+
+                }
+
+            }
+        );
+    }
+
+
+    /* =================================================
+       BUILD BARS
+    ================================================= */
+
+    function buildBars() {
+
+        if (
+            !currentCard ||
+            !waveform
+        ) {
+
+            return;
         }
 
 
@@ -193,15 +323,18 @@
                 ".wave-side-top"
             );
 
+
         const bottom =
             waveform.querySelector(
                 ".wave-side-bottom"
             );
 
+
         const left =
             waveform.querySelector(
                 ".wave-side-left"
             );
+
 
         const right =
             waveform.querySelector(
@@ -215,13 +348,21 @@
             !left ||
             !right
         ) {
+
             return;
         }
 
 
+        /*
+         * Remove existing bars.
+         */
+
         top.replaceChildren();
+
         bottom.replaceChildren();
+
         left.replaceChildren();
+
         right.replaceChildren();
 
 
@@ -229,12 +370,12 @@
 
 
         /*
-         * Use the CARD dimensions,
-         * not the wrapper.
+         * Read card size once.
          */
 
         const width =
             currentCard.clientWidth;
+
 
         const height =
             currentCard.clientHeight;
@@ -258,6 +399,7 @@
                 )
             );
 
+
             bars.push(
                 createBar(
                     bottom,
@@ -265,6 +407,7 @@
                     x
                 )
             );
+
         }
 
 
@@ -286,6 +429,7 @@
                 )
             );
 
+
             bars.push(
                 createBar(
                     right,
@@ -293,19 +437,19 @@
                     y
                 )
             );
+
         }
 
 
         console.log(
-            "Ralkerie waveform:",
-            bars.length,
-            "bars"
+            "Ralkerie waveform bars:",
+            bars.length
         );
     }
 
 
     /* =================================================
-       FIND CARD
+       FIND DISCORD CARD
     ================================================= */
 
     function findCard() {
@@ -317,12 +461,14 @@
 
 
         if (!card) {
+
             return;
+
         }
 
 
         /*
-         * Same card.
+         * Same card already connected.
          */
 
         if (
@@ -332,11 +478,12 @@
         ) {
 
             return;
+
         }
 
 
         /*
-         * Discord replaced the card.
+         * Discord created a new card.
          */
 
         if (waveform) {
@@ -344,44 +491,19 @@
             waveform.remove();
 
             waveform = null;
+
         }
 
 
         bars = [];
 
-        currentCard = card;
+
+        currentCard =
+            card;
 
 
-        /*
-         * Make sure the card is a positioning
-         * reference for the waveform.
-         */
+        createWaveform();
 
-        const computed =
-            getComputedStyle(card);
-
-
-        if (
-            computed.position === "static"
-        ) {
-
-            card.style.position =
-                "relative";
-        }
-
-
-        requestAnimationFrame(
-            () => {
-
-                if (
-                    currentCard === card
-                ) {
-
-                    buildWaveform();
-                }
-
-            }
-        );
     }
 
 
@@ -394,10 +516,26 @@
         animationFrame = null;
 
 
-        if (document.hidden) {
+        /*
+         * Stop completely when hidden.
+         */
+
+        if (
+            document.hidden
+        ) {
+
             return;
+
         }
 
+
+        /*
+         * Throttle updates.
+
+         * requestAnimationFrame still runs,
+         * but DOM transforms only update
+         * about 20 times per second.
+         */
 
         if (
             time - lastUpdate <
@@ -410,10 +548,12 @@
                 );
 
             return;
+
         }
 
 
-        lastUpdate = time;
+        lastUpdate =
+            time;
 
 
         const elapsed =
@@ -423,9 +563,23 @@
             ) / 1000;
 
 
+        /* =================================================
+           ANIMATE BARS
+        ================================================= */
+
         for (
-            const data of bars
+            let i = 0;
+            i < bars.length;
+            i++
         ) {
+
+            const data =
+                bars[i];
+
+
+            /*
+             * Main wave.
+             */
 
             const wave =
                 (
@@ -433,25 +587,39 @@
                         elapsed *
                         data.speed +
                         data.phase
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
-            const second =
+            /*
+             * Secondary movement.
+             */
+
+            const secondary =
                 (
                     Math.sin(
                         elapsed *
                         3.2 +
                         data.phase *
                         1.4
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
+            /*
+             * Mix waves.
+             */
+
             const value =
                 wave * 0.78 +
-                second * 0.22;
+                secondary * 0.22;
 
+
+            /*
+             * Calculate bar size.
+             */
 
             const size =
                 MIN_HEIGHT +
@@ -467,6 +635,10 @@
                 data.element;
 
 
+            /* =================================================
+               TOP
+            ================================================= */
+
             if (
                 data.side === "top"
             ) {
@@ -475,6 +647,11 @@
                     `scaleY(${size})`;
 
             }
+
+
+            /* =================================================
+               BOTTOM
+            ================================================= */
 
             else if (
                 data.side === "bottom"
@@ -485,6 +662,11 @@
 
             }
 
+
+            /* =================================================
+               LEFT
+            ================================================= */
+
             else if (
                 data.side === "left"
             ) {
@@ -494,12 +676,20 @@
 
             }
 
-            else {
+
+            /* =================================================
+               RIGHT
+            ================================================= */
+
+            else if (
+                data.side === "right"
+            ) {
 
                 bar.style.transform =
                     `scaleX(${size})`;
 
             }
+
         }
 
 
@@ -507,6 +697,7 @@
             requestAnimationFrame(
                 animate
             );
+
     }
 
 
@@ -514,25 +705,24 @@
        RESIZE
     ================================================= */
 
-    let resizeTimer = null;
-
-
     window.addEventListener(
         "resize",
         () => {
 
             clearTimeout(
-                resizeTimer
+                rebuildTimer
             );
 
 
-            resizeTimer =
+            rebuildTimer =
                 setTimeout(
                     () => {
 
-                        if (currentCard) {
+                        if (
+                            currentCard
+                        ) {
 
-                            buildWaveform();
+                            buildBars();
 
                         }
 
@@ -548,7 +738,7 @@
 
 
     /* =================================================
-       DISCORD CHANGES
+       DISCORD MUTATION OBSERVER
     ================================================= */
 
     const observer =
@@ -590,6 +780,7 @@
             startTime =
                 performance.now();
 
+
             lastUpdate = 0;
 
 
@@ -602,6 +793,7 @@
                     requestAnimationFrame(
                         animate
                     );
+
             }
 
         }
@@ -609,11 +801,15 @@
 
 
     /* =================================================
-       INITIAL
+       INITIAL LOAD
     ================================================= */
 
     findCard();
 
+
+    /* =================================================
+       DISCORD LOAD RETRY
+    ================================================= */
 
     let attempts = 0;
 
@@ -623,6 +819,7 @@
             () => {
 
                 attempts++;
+
 
                 findCard();
 
@@ -635,6 +832,7 @@
                     clearInterval(
                         finder
                     );
+
                 }
 
             },
