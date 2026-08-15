@@ -73,7 +73,7 @@
 
 
         /* =================================================
-           BACKGROUND
+           STARS
         ================================================= */
 
         #stars {
@@ -101,249 +101,35 @@
 
             position: fixed;
 
-            left: 0;
-            top: 50%;
+            inset: 0;
 
             width: 100vw;
-            height: 180px;
+            height: 100vh;
 
-            transform:
-                translateY(-50%);
+            z-index: 4;
 
             pointer-events: none;
 
-            z-index: 3;
-
             overflow: hidden;
-
-            opacity: 0.85;
         }
 
 
-        /* =================================================
-           WAVEFORM PINK GLOW
-        ================================================= */
-
-        #waveform::before {
-
-            content: "";
+        #waveform-canvas {
 
             position: absolute;
 
-            left: -5%;
-            top: 0;
+            inset: 0;
 
-            width: 110%;
+            width: 100%;
             height: 100%;
 
             pointer-events: none;
-
-            background:
-                repeating-linear-gradient(
-                    90deg,
-
-                    transparent 0px,
-                    transparent 8px,
-
-                    rgba(
-                        255,
-                        70,
-                        200,
-                        0.15
-                    ) 9px,
-
-                    rgba(
-                        255,
-                        70,
-                        200,
-                        0.7
-                    ) 10px,
-
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        0.95
-                    ) 11px,
-
-                    rgba(
-                        255,
-                        70,
-                        200,
-                        0.7
-                    ) 12px,
-
-                    transparent 13px,
-
-                    transparent 24px
-                );
-
-            mask-image:
-                radial-gradient(
-                    ellipse 60% 45% at 50% 50%,
-                    black 0%,
-                    rgba(0,0,0,0.9) 45%,
-                    transparent 75%
-                );
-
-            -webkit-mask-image:
-                radial-gradient(
-                    ellipse 60% 45% at 50% 50%,
-                    black 0%,
-                    rgba(0,0,0,0.9) 45%,
-                    transparent 75%
-                );
-
-            filter:
-                blur(0.5px)
-                drop-shadow(
-                    0 0 5px
-                    rgba(
-                        255,
-                        60,
-                        200,
-                        0.9
-                    )
-                );
-
-            animation:
-                waveformMove
-                3s
-                linear
-                infinite;
-        }
-
-
-        /* =================================================
-           WAVEFORM WHITE CENTER
-        ================================================== */
-
-        #waveform::after {
-
-            content: "";
-
-            position: absolute;
-
-            left: 0;
-
-            top: 50%;
-
-            width: 100%;
-
-            height: 3px;
-
-            transform:
-                translateY(-50%);
-
-            background:
-                linear-gradient(
-                    to right,
-
-                    transparent 0%,
-
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        0.1
-                    ) 10%,
-
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        0.95
-                    ) 35%,
-
-                    #ffffff 50%,
-
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        0.95
-                    ) 65%,
-
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        0.1
-                    ) 90%,
-
-                    transparent 100%
-                );
-
-            box-shadow:
-
-                0 0 4px #ffffff,
-
-                0 0 10px #ff72cf,
-
-                0 0 20px #ff3dbd,
-
-                0 0 35px
-                rgba(
-                    255,
-                    60,
-                    195,
-                    0.5
-                );
-
-            pointer-events: none;
-        }
-
-
-        /* =================================================
-           WAVEFORM ANIMATION
-        ================================================== */
-
-        @keyframes waveformMove {
-
-            0% {
-
-                transform:
-                    translateX(0)
-                    scaleY(0.9);
-            }
-
-
-            25% {
-
-                transform:
-                    translateX(-4%)
-                    scaleY(1.15);
-            }
-
-
-            50% {
-
-                transform:
-                    translateX(-8%)
-                    scaleY(0.8);
-            }
-
-
-            75% {
-
-                transform:
-                    translateX(-4%)
-                    scaleY(1.2);
-            }
-
-
-            100% {
-
-                transform:
-                    translateX(0)
-                    scaleY(0.9);
-            }
         }
 
 
         /* =================================================
            METEORS
-        ================================================== */
+        ================================================= */
 
         #meteors {
 
@@ -364,7 +150,7 @@
 
         /* =================================================
            NAVIGATION
-        ================================================== */
+        ================================================= */
 
         .pixel-tabs {
 
@@ -504,6 +290,8 @@
 
         .live-content {
 
+            position: relative;
+
             display: flex;
 
             flex-direction: column;
@@ -514,6 +302,8 @@
             gap: 18px;
 
             width: 100%;
+
+            z-index: 15;
         }
 
 
@@ -538,6 +328,10 @@
             user-select: none;
 
             pointer-events: none;
+
+            position: relative;
+
+            z-index: 30;
         }
 
 
@@ -553,6 +347,10 @@
             justify-content: center;
 
             width: 100%;
+
+            position: relative;
+
+            z-index: 30;
         }
 
 
@@ -575,7 +373,7 @@
                     5,
                     5,
                     5,
-                    0.92
+                    0.94
                 );
 
             border:
@@ -583,6 +381,10 @@
 
             box-shadow:
                 6px 6px 0 #000000;
+
+            position: relative;
+
+            z-index: 30;
         }
 
 
@@ -1066,14 +868,6 @@
             }
 
 
-            #waveform {
-
-                height: 120px;
-
-                opacity: 0.7;
-            }
-
-
             .link-grid {
 
                 grid-template-columns:
@@ -1091,7 +885,7 @@
             prefers-reduced-motion: reduce
         ) {
 
-            #waveform::before {
+            #waveform-canvas {
 
                 animation: none;
             }
@@ -1102,8 +896,8 @@
 
 
     <!-- =================================================
-         BACKGROUND CSS
-         YOUR STARS CSS IS CALLED background.css
+         STARS
+         Your stars CSS is background.css
     ================================================== -->
 
     <link
@@ -1113,7 +907,7 @@
 
 
     <!-- =================================================
-         METEOR CSS
+         METEORS
     ================================================== -->
 
     <link
@@ -1128,7 +922,7 @@
 
 
     <!-- =================================================
-         BACKGROUND
+         STARS
     ================================================== -->
 
     <div
@@ -1138,13 +932,19 @@
 
 
     <!-- =================================================
-         OSU WAVEFORM
+         WAVEFORM
     ================================================== -->
 
     <div
         id="waveform"
         aria-hidden="true"
-    ></div>
+    >
+
+        <canvas
+            id="waveform-canvas"
+        ></canvas>
+
+    </div>
 
 
     <!-- =================================================
@@ -1232,9 +1032,7 @@
             <div class="live-content">
 
 
-                <!-- =================================================
-                     RALKERIE PNG
-                ================================================== -->
+                <!-- RALKERIE -->
 
                 <img
                     class="username-png"
@@ -1243,9 +1041,7 @@
                 >
 
 
-                <!-- =================================================
-                     DISCORD
-                ================================================== -->
+                <!-- DISCORD -->
 
                 <div
                     id="discord-card-container"
@@ -1447,6 +1243,8 @@
     <script src="./js/stars.js"></script>
 
     <script src="./js/meteors.js"></script>
+
+    <script src="./js/waveform.js"></script>
 
     <script src="./js/main.js"></script>
 
