@@ -1,4 +1,4 @@
-```javascript
+
 (function () {
 
     "use strict";
@@ -486,4 +486,4 @@
 
 
 })();
-```
+
