@@ -1,9 +1,23 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED EQUALIZER BORDER
+   FOUR-SIDED BOX EQUALIZER
 
-   Bars are FLAT against the Discord box
-   and pulse outward.
+   The waveform automatically attaches itself
+   to .discord-live-card.
+
+   Every side gets its OWN bar container.
+
+   TOP:
+       bars grow upward
+
+   BOTTOM:
+       bars grow downward
+
+   LEFT:
+       bars grow left
+
+   RIGHT:
+       bars grow right
 ===================================================== */
 
 (() => {
@@ -11,28 +25,8 @@
     "use strict";
 
 
-    /* =================================================
-       FIND WRAPPER
-    ================================================= */
-
-    const wrapper =
-        document.getElementById(
-            "waveform-wrapper"
-        );
-
-
-    if (!wrapper) {
-
-        console.error(
-            "Ralkerie waveform: #waveform-wrapper not found."
-        );
-
-        return;
-    }
-
-
     console.log(
-        "Ralkerie waveform loaded."
+        "Ralkerie waveform starting..."
     );
 
 
@@ -40,48 +34,229 @@
        SETTINGS
     ================================================= */
 
-    const BAR_SIZE = 3;
+    const BAR_WIDTH = 3;
 
-    const BAR_GAP = 5;
+    const BAR_HEIGHT = 3;
+
+    const GAP = 4;
 
     const MIN_SIZE = 3;
 
-    const MAX_SIZE = 30;
+    const MAX_SIZE = 28;
 
 
     /* =================================================
-       CREATE BORDER
+       FIND DISCORD CONTAINER
     ================================================= */
 
-    let border =
-        wrapper.querySelector(
-            ".wave-border"
+    const container =
+        document.getElementById(
+            "discord-card-container"
         );
 
 
-    if (!border) {
+    if (!container) {
 
-        border =
+        console.error(
+            "Ralkerie waveform: Discord container not found."
+        );
+
+        return;
+    }
+
+
+    /* =================================================
+       CURRENT WRAPPER
+    ================================================= */
+
+    let currentWrapper = null;
+
+
+    /* =================================================
+       CREATE WAVEFORM
+    ================================================= */
+
+    function attachWaveform(card) {
+
+        if (!card) {
+            return;
+        }
+
+
+        /*
+         * Already wrapped.
+         */
+
+        if (
+            card.parentElement &&
+            card.parentElement.classList.contains(
+                "waveform-wrapper"
+            )
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * Remove old wrapper if Discord
+         * replaced its contents.
+         */
+
+        if (
+            currentWrapper &&
+            currentWrapper.parentElement
+        ) {
+
+            currentWrapper.remove();
+
+            currentWrapper = null;
+        }
+
+
+        /* =================================================
+           WRAPPER
+        ================================================= */
+
+        const wrapper =
             document.createElement(
                 "div"
             );
+
+
+        wrapper.className =
+            "waveform-wrapper";
+
+
+        /* =================================================
+           BORDER
+        ================================================= */
+
+        const border =
+            document.createElement(
+                "div"
+            );
+
 
         border.className =
             "wave-border";
 
 
-        wrapper.insertBefore(
-            border,
-            wrapper.firstChild
+        /* =================================================
+           FOUR SIDES
+        ================================================= */
+
+        const top =
+            createSide(
+                "top"
+            );
+
+
+        const bottom =
+            createSide(
+                "bottom"
+            );
+
+
+        const left =
+            createSide(
+                "left"
+            );
+
+
+        const right =
+            createSide(
+                "right"
+            );
+
+
+        border.appendChild(
+            top
+        );
+
+        border.appendChild(
+            bottom
+        );
+
+        border.appendChild(
+            left
+        );
+
+        border.appendChild(
+            right
+        );
+
+
+        wrapper.appendChild(
+            border
+        );
+
+
+        /*
+         * Move Discord card into wrapper.
+         */
+
+        container.appendChild(
+            wrapper
+        );
+
+
+        wrapper.appendChild(
+            card
+        );
+
+
+        currentWrapper =
+            wrapper;
+
+
+        /*
+         * Build bars after the browser
+         * knows the card dimensions.
+         */
+
+        requestAnimationFrame(
+            () => {
+
+                buildBars(
+                    top,
+                    bottom,
+                    left,
+                    right,
+                    wrapper
+                );
+
+            }
+        );
+
+
+        console.log(
+            "Ralkerie waveform attached to Discord card."
         );
     }
 
 
     /* =================================================
-       BAR DATA
+       CREATE SIDE
     ================================================= */
 
-    let bars = [];
+    function createSide(
+        side
+    ) {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.className =
+            "wave-side wave-side-" +
+            side;
+
+
+        return element;
+    }
 
 
     /* =================================================
@@ -89,6 +264,7 @@
     ================================================= */
 
     function createBar(
+        parent,
         side,
         position
     ) {
@@ -99,34 +275,57 @@
             );
 
 
+        bar.className =
+            "wave-bar";
+
+
         /*
-         * IMPORTANT:
-         *
-         * Gives each bar its direction class.
-         *
-         * wave-top
-         * wave-bottom
-         * wave-left
-         * wave-right
+         * Horizontal sides.
          */
 
-        bar.className =
-            "wave-bar wave-" +
-            side;
+        if (
+            side === "top" ||
+            side === "bottom"
+        ) {
+
+            bar.style.left =
+                `${position}px`;
+
+            bar.style.width =
+                `${BAR_WIDTH}px`;
+
+            bar.style.height =
+                `${MIN_SIZE}px`;
+        }
 
 
-        border.appendChild(
+        /*
+         * Vertical sides.
+         */
+
+        else {
+
+            bar.style.top =
+                `${position}px`;
+
+            bar.style.height =
+                `${BAR_HEIGHT}px`;
+
+            bar.style.width =
+                `${MIN_SIZE}px`;
+        }
+
+
+        parent.appendChild(
             bar
         );
 
 
-        bars.push({
+        return {
 
             element: bar,
 
             side: side,
-
-            position: position,
 
             phase:
                 Math.random() *
@@ -135,24 +334,40 @@
 
             speed:
                 1.5 +
-                Math.random() * 2.5,
+                Math.random() *
+                3,
 
             strength:
                 0.65 +
-                Math.random() * 0.35
-        });
+                Math.random() *
+                0.35
+        };
     }
 
 
     /* =================================================
-       BUILD WAVEFORM
+       BUILD ALL BARS
     ================================================= */
 
-    function build() {
+    function buildBars(
+        top,
+        bottom,
+        left,
+        right,
+        wrapper
+    ) {
 
-        border.innerHTML = "";
+        /*
+         * Clear old bars.
+         */
 
-        bars = [];
+        top.innerHTML = "";
+
+        bottom.innerHTML = "";
+
+        left.innerHTML = "";
+
+        right.innerHTML = "";
 
 
         const width =
@@ -163,33 +378,26 @@
             wrapper.clientHeight;
 
 
+        const bars = [];
+
+
         /* =================================================
            TOP
         ================================================= */
 
-        const topCount =
-            Math.ceil(
-                width /
-                (
-                    BAR_SIZE +
-                    BAR_GAP
-                )
-            );
-
-
         for (
-            let i = 0;
-            i < topCount;
-            i++
+            let x = 0;
+            x < width;
+            x +=
+                BAR_WIDTH +
+                GAP
         ) {
 
-            createBar(
-                "top",
-
-                i *
-                (
-                    BAR_SIZE +
-                    BAR_GAP
+            bars.push(
+                createBar(
+                    top,
+                    "top",
+                    x
                 )
             );
         }
@@ -199,29 +407,19 @@
            BOTTOM
         ================================================= */
 
-        const bottomCount =
-            Math.ceil(
-                width /
-                (
-                    BAR_SIZE +
-                    BAR_GAP
-                )
-            );
-
-
         for (
-            let i = 0;
-            i < bottomCount;
-            i++
+            let x = 0;
+            x < width;
+            x +=
+                BAR_WIDTH +
+                GAP
         ) {
 
-            createBar(
-                "bottom",
-
-                i *
-                (
-                    BAR_SIZE +
-                    BAR_GAP
+            bars.push(
+                createBar(
+                    bottom,
+                    "bottom",
+                    x
                 )
             );
         }
@@ -231,29 +429,19 @@
            LEFT
         ================================================= */
 
-        const leftCount =
-            Math.ceil(
-                height /
-                (
-                    BAR_SIZE +
-                    BAR_GAP
-                )
-            );
-
-
         for (
-            let i = 0;
-            i < leftCount;
-            i++
+            let y = 0;
+            y < height;
+            y +=
+                BAR_HEIGHT +
+                GAP
         ) {
 
-            createBar(
-                "left",
-
-                i *
-                (
-                    BAR_SIZE +
-                    BAR_GAP
+            bars.push(
+                createBar(
+                    left,
+                    "left",
+                    y
                 )
             );
         }
@@ -263,146 +451,36 @@
            RIGHT
         ================================================= */
 
-        const rightCount =
-            Math.ceil(
-                height /
-                (
-                    BAR_SIZE +
-                    BAR_GAP
-                )
-            );
-
-
         for (
-            let i = 0;
-            i < rightCount;
-            i++
+            let y = 0;
+            y < height;
+            y +=
+                BAR_HEIGHT +
+                GAP
         ) {
 
-            createBar(
-                "right",
-
-                i *
-                (
-                    BAR_SIZE +
-                    BAR_GAP
+            bars.push(
+                createBar(
+                    right,
+                    "right",
+                    y
                 )
             );
         }
 
 
-        /* =================================================
-           POSITION BARS
-        ================================================= */
+        /*
+         * Save bars on wrapper.
+         */
 
-        for (
-            const data of bars
-        ) {
-
-            const bar =
-                data.element;
+        wrapper._waveBars =
+            bars;
 
 
-            /* =============================================
-               TOP
-
-               Bottom edge of bar touches
-               the top edge of the box.
-            ============================================= */
-
-            if (
-                data.side === "top"
-            ) {
-
-                bar.style.left =
-                    `${data.position}px`;
-
-                bar.style.top =
-                    "0px";
-
-                bar.style.width =
-                    `${BAR_SIZE}px`;
-
-                bar.style.height =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            /* =============================================
-               BOTTOM
-
-               Top edge of bar touches
-               bottom edge of box.
-            ============================================= */
-
-            else if (
-                data.side === "bottom"
-            ) {
-
-                bar.style.left =
-                    `${data.position}px`;
-
-                bar.style.bottom =
-                    "0px";
-
-                bar.style.width =
-                    `${BAR_SIZE}px`;
-
-                bar.style.height =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            /* =============================================
-               LEFT
-
-               Right edge of bar touches
-               left edge of box.
-            ============================================= */
-
-            else if (
-                data.side === "left"
-            ) {
-
-                bar.style.top =
-                    `${data.position}px`;
-
-                bar.style.left =
-                    "0px";
-
-                bar.style.height =
-                    `${BAR_SIZE}px`;
-
-                bar.style.width =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            /* =============================================
-               RIGHT
-
-               Left edge of bar touches
-               right edge of box.
-            ============================================= */
-
-            else if (
-                data.side === "right"
-            ) {
-
-                bar.style.top =
-                    `${data.position}px`;
-
-                bar.style.right =
-                    "0px";
-
-                bar.style.height =
-                    `${BAR_SIZE}px`;
-
-                bar.style.width =
-                    `${MIN_SIZE}px`;
-            }
-
-        }
+        console.log(
+            "Waveform bars:",
+            bars.length
+        );
     }
 
 
@@ -410,121 +488,147 @@
        ANIMATION
     ================================================= */
 
-    const startTime =
+    let startTime =
         performance.now();
 
 
     function animate(
-        currentTime
+        time
     ) {
 
         const elapsed =
             (
-                currentTime -
+                time -
                 startTime
             ) / 1000;
 
 
-        for (
-            const data of bars
+        if (
+            currentWrapper &&
+            currentWrapper._waveBars
         ) {
 
-            /*
-             * Main waveform movement.
-             */
-
-            const wave =
-                (
-                    Math.sin(
-                        elapsed *
-                        data.speed +
-                        data.phase
-                    ) +
-                    1
-                ) / 2;
-
-
-            /*
-             * Smaller secondary movement.
-             */
-
-            const secondary =
-                (
-                    Math.sin(
-                        elapsed *
-                        3.1 +
-                        data.phase *
-                        1.7
-                    ) +
-                    1
-                ) / 2;
-
-
-            /*
-             * Combine both waves.
-             */
-
-            const value =
-                (
-                    wave *
-                    0.75
-                ) +
-                (
-                    secondary *
-                    0.25
-                );
-
-
-            /*
-             * Calculate bar size.
-             */
-
-            const size =
-                MIN_SIZE +
-                (
-                    MAX_SIZE -
-                    MIN_SIZE
-                ) *
-                value *
-                data.strength;
-
-
-            const bar =
-                data.element;
-
-
-            /* =============================================
-               TOP / BOTTOM
-
-               Height changes.
-
-               Width stays flat.
-            ============================================= */
-
-            if (
-                data.side === "top" ||
-                data.side === "bottom"
+            for (
+                const data
+                of currentWrapper._waveBars
             ) {
 
-                bar.style.height =
-                    `${size}px`;
+                /*
+                 * Main wave.
+                 */
+
+                const wave =
+                    (
+                        Math.sin(
+                            elapsed *
+                            data.speed +
+                            data.phase
+                        ) +
+                        1
+                    ) / 2;
+
+
+                /*
+                 * Secondary wave.
+                 */
+
+                const secondary =
+                    (
+                        Math.sin(
+                            elapsed *
+                            4 +
+                            data.phase *
+                            1.7
+                        ) +
+                        1
+                    ) / 2;
+
+
+                /*
+                 * Combine waves.
+                 */
+
+                const value =
+                    (
+                        wave *
+                        0.75
+                    ) +
+                    (
+                        secondary *
+                        0.25
+                    );
+
+
+                /*
+                 * Calculate size.
+                 */
+
+                const size =
+                    MIN_SIZE +
+                    (
+                        MAX_SIZE -
+                        MIN_SIZE
+                    ) *
+                    value *
+                    data.strength;
+
+
+                const bar =
+                    data.element;
+
+
+                /* =========================================
+                   TOP
+                ========================================= */
+
+                if (
+                    data.side === "top"
+                ) {
+
+                    bar.style.height =
+                        `${size}px`;
+                }
+
+
+                /* =========================================
+                   BOTTOM
+                ========================================= */
+
+                else if (
+                    data.side === "bottom"
+                ) {
+
+                    bar.style.height =
+                        `${size}px`;
+                }
+
+
+                /* =========================================
+                   LEFT
+                ========================================= */
+
+                else if (
+                    data.side === "left"
+                ) {
+
+                    bar.style.width =
+                        `${size}px`;
+                }
+
+
+                /* =========================================
+                   RIGHT
+                ========================================= */
+
+                else if (
+                    data.side === "right"
+                ) {
+
+                    bar.style.width =
+                        `${size}px`;
+                }
+
             }
-
-
-            /* =============================================
-               LEFT / RIGHT
-
-               Width changes.
-
-               Height stays flat.
-            ============================================= */
-
-            else {
-
-                bar.style.width =
-                    `${size}px`;
-            }
-
         }
 
 
@@ -532,6 +636,107 @@
             animate
         );
     }
+
+
+    /* =================================================
+       FIND CARD
+    ================================================= */
+
+    function findCard() {
+
+        const card =
+            container.querySelector(
+                ".discord-live-card"
+            );
+
+
+        if (!card) {
+
+            return false;
+        }
+
+
+        attachWaveform(
+            card
+        );
+
+
+        return true;
+    }
+
+
+    /* =================================================
+       OBSERVE DISCORD
+
+       Discord.js can replace the card dynamically.
+       This catches that and reconnects the waveform.
+    ================================================= */
+
+    const observer =
+        new MutationObserver(
+            () => {
+
+                findCard();
+
+            }
+        );
+
+
+    observer.observe(
+        container,
+        {
+            childList: true,
+            subtree: true
+        }
+    );
+
+
+    /* =================================================
+       INITIAL ATTEMPT
+    ================================================= */
+
+    findCard();
+
+
+    /* =================================================
+       KEEP TRYING FOR DISCORD LOAD
+    ================================================= */
+
+    let attempts = 0;
+
+
+    const finder =
+        setInterval(
+            () => {
+
+                attempts++;
+
+
+                if (
+                    findCard()
+                ) {
+
+                    clearInterval(
+                        finder
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    attempts > 100
+                ) {
+
+                    clearInterval(
+                        finder
+                    );
+
+                }
+
+            },
+            100
+        );
 
 
     /* =================================================
@@ -554,7 +759,53 @@
                 setTimeout(
                     () => {
 
-                        build();
+                        if (
+                            currentWrapper &&
+                            currentWrapper._waveBars
+                        ) {
+
+                            const top =
+                                currentWrapper.querySelector(
+                                    ".wave-side-top"
+                                );
+
+
+                            const bottom =
+                                currentWrapper.querySelector(
+                                    ".wave-side-bottom"
+                                );
+
+
+                            const left =
+                                currentWrapper.querySelector(
+                                    ".wave-side-left"
+                                );
+
+
+                            const right =
+                                currentWrapper.querySelector(
+                                    ".wave-side-right"
+                                );
+
+
+                            if (
+                                top &&
+                                bottom &&
+                                left &&
+                                right
+                            ) {
+
+                                buildBars(
+                                    top,
+                                    bottom,
+                                    left,
+                                    right,
+                                    currentWrapper
+                                );
+
+                            }
+
+                        }
 
                     },
                     150
@@ -568,19 +819,16 @@
 
 
     /* =================================================
-       INITIAL BUILD
-    ================================================= */
-
-    build();
-
-
-    /* =================================================
-       START ANIMATION
+       START
     ================================================= */
 
     requestAnimationFrame(
         animate
     );
 
+
+    console.log(
+        "Ralkerie waveform ready."
+    );
 
 })();
