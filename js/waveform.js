@@ -1,13 +1,12 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   STABLE + LOW CPU
+   DENSE + STABLE + LOW CPU
 
-   - Wraps the Discord card correctly
-   - No flashing
-   - No rebuilding every Discord refresh
-   - Smooth waveform
-   - White/pink glow
-   - Only transforms are animated
+   - Wraps the Discord card
+   - Dense bars with minimal gaps
+   - White center + pink glow
+   - No flashing during Discord refreshes
+   - Transform-only animation
    - Pauses when tab is hidden
 ===================================================== */
 
@@ -21,11 +20,21 @@
     ================================================= */
 
     const BAR_SIZE = 3;
-    const GAP = 5;
+
+    /*
+     * Small gap so the waveform doesn't have
+     * obvious missing sections.
+     */
+    const GAP = 2;
 
     const MIN_SCALE = 0.15;
+
     const MAX_SCALE = 7;
 
+    /*
+     * ~22 updates per second.
+     * Keeps CPU usage low.
+     */
     const UPDATE_INTERVAL = 45;
 
 
@@ -90,9 +99,17 @@
         const bar =
             document.createElement("span");
 
+
         bar.className =
             "wave-bar";
 
+
+        /*
+         * Position is set ONCE.
+         *
+         * Animation never changes
+         * left/top.
+         */
 
         if (
             side === "top" ||
@@ -109,13 +126,6 @@
 
         }
 
-
-        /*
-         * Random animation values are generated
-         * ONCE and never regenerated.
-         *
-         * This prevents flashing.
-         */
 
         const data = {
 
@@ -135,17 +145,21 @@
             strength:
                 0.65 +
                 Math.random() * 0.35
+
         };
 
 
-        parent.appendChild(bar);
+        parent.appendChild(
+            bar
+        );
+
 
         return data;
     }
 
 
     /* =================================================
-       BUILD WAVEFORM
+       BUILD BARS
     ================================================= */
 
     function buildWaveform() {
@@ -188,15 +202,14 @@
 
 
         /*
-         * Only build if there are no bars.
-         *
-         * This is important.
-         *
-         * Discord refreshing must NOT
-         * destroy and recreate the bars.
+         * Don't rebuild the waveform
+         * during Discord updates.
          */
 
-        if (bars.length > 0) {
+        if (
+            bars.length > 0
+        ) {
+
             return;
         }
 
@@ -238,6 +251,7 @@
                     x
                 )
             );
+
         }
 
 
@@ -258,6 +272,7 @@
                     x
                 )
             );
+
         }
 
 
@@ -278,6 +293,7 @@
                     y
                 )
             );
+
         }
 
 
@@ -298,6 +314,7 @@
                     y
                 )
             );
+
         }
 
 
@@ -309,7 +326,7 @@
 
 
     /* =================================================
-       ATTACH
+       ATTACH WAVEFORM
     ================================================= */
 
     function attach() {
@@ -326,7 +343,7 @@
 
 
         /*
-         * Already correctly wrapped.
+         * Already attached.
          */
 
         if (
@@ -339,25 +356,23 @@
             wrapper =
                 card.parentElement;
 
-            /*
-             * Give the browser a frame to finish
-             * sizing before creating bars.
-             */
 
-            if (bars.length === 0) {
+            if (
+                bars.length === 0
+            ) {
 
                 requestAnimationFrame(
                     buildWaveform
                 );
             }
 
+
             return;
         }
 
 
         /*
-         * Remove an old wrapper ONLY if it is
-         * actually ours.
+         * Remove old wrapper if necessary.
          */
 
         const oldWrapper =
@@ -368,11 +383,9 @@
 
         if (oldWrapper) {
 
-            /*
-             * Preserve the card.
-             */
-
-            oldWrapper.replaceWith(card);
+            oldWrapper.replaceWith(
+                card
+            );
         }
 
 
@@ -403,23 +416,40 @@
             createSide("right");
 
 
-        wrapper.appendChild(top);
-        wrapper.appendChild(bottom);
-        wrapper.appendChild(left);
-        wrapper.appendChild(right);
+        wrapper.appendChild(
+            top
+        );
+
+        wrapper.appendChild(
+            bottom
+        );
+
+        wrapper.appendChild(
+            left
+        );
+
+        wrapper.appendChild(
+            right
+        );
 
 
-        /*
-         * Put wrapper exactly where the card was.
-         */
+        container.appendChild(
+            wrapper
+        );
 
-        container.appendChild(wrapper);
 
-        wrapper.appendChild(card);
+        wrapper.appendChild(
+            card
+        );
 
 
         bars = [];
 
+
+        /*
+         * Wait until the wrapper has
+         * its final dimensions.
+         */
 
         requestAnimationFrame(
             () => {
@@ -442,10 +472,17 @@
         animationFrame = null;
 
 
-        if (document.hidden) {
+        if (
+            document.hidden
+        ) {
+
             return;
         }
 
+
+        /*
+         * Throttle actual updates.
+         */
 
         if (
             time - lastUpdate <
@@ -482,7 +519,8 @@
                         elapsed *
                         data.speed +
                         data.phase
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
@@ -493,7 +531,8 @@
                         2.7 +
                         data.phase *
                         1.7
-                    ) + 1
+                    ) +
+                    1
                 ) * 0.5;
 
 
@@ -509,10 +548,6 @@
                 data.strength;
 
 
-            /*
-             * Top/bottom bars grow vertically.
-             */
-
             if (
                 data.side === "top" ||
                 data.side === "bottom"
@@ -521,17 +556,12 @@
                 data.element.style.transform =
                     `scaleY(${scale})`;
 
-            }
-
-            /*
-             * Left/right bars grow horizontally.
-             */
-
-            else {
+            } else {
 
                 data.element.style.transform =
                     `scaleX(${scale})`;
             }
+
         }
 
 
@@ -562,33 +592,35 @@
                 setTimeout(
                     () => {
 
+                        if (!wrapper) {
+                            return;
+                        }
+
+
                         /*
-                         * Rebuild only on actual
-                         * browser resize.
-                         *
-                         * Discord refreshes won't
-                         * cause this.
+                         * Only rebuild when the
+                         * actual browser size changes.
                          */
 
-                        if (wrapper) {
-
-                            bars = [];
+                        bars = [];
 
 
-                            const sides =
-                                wrapper.querySelectorAll(
-                                    ".wave-side"
-                                );
-
-
-                            sides.forEach(
-                                side =>
-                                    side.replaceChildren()
+                        const sides =
+                            wrapper.querySelectorAll(
+                                ".wave-side"
                             );
 
 
-                            buildWaveform();
-                        }
+                        sides.forEach(
+                            side => {
+
+                                side.replaceChildren();
+
+                            }
+                        );
+
+
+                        buildWaveform();
 
                     },
                     300
@@ -612,14 +644,6 @@
         new MutationObserver(
             () => {
 
-                /*
-                 * Discord updates the INSIDE
-                 * of the card every 15 seconds.
-                 *
-                 * Never rebuild the waveform
-                 * because of that.
-                 */
-
                 clearTimeout(
                     observerTimer
                 );
@@ -635,18 +659,28 @@
                                 );
 
 
+                            /*
+                             * Only attach if Discord
+                             * actually replaced/moved
+                             * the card.
+                             */
+
                             if (
                                 card &&
-                                (!wrapper ||
-                                card.parentElement !== wrapper)
+                                (
+                                    !wrapper ||
+                                    card.parentElement !== wrapper
+                                )
                             ) {
 
                                 attach();
+
                             }
 
                         },
                         250
                     );
+
             }
         );
 
@@ -683,6 +717,7 @@
                     requestAnimationFrame(
                         animate
                     );
+
             }
 
         }
@@ -690,15 +725,15 @@
 
 
     /* =================================================
-       START
+       INITIAL ATTACH
     ================================================= */
 
     attach();
 
 
-    /*
-     * Discord can appear asynchronously.
-     */
+    /* =================================================
+       DISCORD LOAD RETRY
+    ================================================= */
 
     let attempts = 0;
 
@@ -721,6 +756,7 @@
                     clearInterval(
                         finder
                     );
+
                 }
 
             },
@@ -729,7 +765,7 @@
 
 
     /* =================================================
-       START ANIMATION
+       START
     ================================================= */
 
     animationFrame =
@@ -739,7 +775,7 @@
 
 
     console.log(
-        "Ralkerie stable waveform ready."
+        "Ralkerie dense waveform ready."
     );
 
 })();
