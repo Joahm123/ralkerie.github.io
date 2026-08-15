@@ -1,24 +1,11 @@
 /* =====================================================
    RALKERIE DISCORD
-   STABLE VERSION
-
-   - Lanyard Discord presence
-   - Spotify
-   - Game activity
-   - Local clock
-   - Refreshes every 15 seconds
-   - Does NOT create/remove waveform wrappers
-   - Does NOT show permanent "loading"
+   LANYARD + SPOTIFY SYNC
 ===================================================== */
 
 (() => {
 
     "use strict";
-
-
-    /* =================================================
-       SETTINGS
-    ================================================= */
 
     const USER_ID =
         "1044800788817510460";
@@ -27,45 +14,29 @@
         "https://api.lanyard.rest/v1/users/" +
         USER_ID;
 
-    const REFRESH_TIME =
-        15000;
-
-
-    /* =================================================
-       CONTAINER
-    ================================================= */
+    const REFRESH_TIME = 15000;
 
     const container =
         document.getElementById(
             "discord-card-container"
         );
 
-
     if (!container) {
-
         console.error(
-            "Ralkerie: #discord-card-container not found."
+            "Ralkerie: Discord container not found."
         );
-
         return;
     }
 
 
-    console.log(
-        "Ralkerie Discord system loaded."
-    );
-
-
     /* =================================================
-       ESCAPE HTML
+       ESCAPE
     ================================================= */
 
     function escapeHTML(value) {
 
         const div =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         div.textContent =
             value == null
@@ -101,7 +72,6 @@
             );
 
         if (clock) {
-
             clock.textContent =
                 getTime();
         }
@@ -109,28 +79,18 @@
 
 
     /* =================================================
-       FIND GAME
+       GAME
     ================================================= */
 
     function getGame(activities) {
 
-        if (
-            !Array.isArray(activities)
-        ) {
-
+        if (!Array.isArray(activities)) {
             return null;
         }
 
-
         for (
-            let i = 0;
-            i < activities.length;
-            i++
+            const activity of activities
         ) {
-
-            const activity =
-                activities[i];
-
 
             if (
                 activity &&
@@ -141,13 +101,12 @@
             }
         }
 
-
         return null;
     }
 
 
     /* =================================================
-       GET AVATAR
+       AVATAR
     ================================================= */
 
     function getAvatar(user) {
@@ -166,7 +125,6 @@
             );
         }
 
-
         return (
             "https://cdn.discordapp.com/" +
             "embed/avatars/0.png"
@@ -175,7 +133,152 @@
 
 
     /* =================================================
-       RENDER CARD
+       SEND SPOTIFY DATA TO WAVEFORM
+    ================================================= */
+
+    function sendSpotifyData(data) {
+
+        const spotify =
+            data &&
+            data.spotify
+                ? data.spotify
+                : null;
+
+
+        /*
+         * Not listening to Spotify.
+         */
+
+        if (
+            !spotify ||
+            !data.listening_to_spotify
+        ) {
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    "ralkerie:spotify",
+                    {
+                        detail: {
+
+                            playing: false,
+
+                            spotify: null
+
+                        }
+                    }
+                )
+            );
+
+            return;
+        }
+
+
+        /*
+         * Lanyard gives us:
+         *
+         * timestamps.start
+         * timestamps.end
+         *
+         * This lets us calculate where the
+         * song currently is.
+         */
+
+        const start =
+            Number(
+                spotify.timestamps?.start || 0
+            );
+
+        const end =
+            Number(
+                spotify.timestamps?.end || 0
+            );
+
+
+        const now =
+            Date.now();
+
+
+        let position =
+            start
+                ? now - start
+                : 0;
+
+
+        let duration =
+            end && start
+                ? end - start
+                : 0;
+
+
+        /*
+         * Don't allow weird values.
+         */
+
+        if (position < 0) {
+            position = 0;
+        }
+
+
+        if (
+            duration > 0 &&
+            position > duration
+        ) {
+
+            position = duration;
+        }
+
+
+        /*
+         * Send everything to waveform.js.
+         */
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "ralkerie:spotify",
+                {
+                    detail: {
+
+                        playing: true,
+
+                        position:
+                            position,
+
+                        duration:
+                            duration,
+
+                        trackId:
+                            (
+                                spotify.song ||
+                                ""
+                            ) +
+                            "|" +
+                            (
+                                spotify.artist ||
+                                ""
+                            ),
+
+                        spotify:
+                            spotify
+
+                    }
+                }
+            )
+        );
+
+
+        console.log(
+            "Ralkerie Spotify sync:",
+            spotify.song,
+            Math.floor(position / 1000) +
+                "s / " +
+                Math.floor(duration / 1000) +
+                "s"
+        );
+    }
+
+
+    /* =================================================
+       RENDER
     ================================================= */
 
     function renderDiscord(data) {
@@ -184,9 +287,17 @@
             !data ||
             !data.discord_user
         ) {
-
             return;
         }
+
+
+        /*
+         * FIRST:
+         *
+         * Tell waveform about Spotify.
+         */
+
+        sendSpotifyData(data);
 
 
         const user =
@@ -219,8 +330,7 @@
             );
 
 
-        let gameHTML =
-            "";
+        let gameHTML = "";
 
 
         if (game) {
@@ -234,9 +344,7 @@
                     </div>
 
                     <div class="discord-activity-text">
-                        ${escapeHTML(
-                            game.name
-                        )}
+                        ${escapeHTML(game.name)}
                     </div>
 
                 </div>
@@ -249,8 +357,7 @@
            SPOTIFY
         ================================================= */
 
-        let spotifyHTML =
-            "";
+        let spotifyHTML = "";
 
 
         if (
@@ -281,6 +388,7 @@
                                             spotify.album_art_url
                                         )}"
                                         alt="Album artwork"
+                                        loading="eager"
                                     >
                                   `
                                 : ""
@@ -311,13 +419,7 @@
 
 
         /* =================================================
-           CREATE CARD
-           
-           IMPORTANT:
-           We replace ONLY the contents of the
-           Discord card itself.
-
-           We never touch its parent wrapper.
+           FIND EXISTING CARD
         ================================================= */
 
         let card =
@@ -336,13 +438,6 @@
             card.className =
                 "discord-live-card";
 
-
-            /*
-             * If waveform already wrapped the
-             * card, append it to the wrapper.
-             *
-             * Otherwise append normally.
-             */
 
             const wrapper =
                 container.querySelector(
@@ -366,7 +461,7 @@
 
 
         /* =================================================
-           UPDATE CARD CONTENT
+           UPDATE ONLY CARD
         ================================================= */
 
         card.innerHTML = `
@@ -385,15 +480,11 @@
                 <div>
 
                     <div class="discord-name">
-                        ${escapeHTML(
-                            username
-                        )}
+                        ${escapeHTML(username)}
                     </div>
 
                     <div
-                        class="discord-status status-${escapeHTML(
-                            status
-                        )}"
+                        class="discord-status status-${escapeHTML(status)}"
                     >
                         ${escapeHTML(
                             status.toUpperCase()
@@ -404,12 +495,9 @@
 
             </div>
 
-
             ${gameHTML}
 
-
             ${spotifyHTML}
-
 
             <div class="local-clock">
 
@@ -434,7 +522,7 @@
 
 
     /* =================================================
-       ERROR CARD
+       ERROR
     ================================================= */
 
     function showError() {
@@ -477,12 +565,6 @@
         }
 
 
-        /*
-         * Do NOT replace the whole container.
-         * This prevents the waveform from being
-         * destroyed.
-         */
-
         card.innerHTML = `
 
             <div class="discord-profile">
@@ -521,26 +603,39 @@
 
         `;
 
+
+        /*
+         * Tell waveform that Spotify
+         * isn't available.
+         */
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "ralkerie:spotify",
+                {
+                    detail: {
+                        playing: false,
+                        spotify: null
+                    }
+                }
+            )
+        );
+
+
         updateClock();
     }
 
 
     /* =================================================
-       LOAD DISCORD
+       LOAD
     ================================================= */
 
-    let loading =
-        false;
+    let loading = false;
 
 
     async function loadDiscord() {
 
-        /*
-         * Prevent overlapping requests.
-         */
-
         if (loading) {
-
             return;
         }
 
@@ -589,24 +684,13 @@
             );
 
 
-            console.log(
-                "Ralkerie Discord updated."
-            );
-
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Ralkerie Discord error:",
                 error
             );
 
-
-            /*
-             * Only show the error if we
-             * don't already have a card.
-             */
 
             const existingCard =
                 container.querySelector(
@@ -618,9 +702,9 @@
 
                 showError();
             }
-        }
 
-        finally {
+
+        } finally {
 
             loading = false;
         }
@@ -655,7 +739,7 @@
 
 
     console.log(
-        "Ralkerie Discord ready."
+        "Ralkerie Discord + Spotify sync ready."
     );
 
 })();
