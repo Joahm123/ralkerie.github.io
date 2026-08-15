@@ -3,9 +3,12 @@
 
   "name": "ralkerie",
 
+  "main": "worker.js",
+
   "compatibility_date": "2026-08-14",
 
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   }
 }
