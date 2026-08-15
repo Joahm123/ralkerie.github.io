@@ -3,6 +3,11 @@
 
     "use strict";
 
+
+    /* =====================================================
+       FIND METEOR CONTAINER
+    ===================================================== */
+
     var container =
         document.getElementById("meteors");
 
@@ -34,9 +39,6 @@
     audio.preload = "auto";
 
 
-    var AUDIO_START_TIME = 35;
-
-
     /* =====================================================
        POPUP
     ===================================================== */
@@ -48,146 +50,64 @@
         "meteor-popup";
 
 
-    var popupBox =
-        document.createElement("div");
+    popup.innerHTML = `
 
-    popupBox.className =
-        "meteor-popup-box";
+        <div class="meteor-popup-box">
 
+            <button
+                class="meteor-popup-close"
+                type="button"
+            >
+                ×
+            </button>
 
-    var closeButton =
-        document.createElement("button");
+            <img
+                class="meteor-popup-gif"
+                src="./assets/images/meteor.gif"
+                alt="Meteor"
+            >
 
-    closeButton.className =
-        "meteor-popup-close";
+        </div>
 
-    closeButton.type =
-        "button";
+    `;
 
-    closeButton.textContent =
-        "×";
-
-
-    var gif =
-        document.createElement("img");
-
-    gif.className =
-        "meteor-popup-gif";
-
-    gif.src =
-        "./assets/images/meteor.gif";
-
-    gif.alt =
-        "Meteor";
-
-
-    popupBox.appendChild(
-        closeButton
-    );
-
-    popupBox.appendChild(
-        gif
-    );
-
-    popup.appendChild(
-        popupBox
-    );
 
     document.body.appendChild(
         popup
     );
 
 
-    /* =====================================================
-       PLAY AUDIO
-    ===================================================== */
-
-    function playMeteorAudio() {
-
-        /*
-           Reset the audio.
-        */
-
-        audio.pause();
-
-
-        /*
-           Start from zero first.
-           This happens directly from
-           the meteor click.
-        */
-
-        audio.currentTime = 0;
-
-
-        var playPromise =
-            audio.play();
-
-
-        if (!playPromise) {
-            return;
-        }
-
-
-        playPromise.then(
-            function () {
-
-                /*
-                   Once playback has actually
-                   started, jump to 35 seconds.
-                */
-
-                try {
-
-                    audio.currentTime =
-                        AUDIO_START_TIME;
-
-                } catch (error) {
-
-                    console.error(
-                        "Could not seek audio:",
-                        error
-                    );
-
-                }
-
-            }
-        ).catch(
-            function (error) {
-
-                console.error(
-                    "Audio playback failed:",
-                    error
-                );
-
-            }
+    var closeButton =
+        popup.querySelector(
+            ".meteor-popup-close"
         );
 
-    }
-
 
     /* =====================================================
-       METEOR CLICK
+       OPEN METEOR
     ===================================================== */
 
-    function meteorClicked(event) {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
+    function meteorClicked() {
 
         popup.classList.add(
             "visible"
         );
 
 
-        /*
-           This is called directly by
-           the user's click.
-        */
+        audio.currentTime = 0;
 
-        playMeteorAudio();
+
+        audio.play()
+            .catch(
+                function (error) {
+
+                    console.error(
+                        "Meteor audio error:",
+                        error
+                    );
+
+                }
+            );
 
     }
 
@@ -205,8 +125,7 @@
 
         audio.pause();
 
-        audio.currentTime =
-            0;
+        audio.currentTime = 0;
 
     }
 
@@ -256,9 +175,7 @@
     function createMeteor() {
 
         var hitbox =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         hitbox.className =
@@ -266,9 +183,7 @@
 
 
         var meteor =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         meteor.className =
@@ -276,42 +191,57 @@
 
 
         /*
-           Spawn position
-        */
+         * SPAWN POSITION
+         *
+         * Much farther toward the right.
+         *
+         * The random amount prevents every
+         * meteor from appearing at exactly
+         * the same height.
+         */
 
         hitbox.style.left =
-            "180px";
+            (
+                300 +
+                Math.random() * 180
+            ) +
+            "px";
 
 
         hitbox.style.top =
             (
-                10 +
-                Math.random() * 70
-            ) + "vh";
+                5 +
+                Math.random() * 75
+            ) +
+            "vh";
 
-
-        /*
-           Put meteor inside hitbox
-        */
 
         hitbox.appendChild(
             meteor
         );
 
 
-        /*
-           Click
-        */
+        /* =================================================
+           CLICK
+        ================================================= */
 
         hitbox.addEventListener(
             "click",
-            meteorClicked
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                meteorClicked();
+
+            }
         );
 
 
-        /*
-           Add to page
-        */
+        /* =================================================
+           ADD
+        ================================================= */
 
         container.appendChild(
             hitbox
@@ -319,26 +249,18 @@
 
 
         console.log(
-            "Meteor spawned"
+            "Meteor spawned."
         );
 
 
-        /*
-           Remove after animation
-        */
+        /* =================================================
+           REMOVE
+        ================================================= */
 
         setTimeout(
             function () {
 
-                if (
-                    hitbox.parentNode
-                ) {
-
-                    hitbox.parentNode.removeChild(
-                        hitbox
-                    );
-
-                }
+                hitbox.remove();
 
             },
             5500
@@ -358,6 +280,12 @@
        SPAWN LOOP
     ===================================================== */
 
+    /*
+     * Lower number = more meteors.
+     *
+     * 2200ms = about one every 2.2 seconds.
+     */
+
     setInterval(
         function () {
 
@@ -370,8 +298,9 @@
             }
 
         },
-        3500
+        2200
     );
+
 
 })();
 
