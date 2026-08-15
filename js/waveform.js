@@ -1,30 +1,40 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED BOX EQUALIZER
+   PERFORMANCE OPTIMIZED
+
+   - ~20 updates/sec instead of 60+
+   - Uses transform instead of width/height
+   - Fewer bars
+   - No continuous layout recalculation
+   - Pauses when tab is hidden
+   - Automatically rebuilds when Discord changes
 ===================================================== */
 
 (() => {
 
     "use strict";
 
-    console.log(
-        "Ralkerie waveform starting..."
-    );
-
 
     /* =================================================
        SETTINGS
     ================================================= */
 
-    const BAR_WIDTH = 3;
+    const BAR_SIZE = 3;
 
-    const BAR_HEIGHT = 3;
+    const GAP = 6;
 
-    const GAP = 4;
+    const MIN_SIZE = 0.25;
 
-    const MIN_SIZE = 3;
+    const MAX_SIZE = 9;
 
-    const MAX_SIZE = 28;
+    /*
+     * 50ms = 20 updates/sec.
+     *
+     * Visually still looks animated,
+     * but massively reduces CPU usage.
+     */
+
+    const UPDATE_INTERVAL = 50;
 
 
     /* =================================================
@@ -40,7 +50,7 @@
     if (!container) {
 
         console.error(
-            "Ralkerie waveform: Discord container not found."
+            "Ralkerie waveform: container not found."
         );
 
         return;
@@ -48,6 +58,15 @@
 
 
     let currentWrapper = null;
+
+    let bars = [];
+
+    let lastUpdate = 0;
+
+    let animationFrame = null;
+
+    let startTime =
+        performance.now();
 
 
     /* =================================================
@@ -57,11 +76,12 @@
     function createSide(side) {
 
         const element =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         element.className =
-            "wave-side wave-side-" +
-            side;
+            `wave-side wave-side-${side}`;
 
         return element;
     }
@@ -78,10 +98,21 @@
     ) {
 
         const bar =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
 
-        bar.className = "wave-bar";
 
+        bar.className =
+            "wave-bar";
+
+
+        /*
+         * Position only once.
+         *
+         * We never change left/top
+         * during animation.
+         */
 
         if (
             side === "top" ||
@@ -91,26 +122,17 @@
             bar.style.left =
                 `${position}px`;
 
-            bar.style.width =
-                `${BAR_WIDTH}px`;
-
-            bar.style.height =
-                `${MIN_SIZE}px`;
-
         } else {
 
             bar.style.top =
                 `${position}px`;
 
-            bar.style.height =
-                `${BAR_HEIGHT}px`;
-
-            bar.style.width =
-                `${MIN_SIZE}px`;
         }
 
 
-        parent.appendChild(bar);
+        parent.appendChild(
+            bar
+        );
 
 
         return {
@@ -125,12 +147,14 @@
                 2,
 
             speed:
-                1.5 +
-                Math.random() * 3,
+                1.2 +
+                Math.random() *
+                1.8,
 
             strength:
                 0.65 +
-                Math.random() * 0.35
+                Math.random() *
+                0.35
 
         };
     }
@@ -140,37 +164,71 @@
        BUILD BARS
     ================================================= */
 
-    function buildBars(
-        top,
-        bottom,
-        left,
-        right,
-        wrapper
-    ) {
+    function buildBars(wrapper) {
 
-        top.innerHTML = "";
-        bottom.innerHTML = "";
-        left.innerHTML = "";
-        right.innerHTML = "";
+        const top =
+            wrapper.querySelector(
+                ".wave-side-top"
+            );
+
+        const bottom =
+            wrapper.querySelector(
+                ".wave-side-bottom"
+            );
+
+        const left =
+            wrapper.querySelector(
+                ".wave-side-left"
+            );
+
+        const right =
+            wrapper.querySelector(
+                ".wave-side-right"
+            );
+
+
+        if (
+            !top ||
+            !bottom ||
+            !left ||
+            !right
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * Clear old bars.
+         */
+
+        top.replaceChildren();
+
+        bottom.replaceChildren();
+
+        left.replaceChildren();
+
+        right.replaceChildren();
+
+
+        bars = [];
 
 
         const width =
             wrapper.clientWidth;
 
-
         const height =
             wrapper.clientHeight;
 
 
-        const bars = [];
-
-
-        /* TOP */
+        /* =================================================
+           TOP + BOTTOM
+        ================================================= */
 
         for (
             let x = 0;
             x < width;
-            x += BAR_WIDTH + GAP
+            x += BAR_SIZE + GAP
         ) {
 
             bars.push(
@@ -181,17 +239,6 @@
                 )
             );
 
-        }
-
-
-        /* BOTTOM */
-
-        for (
-            let x = 0;
-            x < width;
-            x += BAR_WIDTH + GAP
-        ) {
-
             bars.push(
                 createBar(
                     bottom,
@@ -199,16 +246,17 @@
                     x
                 )
             );
-
         }
 
 
-        /* LEFT */
+        /* =================================================
+           LEFT + RIGHT
+        ================================================= */
 
         for (
             let y = 0;
             y < height;
-            y += BAR_HEIGHT + GAP
+            y += BAR_SIZE + GAP
         ) {
 
             bars.push(
@@ -219,17 +267,6 @@
                 )
             );
 
-        }
-
-
-        /* RIGHT */
-
-        for (
-            let y = 0;
-            y < height;
-            y += BAR_HEIGHT + GAP
-        ) {
-
             bars.push(
                 createBar(
                     right,
@@ -237,17 +274,18 @@
                     y
                 )
             );
-
         }
 
 
-        wrapper._waveBars = bars;
-
+        console.log(
+            "Optimized waveform bars:",
+            bars.length
+        );
     }
 
 
     /* =================================================
-       ATTACH
+       ATTACH WAVEFORM
     ================================================= */
 
     function attachWaveform(card) {
@@ -256,6 +294,10 @@
             return;
         }
 
+
+        /*
+         * Already attached.
+         */
 
         if (
             card.parentElement &&
@@ -271,30 +313,33 @@
         }
 
 
+        /*
+         * Remove old waveform.
+         */
+
         if (
             currentWrapper &&
-            currentWrapper.parentElement
+            currentWrapper.parentNode
         ) {
 
             currentWrapper.remove();
 
-            currentWrapper = null;
         }
 
 
         const wrapper =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         wrapper.className =
             "waveform-wrapper";
 
 
-        const border =
-            document.createElement("div");
-
-        border.className =
-            "wave-border";
-
+        /* =================================================
+           FOUR SIDES
+        ================================================= */
 
         const top =
             createSide("top");
@@ -309,45 +354,61 @@
             createSide("right");
 
 
-        border.appendChild(top);
-        border.appendChild(bottom);
-        border.appendChild(left);
-        border.appendChild(right);
+        wrapper.appendChild(top);
+
+        wrapper.appendChild(bottom);
+
+        wrapper.appendChild(left);
+
+        wrapper.appendChild(right);
 
 
-        wrapper.appendChild(border);
+        /*
+         * Put wrapper in container.
+         */
+
+        container.appendChild(
+            wrapper
+        );
 
 
-        container.appendChild(wrapper);
+        /*
+         * Put Discord card inside.
+         */
 
-        wrapper.appendChild(card);
+        wrapper.appendChild(
+            card
+        );
 
 
         currentWrapper =
             wrapper;
 
 
-        requestAnimationFrame(() => {
+        /*
+         * Wait until dimensions exist.
+         */
 
-            buildBars(
-                top,
-                bottom,
-                left,
-                right,
-                wrapper
-            );
+        requestAnimationFrame(
+            () => {
 
-        });
+                if (
+                    currentWrapper === wrapper
+                ) {
 
+                    buildBars(
+                        wrapper
+                    );
 
-        console.log(
-            "Ralkerie waveform attached."
+                }
+
+            }
         );
     }
 
 
     /* =================================================
-       FIND CARD
+       FIND DISCORD CARD
     ================================================= */
 
     function findCard() {
@@ -359,46 +420,66 @@
 
 
         if (!card) {
-            return false;
+
+            return;
+
         }
 
 
-        attachWaveform(card);
-
-        return true;
+        attachWaveform(
+            card
+        );
     }
-
-
-    /* =================================================
-       OBSERVER
-    ================================================= */
-
-    const observer =
-        new MutationObserver(() => {
-
-            findCard();
-
-        });
-
-
-    observer.observe(
-        container,
-        {
-            childList: true,
-            subtree: true
-        }
-    );
 
 
     /* =================================================
        ANIMATION
     ================================================= */
 
-    const startTime =
-        performance.now();
-
-
     function animate(time) {
+
+        animationFrame = null;
+
+
+        /*
+         * Completely stop processing
+         * while tab is hidden.
+         */
+
+        if (
+            document.hidden
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * Throttle animation.
+
+         * Browser may call rAF at 60fps,
+         * but we only actually update
+         * the bars every 50ms.
+         */
+
+        if (
+            time - lastUpdate <
+            UPDATE_INTERVAL
+        ) {
+
+            animationFrame =
+                requestAnimationFrame(
+                    animate
+                );
+
+            return;
+        }
+
+
+        lastUpdate =
+            time;
+
 
         const elapsed =
             (
@@ -407,78 +488,131 @@
             ) / 1000;
 
 
-        if (
-            currentWrapper &&
-            currentWrapper._waveBars
+        /*
+         * Animate bars.
+         */
+
+        for (
+            const data
+            of bars
         ) {
 
-            for (
-                const data
-                of currentWrapper._waveBars
+            const wave =
+                (
+                    Math.sin(
+                        elapsed *
+                        data.speed +
+                        data.phase
+                    ) +
+                    1
+                ) * 0.5;
+
+
+            const secondary =
+                (
+                    Math.sin(
+                        elapsed *
+                        3 +
+                        data.phase
+                    ) +
+                    1
+                ) * 0.5;
+
+
+            const value =
+                wave * 0.75 +
+                secondary * 0.25;
+
+
+            /*
+             * Scale rather than changing
+             * width/height.
+
+             * This avoids layout work.
+             */
+
+            const scale =
+                MIN_SIZE +
+                value *
+                MAX_SIZE *
+                data.strength;
+
+
+            const bar =
+                data.element;
+
+
+            if (
+                data.side === "top"
             ) {
 
-                const wave =
-                    (
-                        Math.sin(
-                            elapsed *
-                            data.speed +
-                            data.phase
-                        ) + 1
-                    ) / 2;
+                bar.style.transform =
+                    `scaleY(${scale})`;
+
+            }
+
+            else if (
+                data.side === "bottom"
+            ) {
+
+                bar.style.transform =
+                    `scaleY(${scale})`;
+
+            }
+
+            else if (
+                data.side === "left"
+            ) {
+
+                bar.style.transform =
+                    `scaleX(${scale})`;
+
+            }
+
+            else {
+
+                bar.style.transform =
+                    `scaleX(${scale})`;
+
+            }
+        }
 
 
-                const secondary =
-                    (
-                        Math.sin(
-                            elapsed * 4 +
-                            data.phase * 1.7
-                        ) + 1
-                    ) / 2;
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+    }
 
 
-                const value =
-                    wave * 0.75 +
-                    secondary * 0.25;
+    /* =================================================
+       VISIBILITY
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            startTime =
+                performance.now();
+
+            lastUpdate = 0;
 
 
-                const size =
-                    MIN_SIZE +
-                    (
-                        MAX_SIZE -
-                        MIN_SIZE
-                    ) *
-                    value *
-                    data.strength;
+            if (
+                !document.hidden &&
+                !animationFrame
+            ) {
 
-
-                const bar =
-                    data.element;
-
-
-                if (
-                    data.side === "top" ||
-                    data.side === "bottom"
-                ) {
-
-                    bar.style.height =
-                        `${size}px`;
-
-                } else {
-
-                    bar.style.width =
-                        `${size}px`;
-
-                }
+                animationFrame =
+                    requestAnimationFrame(
+                        animate
+                    );
 
             }
 
         }
-
-
-        requestAnimationFrame(
-            animate
-        );
-    }
+    );
 
 
     /* =================================================
@@ -498,53 +632,22 @@
 
 
             resizeTimer =
-                setTimeout(() => {
-
-                    if (
-                        currentWrapper
-                    ) {
-
-                        const top =
-                            currentWrapper.querySelector(
-                                ".wave-side-top"
-                            );
-
-                        const bottom =
-                            currentWrapper.querySelector(
-                                ".wave-side-bottom"
-                            );
-
-                        const left =
-                            currentWrapper.querySelector(
-                                ".wave-side-left"
-                            );
-
-                        const right =
-                            currentWrapper.querySelector(
-                                ".wave-side-right"
-                            );
-
+                setTimeout(
+                    () => {
 
                         if (
-                            top &&
-                            bottom &&
-                            left &&
-                            right
+                            currentWrapper
                         ) {
 
                             buildBars(
-                                top,
-                                bottom,
-                                left,
-                                right,
                                 currentWrapper
                             );
 
                         }
 
-                    }
-
-                }, 150);
+                    },
+                    250
+                );
 
         },
         {
@@ -554,18 +657,93 @@
 
 
     /* =================================================
-       START
+       DISCORD OBSERVER
+    ================================================= */
+
+    const observer =
+        new MutationObserver(
+            () => {
+
+                /*
+                 * Don't rebuild constantly.
+                 */
+
+                clearTimeout(
+                    observer.timer
+                );
+
+
+                observer.timer =
+                    setTimeout(
+                        findCard,
+                        100
+                    );
+
+            }
+        );
+
+
+    observer.observe(
+        container,
+        {
+            childList: true,
+            subtree: true
+        }
+    );
+
+
+    /* =================================================
+       INITIAL
     ================================================= */
 
     findCard();
 
-    requestAnimationFrame(
-        animate
-    );
+
+    /*
+     * Discord loads asynchronously,
+     * so check briefly.
+     */
+
+    let attempts = 0;
+
+
+    const finder =
+        setInterval(
+            () => {
+
+                attempts++;
+
+                findCard();
+
+
+                if (
+                    currentWrapper ||
+                    attempts >= 100
+                ) {
+
+                    clearInterval(
+                        finder
+                    );
+
+                }
+
+            },
+            250
+        );
+
+
+    /* =================================================
+       START
+    ================================================= */
+
+    animationFrame =
+        requestAnimationFrame(
+            animate
+        );
 
 
     console.log(
-        "Ralkerie waveform ready."
+        "Ralkerie optimized waveform ready."
     );
 
 })();
