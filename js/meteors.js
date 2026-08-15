@@ -1,11 +1,16 @@
 /* =====================================================
    RALKERIE METEORS
+   TOP-WIDE SPAWN → DOWN + RIGHT
 ===================================================== */
 
 (() => {
 
     "use strict";
 
+
+    /* =================================================
+       CONTAINER
+    ================================================= */
 
     const container =
         document.getElementById("meteors");
@@ -83,7 +88,7 @@
 
 
     /* =================================================
-       OPEN
+       OPEN POPUP
     ================================================= */
 
     function meteorClicked() {
@@ -103,7 +108,7 @@
 
 
     /* =================================================
-       CLOSE
+       CLOSE POPUP
     ================================================= */
 
     function closePopup() {
@@ -176,26 +181,41 @@
 
 
         /* =================================================
-           SPAWN
+           HUGE TOP SPAWN AREA
 
-           Start above/right of the visible screen.
+           X:
+           Anywhere from far LEFT
+           to far RIGHT.
+
+           Y:
+           Anywhere across the upper
+           portion of the screen.
+
+           This gives the whole screen
+           coverage instead of a single
+           spawn point.
         ================================================= */
 
+        const spawnWidth =
+            window.innerWidth +
+            500;
+
+
+        const spawnHeight =
+            window.innerHeight *
+            0.35;
+
+
         const startX =
-            window.innerWidth *
-            (
-                0.65 +
-                Math.random() * 0.5
-            );
+            -250 +
+            Math.random() *
+            spawnWidth;
 
 
         const startY =
-            -50 +
+            -250 +
             Math.random() *
-            (
-                window.innerHeight *
-                0.55
-            );
+            spawnHeight;
 
 
         hitbox.style.left =
@@ -267,7 +287,7 @@
 
 
     /* =================================================
-       LOOP
+       CONTINUOUS SPAWN
     ================================================= */
 
     setInterval(
@@ -281,7 +301,8 @@
             }
 
         },
-        2200
+        1800
     );
+
 
 })();
