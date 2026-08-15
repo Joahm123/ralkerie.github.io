@@ -1,5 +1,5 @@
 /* =====================================================
-   RALKERIE STAR BACKGROUND
+   RALKERIE BACKGROUND / STARS
 ===================================================== */
 
 
@@ -29,6 +29,14 @@
 
 /* =====================================================
    STAR
+
+   stars.js controls:
+       left/right movement
+       X position
+       Y position
+       transform
+
+   This CSS only controls appearance.
 ===================================================== */
 
 .star {
@@ -43,15 +51,15 @@
         radial-gradient(
             circle,
 
-            #ff69d2 0%,
+            #ffffff 0%,
 
-            #ff55c9 35%,
+            #ffffff 25%,
 
-            #ff8dde 55%,
+            #ffb5e9 45%,
 
-            #ffffff 78%,
+            #ff69d2 70%,
 
-            #ffffff 100%
+            #ff2db5 100%
         );
 
     box-shadow:
@@ -67,7 +75,7 @@
             255,
             60,
             195,
-            0.75
+            0.8
         );
 
     opacity: 0.85;
@@ -84,66 +92,74 @@
 
 /* =====================================================
    STAR SPARKLE
+
+   Uses opacity only.
+
+   IMPORTANT:
+   It does NOT animate transform,
+   because stars.js controls transform.
 ===================================================== */
 
 @keyframes starSparkle {
 
-    0% {
-
-        opacity: 0.35;
+    0%,
+    100% {
+        opacity: 0.45;
     }
 
     50% {
-
         opacity: 1;
     }
 
-    100% {
-
-        opacity: 0.35;
-    }
 }
 
-
-/* =====================================================
-   SPARKLE CLASS
-===================================================== */
 
 .star {
 
     animation:
         starSparkle
-        2s
+        2.2s
         ease-in-out
         infinite;
 }
 
 
 /* =====================================================
-   EXTRA RANDOM-LOOKING TIMING
+   VARIED SPARKLE SPEEDS
 ===================================================== */
 
 .star:nth-child(3n) {
 
-    animation-duration: 1.4s;
+    animation-duration:
+        1.5s;
 }
 
 
 .star:nth-child(4n) {
 
-    animation-duration: 2.8s;
+    animation-duration:
+        2.8s;
 }
 
 
 .star:nth-child(7n) {
 
-    animation-duration: 1.9s;
+    animation-duration:
+        1.9s;
 }
 
 
 .star:nth-child(11n) {
 
-    animation-duration: 3.2s;
+    animation-duration:
+        3.1s;
+}
+
+
+.star:nth-child(13n) {
+
+    animation-duration:
+        1.3s;
 }
 
 
