@@ -151,3 +151,40 @@
     }
 
 }
+/* =====================================================
+   RALKERIE DISCORD CARD — COMPACT SIZE FIX
+===================================================== */
+
+#discord-card-container {
+    width: 320px !important;
+    max-width: 320px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+}
+
+#discord-card-container .discord-live-card {
+    width: 320px !important;
+    max-width: 320px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    box-sizing: border-box !important;
+
+    padding: 14px !important;
+}
+
+
+/* Prevent the waveform from affecting layout */
+
+.discord-waveform-overlay {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    pointer-events: none !important;
+}
