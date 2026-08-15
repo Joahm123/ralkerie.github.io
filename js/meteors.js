@@ -1,6 +1,7 @@
 /* =====================================================
    RALKERIE METEORS
-   TOP-WIDE SPAWN → DOWN + RIGHT
+   HUGE TOP SPAWN AREA
+   MOVEMENT: ↘ DOWN + RIGHT
 ===================================================== */
 
 (() => {
@@ -9,7 +10,7 @@
 
 
     /* =================================================
-       CONTAINER
+       FIND CONTAINER
     ================================================= */
 
     const container =
@@ -88,7 +89,7 @@
 
 
     /* =================================================
-       OPEN POPUP
+       OPEN
     ================================================= */
 
     function meteorClicked() {
@@ -108,7 +109,7 @@
 
 
     /* =================================================
-       CLOSE POPUP
+       CLOSE
     ================================================= */
 
     function closePopup() {
@@ -181,39 +182,36 @@
 
 
         /* =================================================
-           HUGE TOP SPAWN AREA
+           HUGE SPAWN BOX
 
-           X:
-           Anywhere from far LEFT
-           to far RIGHT.
+           X covers the entire width PLUS
+           extra space on both sides.
 
-           Y:
-           Anywhere across the upper
-           portion of the screen.
+           Y covers the upper 35% of
+           the screen PLUS space above it.
 
-           This gives the whole screen
-           coverage instead of a single
-           spawn point.
+           This prevents the meteors from
+           only appearing on one side.
         ================================================= */
 
         const spawnWidth =
             window.innerWidth +
-            500;
+            600;
 
 
         const spawnHeight =
             window.innerHeight *
-            0.35;
+            0.40;
 
 
         const startX =
-            -250 +
+            -300 +
             Math.random() *
             spawnWidth;
 
 
         const startY =
-            -250 +
+            -300 +
             Math.random() *
             spawnHeight;
 
@@ -258,7 +256,7 @@
 
 
         console.log(
-            "Meteor spawned:",
+            "☄️ Meteor spawned",
             Math.round(startX),
             Math.round(startY)
         );
@@ -271,7 +269,12 @@
         setTimeout(
             () => {
 
-                hitbox.remove();
+                if (
+                    hitbox.parentNode
+                ) {
+
+                    hitbox.remove();
+                }
 
             },
             6000
@@ -287,7 +290,7 @@
 
 
     /* =================================================
-       CONTINUOUS SPAWN
+       SPAWN LOOP
     ================================================= */
 
     setInterval(
