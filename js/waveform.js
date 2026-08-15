@@ -2,10 +2,10 @@
    RALKERIE WAVEFORM
    DENSE + STABLE + LOW CPU
 
-   - Wraps the Discord card
-   - Dense bars with minimal gaps
-   - White center + pink glow
-   - No flashing during Discord refreshes
+   - Wraps Discord card
+   - Dense top/bottom waveform
+   - Continuous left/right waveform
+   - No flashing during Discord refresh
    - Transform-only animation
    - Pauses when tab is hidden
 ===================================================== */
@@ -19,23 +19,28 @@
        SETTINGS
     ================================================= */
 
-    const BAR_SIZE = 3;
+    const BAR_SIZE = 4;
 
-    /*
-     * Small gap so the waveform doesn't have
-     * obvious missing sections.
-     */
-    const GAP = 2;
+    const GAP = 1;
 
     const MIN_SCALE = 0.15;
 
     const MAX_SCALE = 7;
 
     /*
-     * ~22 updates per second.
-     * Keeps CPU usage low.
+     * Around 22 updates per second.
      */
     const UPDATE_INTERVAL = 45;
+
+
+    /*
+     * Vertical sides get their own spacing.
+     *
+     * This prevents holes down the left/right edges.
+     */
+    const VERTICAL_BAR_SIZE = 5;
+
+    const VERTICAL_GAP = 0;
 
 
     /* =================================================
@@ -77,10 +82,14 @@
     function createSide(name) {
 
         const side =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         side.className =
             `wave-side wave-side-${name}`;
+
 
         return side;
     }
@@ -97,7 +106,9 @@
     ) {
 
         const bar =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
 
 
         bar.className =
@@ -105,10 +116,7 @@
 
 
         /*
-         * Position is set ONCE.
-         *
-         * Animation never changes
-         * left/top.
+         * Horizontal sides use left.
          */
 
         if (
@@ -119,13 +127,26 @@
             bar.style.left =
                 `${position}px`;
 
-        } else {
+        }
+
+        /*
+         * Vertical sides use top.
+         */
+
+        else {
 
             bar.style.top =
                 `${position}px`;
-
         }
 
+
+        /*
+         * Random values are generated
+         * only once.
+         *
+         * They are NOT recreated every
+         * Discord refresh.
+         */
 
         const data = {
 
@@ -159,7 +180,7 @@
 
 
     /* =================================================
-       BUILD BARS
+       BUILD WAVEFORM
     ================================================= */
 
     function buildWaveform() {
@@ -174,15 +195,18 @@
                 ".wave-side-top"
             );
 
+
         const bottom =
             wrapper.querySelector(
                 ".wave-side-bottom"
             );
 
+
         const left =
             wrapper.querySelector(
                 ".wave-side-left"
             );
+
 
         const right =
             wrapper.querySelector(
@@ -202,8 +226,10 @@
 
 
         /*
-         * Don't rebuild the waveform
-         * during Discord updates.
+         * VERY IMPORTANT:
+         *
+         * Do not rebuild the waveform when
+         * Discord updates its card.
          */
 
         if (
@@ -216,6 +242,7 @@
 
         const width =
             wrapper.clientWidth;
+
 
         const height =
             wrapper.clientHeight;
@@ -230,18 +257,18 @@
         }
 
 
-        const step =
+        /* =================================================
+           TOP + BOTTOM
+        ================================================= */
+
+        const horizontalStep =
             BAR_SIZE + GAP;
 
-
-        /* =================================================
-           TOP
-        ================================================= */
 
         for (
             let x = 0;
             x <= width;
-            x += step
+            x += horizontalStep
         ) {
 
             bars.push(
@@ -252,18 +279,6 @@
                 )
             );
 
-        }
-
-
-        /* =================================================
-           BOTTOM
-        ================================================= */
-
-        for (
-            let x = 0;
-            x <= width;
-            x += step
-        ) {
 
             bars.push(
                 createBar(
@@ -272,49 +287,67 @@
                     x
                 )
             );
-
         }
 
 
         /* =================================================
-           LEFT
+           LEFT + RIGHT
+
+           SPECIAL DENSE MODE
+
+           These use a separate smaller step
+           so there aren't gaps down the sides.
         ================================================= */
+
+        const verticalStep =
+            VERTICAL_BAR_SIZE +
+            VERTICAL_GAP;
+
 
         for (
             let y = 0;
             y <= height;
-            y += step
+            y += verticalStep
         ) {
 
-            bars.push(
+            const leftBar =
                 createBar(
                     left,
                     "left",
                     y
-                )
-            );
-
-        }
+                );
 
 
-        /* =================================================
-           RIGHT
-        ================================================= */
-
-        for (
-            let y = 0;
-            y <= height;
-            y += step
-        ) {
-
-            bars.push(
+            const rightBar =
                 createBar(
                     right,
                     "right",
                     y
-                )
+                );
+
+
+            /*
+             * Slight overlap between vertical bars.
+             *
+             * This removes visible holes.
+             */
+
+            leftBar.element.style.height =
+                "5px";
+
+
+            rightBar.element.style.height =
+                "5px";
+
+
+            bars.push(
+                leftBar
             );
 
+
+            bars.push(
+                rightBar
+            );
         }
 
 
@@ -343,7 +376,8 @@
 
 
         /*
-         * Already attached.
+         * If already wrapped,
+         * leave EVERYTHING alone.
          */
 
         if (
@@ -356,6 +390,11 @@
             wrapper =
                 card.parentElement;
 
+
+            /*
+             * Only build if this is
+             * a brand-new wrapper.
+             */
 
             if (
                 bars.length === 0
@@ -372,7 +411,8 @@
 
 
         /*
-         * Remove old wrapper if necessary.
+         * If an old wrapper exists,
+         * preserve the card.
          */
 
         const oldWrapper =
@@ -403,40 +443,66 @@
             "waveform-wrapper";
 
 
+        /* =================================================
+           CREATE FOUR SIDES
+        ================================================= */
+
         const top =
-            createSide("top");
+            createSide(
+                "top"
+            );
+
 
         const bottom =
-            createSide("bottom");
+            createSide(
+                "bottom"
+            );
+
 
         const left =
-            createSide("left");
+            createSide(
+                "left"
+            );
+
 
         const right =
-            createSide("right");
+            createSide(
+                "right"
+            );
 
 
         wrapper.appendChild(
             top
         );
 
+
         wrapper.appendChild(
             bottom
         );
 
+
         wrapper.appendChild(
             left
         );
+
 
         wrapper.appendChild(
             right
         );
 
 
+        /*
+         * Put wrapper into the container.
+         */
+
         container.appendChild(
             wrapper
         );
 
+
+        /*
+         * Put Discord card inside wrapper.
+         */
 
         wrapper.appendChild(
             card
@@ -447,8 +513,7 @@
 
 
         /*
-         * Wait until the wrapper has
-         * its final dimensions.
+         * Wait for browser layout.
          */
 
         requestAnimationFrame(
@@ -472,6 +537,10 @@
         animationFrame = null;
 
 
+        /*
+         * Don't animate hidden tabs.
+         */
+
         if (
             document.hidden
         ) {
@@ -481,11 +550,12 @@
 
 
         /*
-         * Throttle actual updates.
+         * Throttle actual waveform updates.
          */
 
         if (
-            time - lastUpdate <
+            time -
+            lastUpdate <
             UPDATE_INTERVAL
         ) {
 
@@ -509,9 +579,17 @@
             ) / 1000;
 
 
+        /* =================================================
+           ANIMATE BARS
+        ================================================= */
+
         for (
             const data of bars
         ) {
+
+            /*
+             * Main wave.
+             */
 
             const wave =
                 (
@@ -523,6 +601,10 @@
                     1
                 ) * 0.5;
 
+
+            /*
+             * Secondary wave.
+             */
 
             const secondary =
                 (
@@ -536,10 +618,18 @@
                 ) * 0.5;
 
 
+            /*
+             * Combine waves.
+             */
+
             const value =
                 wave * 0.72 +
                 secondary * 0.28;
 
+
+            /*
+             * Calculate size.
+             */
 
             const scale =
                 MIN_SCALE +
@@ -547,6 +637,10 @@
                 MAX_SCALE *
                 data.strength;
 
+
+            /*
+             * TOP + BOTTOM
+             */
 
             if (
                 data.side === "top" ||
@@ -556,10 +650,18 @@
                 data.element.style.transform =
                     `scaleY(${scale})`;
 
-            } else {
+            }
+
+
+            /*
+             * LEFT + RIGHT
+             */
+
+            else {
 
                 data.element.style.transform =
                     `scaleX(${scale})`;
+
             }
 
         }
@@ -598,8 +700,8 @@
 
 
                         /*
-                         * Only rebuild when the
-                         * actual browser size changes.
+                         * Browser dimensions changed,
+                         * so rebuild the positions.
                          */
 
                         bars = [];
@@ -660,16 +762,19 @@
 
 
                             /*
-                             * Only attach if Discord
-                             * actually replaced/moved
-                             * the card.
+                             * Only fix the wrapper if
+                             * the actual card was moved.
+                             *
+                             * Normal Discord content
+                             * changes do NOTHING here.
                              */
 
                             if (
                                 card &&
                                 (
                                     !wrapper ||
-                                    card.parentElement !== wrapper
+                                    card.parentElement !==
+                                    wrapper
                                 )
                             ) {
 
@@ -704,6 +809,7 @@
 
             startTime =
                 performance.now();
+
 
             lastUpdate = 0;
 
@@ -765,7 +871,7 @@
 
 
     /* =================================================
-       START
+       START ANIMATION
     ================================================= */
 
     animationFrame =
@@ -775,7 +881,7 @@
 
 
     console.log(
-        "Ralkerie dense waveform ready."
+        "Ralkerie dense continuous waveform ready."
     );
 
 })();
