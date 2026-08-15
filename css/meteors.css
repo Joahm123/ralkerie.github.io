@@ -1,6 +1,8 @@
 /* =====================================================
    RALKERIE METEORS
-   BEHIND CONTENT / ABOVE STARS
+   PIXEL SHOOTING STARS
+   HEAD → DOWN + RIGHT
+   TRAIL → UP + LEFT
 ===================================================== */
 
 
@@ -21,20 +23,24 @@
 
     pointer-events: none;
 
+    /*
+     * Above stars,
+     * below the website.
+     */
     z-index: 2;
 }
 
 
 /* =====================================================
-   HITBOX
+   METEOR HITBOX
 ===================================================== */
 
 .meteor-hitbox {
 
     position: absolute;
 
-    width: 180px;
-    height: 80px;
+    width: 150px;
+    height: 100px;
 
     pointer-events: auto;
 
@@ -45,7 +51,7 @@
 
 
 /* =====================================================
-   METEOR
+   METEOR HEAD
 ===================================================== */
 
 .meteor {
@@ -55,28 +61,31 @@
     left: 0;
     top: 0;
 
-    width: 110px;
-    height: 4px;
+    width: 7px;
+    height: 7px;
 
+    /*
+     * Meteor travels down-right.
+     */
     transform:
         rotate(46deg);
 
-    transform-origin: left center;
+    transform-origin: center;
 
-    background: linear-gradient(
-        to right,
-        #ffffff 0%,
-        #ffffff 12%,
-        #ffb8ed 35%,
-        #ff63ca 65%,
-        rgba(255, 99, 202, 0) 100%
-    );
+    background: #ffffff;
+
+    border-radius: 1px;
 
     box-shadow:
-        0 0 4px #ffffff,
-        0 0 8px #ffffff,
-        0 0 14px #ff63ca,
-        0 0 25px rgba(255, 99, 202, 0.7);
+        0 0 3px #ffffff,
+        0 0 7px #ffffff,
+        0 0 12px #ff9be2,
+        0 0 20px rgba(
+            255,
+            99,
+            202,
+            0.75
+        );
 
     opacity: 0.95;
 
@@ -91,40 +100,10 @@
 
 
 /* =====================================================
-   METEOR HEAD
-===================================================== */
+   MAIN TRAIL
 
-.meteor::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 50%;
-
-    width: 10px;
-    height: 10px;
-
-    transform:
-        translate(
-            -2px,
-            -50%
-        );
-
-    background: #ffffff;
-
-    box-shadow:
-        0 0 4px #ffffff,
-        0 0 9px #ffffff,
-        0 0 16px #ff63ca;
-
-    image-rendering: pixelated;
-}
-
-
-/* =====================================================
-   METEOR TRAIL
+   Trail extends UP + LEFT
+   behind the meteor head.
 ===================================================== */
 
 .meteor::after {
@@ -133,25 +112,45 @@
 
     position: absolute;
 
-    left: -90px;
+    /*
+     * Put the trail behind the head.
+     */
+    right: 3px;
+
     top: 50%;
 
-    width: 100px;
-    height: 3px;
+    width: 105px;
+
+    height: 2px;
 
     transform:
         translateY(-50%);
 
-    background: linear-gradient(
-        to left,
-        rgba(255,255,255,0.9),
-        rgba(255,99,202,0.65),
-        rgba(255,99,202,0)
-    );
+    transform-origin: right center;
 
-    filter:
-        drop-shadow(
-            0 0 6px #ff63ca
+    background:
+        linear-gradient(
+            to left,
+            #ffffff 0%,
+            #ffd6f3 10%,
+            #ff9be2 25%,
+            #ff63ca 48%,
+            rgba(
+                255,
+                99,
+                202,
+                0
+            ) 100%
+        );
+
+    box-shadow:
+        0 0 3px #ffffff,
+        0 0 6px #ff63ca,
+        0 0 11px rgba(
+            255,
+            99,
+            202,
+            0.6
         );
 
     pointer-events: none;
@@ -159,7 +158,53 @@
 
 
 /* =====================================================
-   MOVEMENT
+   SOFT TRAIL GLOW
+===================================================== */
+
+.meteor::before {
+
+    content: "";
+
+    position: absolute;
+
+    right: 5px;
+
+    top: 50%;
+
+    width: 75px;
+
+    height: 5px;
+
+    transform:
+        translateY(-50%);
+
+    background:
+        linear-gradient(
+            to left,
+            rgba(
+                255,
+                255,
+                255,
+                0.35
+            ),
+            rgba(
+                255,
+                99,
+                202,
+                0.25
+            ),
+            transparent
+        );
+
+    filter:
+        blur(2px);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   METEOR MOVEMENT
 
    DOWN + RIGHT
 ===================================================== */
@@ -178,10 +223,18 @@
         opacity: 0;
     }
 
-    8% {
+
+    7% {
 
         opacity: 1;
     }
+
+
+    88% {
+
+        opacity: 0.95;
+    }
+
 
     100% {
 
@@ -233,6 +286,10 @@
 }
 
 
+/* =====================================================
+   POPUP VISIBLE
+===================================================== */
+
 .meteor-popup.visible {
 
     opacity: 1;
@@ -255,7 +312,8 @@
 
     background: #050505;
 
-    border: 2px solid #ffffff;
+    border:
+        2px solid #ffffff;
 
     box-shadow:
         6px 6px 0 #000000,
@@ -277,9 +335,11 @@
     display: block;
 
     width: 320px;
+
     height: auto;
 
     max-width: 80vw;
+
     max-height: 70vh;
 
     image-rendering: pixelated;
@@ -295,12 +355,17 @@
     position: absolute;
 
     top: -14px;
+
     right: -14px;
 
     width: 32px;
+
     height: 32px;
 
-    border: 2px solid #ffffff;
+    padding: 0;
+
+    border:
+        2px solid #ffffff;
 
     background: #000000;
 
@@ -321,6 +386,10 @@
 }
 
 
+/* =====================================================
+   CLOSE HOVER
+===================================================== */
+
 .meteor-popup-close:hover {
 
     background: #ff63ca;
@@ -337,14 +406,29 @@
 
     .meteor-hitbox {
 
-        width: 150px;
-        height: 70px;
+        width: 130px;
+
+        height: 90px;
     }
 
 
     .meteor {
 
-        width: 90px;
+        width: 6px;
+
+        height: 6px;
+    }
+
+
+    .meteor::after {
+
+        width: 80px;
+    }
+
+
+    .meteor::before {
+
+        width: 55px;
     }
 
 
