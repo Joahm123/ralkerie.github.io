@@ -1,12 +1,13 @@
 /* =====================================================
    RALKERIE — EYE OF CTHULHU EASTER EGG
 
-   - Small eye button beside LIVE
-   - Click to summon giant Eye of Cthulhu
-   - Dashes around the entire screen
-   - Changes direction at screen edges
-   - Restarts eoc.mp3 on every new dash
+   - Small eye button
+   - Click to summon Eye of Cthulhu
+   - Eye dashes around the screen
+   - Bounces off screen edges
+   - Plays eoc.mp3 on every new direction
    - Eye faces movement direction
+   - Clicking the moving eye creates a pixel burst
    - ESC closes it
 ===================================================== */
 
@@ -20,14 +21,10 @@
     ================================================= */
 
     const button =
-        document.getElementById(
-            "eoc-button"
-        );
+        document.getElementById("eoc-button");
 
     const eye =
-        document.getElementById(
-            "eoc-easter-egg"
-        );
+        document.getElementById("eoc-easter-egg");
 
     const eyeImage =
         eye
@@ -72,7 +69,8 @@
     const MAX_SPEED = 20;
 
     /*
-     * PNG points opposite the movement direction.
+     * Your PNG faces opposite the movement
+     * direction.
      */
     const ROTATION_OFFSET = 180;
 
@@ -99,28 +97,21 @@
 
 
     /* =================================================
-       PLAY DASH SOUND
+       DASH SOUND
     ================================================= */
 
     function playDashSound() {
-
-        /*
-         * Restart the sound every time
-         * the Eye starts a new dash.
-         */
 
         audio.pause();
 
         audio.currentTime = 0;
 
-        audio.play().catch(
-            () => {}
-        );
+        audio.play().catch(() => {});
     }
 
 
     /* =================================================
-       CHOOSE RANDOM DIRECTION
+       RANDOM DIRECTION
     ================================================= */
 
     function chooseDirection() {
@@ -138,6 +129,7 @@
                 MIN_SPEED
             );
 
+
         vx =
             Math.cos(angle) *
             speed;
@@ -146,32 +138,170 @@
             Math.sin(angle) *
             speed;
 
-        /*
-         * New direction = new dash sound.
-         */
 
+        /*
+         * Every new dash starts the sound.
+         */
         playDashSound();
     }
 
 
     /* =================================================
-       START
+       HIT BURST
+    ================================================= */
+
+    function createHitBurst() {
+
+        const burst =
+            document.createElement("div");
+
+
+        burst.className =
+            "eoc-hit-burst";
+
+
+        /*
+         * Spawn exactly where the Eye
+         * currently is.
+         */
+
+        burst.style.left =
+            `${x}px`;
+
+        burst.style.top =
+            `${y}px`;
+
+
+        document.body.appendChild(
+            burst
+        );
+
+
+        /*
+         * Create pixel particles.
+         */
+
+        const particleCount = 32;
+
+
+        for (
+            let i = 0;
+            i < particleCount;
+            i++
+        ) {
+
+            const particle =
+                document.createElement("span");
+
+
+            particle.className =
+                "eoc-hit-particle";
+
+
+            const angle =
+                Math.random() *
+                Math.PI *
+                2;
+
+
+            const distance =
+                45 +
+                Math.random() *
+                150;
+
+
+            const dx =
+                Math.cos(angle) *
+                distance;
+
+
+            const dy =
+                Math.sin(angle) *
+                distance;
+
+
+            particle.style.setProperty(
+                "--dx",
+                `${dx}px`
+            );
+
+
+            particle.style.setProperty(
+                "--dy",
+                `${dy}px`
+            );
+
+
+            const size =
+                3 +
+                Math.random() *
+                8;
+
+
+            particle.style.width =
+                `${size}px`;
+
+
+            particle.style.height =
+                `${size}px`;
+
+
+            /*
+             * Slightly different speeds.
+             */
+
+            particle.style.animationDuration =
+                `${450 + Math.random() * 300}ms`;
+
+
+            burst.appendChild(
+                particle
+            );
+        }
+
+
+        /*
+         * Remove the burst after
+         * the animation finishes.
+         */
+
+        setTimeout(
+            () => {
+
+                if (
+                    burst.parentNode
+                ) {
+
+                    burst.remove();
+                }
+
+            },
+            800
+        );
+    }
+
+
+    /* =================================================
+       ACTIVATE
     ================================================= */
 
     function activateEye() {
 
         if (active) {
+
             return;
         }
+
 
         active = true;
 
 
         /* ---------------------------------------------
-           RANDOM START
+           RANDOM START POSITION
         --------------------------------------------- */
 
         const margin = 140;
+
 
         x =
             margin +
@@ -181,6 +311,7 @@
                 window.innerWidth -
                 margin * 2
             );
+
 
         y =
             margin +
@@ -207,6 +338,7 @@
             "active"
         );
 
+
         eye.style.left =
             `${x}px`;
 
@@ -217,12 +349,17 @@
             "translate(-50%, -50%) scale(1)";
 
 
+        eyeImage.style.transform =
+            "rotate(0deg)";
+
+
         /* ---------------------------------------------
            START ANIMATION
         --------------------------------------------- */
 
         lastTime =
             performance.now();
+
 
         animationFrame =
             requestAnimationFrame(
@@ -238,6 +375,7 @@
             endTimer
         );
 
+
         endTimer =
             setTimeout(
                 deactivateEye,
@@ -247,12 +385,13 @@
 
 
     /* =================================================
-       MOVE
+       MOVE EYE
     ================================================= */
 
     function moveEye(time) {
 
         if (!active) {
+
             return;
         }
 
@@ -262,6 +401,7 @@
                 time - lastTime,
                 40
             );
+
 
         lastTime =
             time;
@@ -276,6 +416,7 @@
             delta /
             16.67;
 
+
         y +=
             vy *
             delta /
@@ -287,24 +428,30 @@
         --------------------------------------------- */
 
         const width =
-            eye.offsetWidth || 180;
+            eye.offsetWidth ||
+            180;
+
 
         const height =
-            eye.offsetHeight || 180;
+            eye.offsetHeight ||
+            180;
+
 
         const halfWidth =
             width / 2;
+
 
         const halfHeight =
             height / 2;
 
 
+        let changedDirection =
+            false;
+
+
         /* ---------------------------------------------
-           WALL COLLISION
+           LEFT
         --------------------------------------------- */
-
-        let changedDirection = false;
-
 
         if (
             x <= halfWidth
@@ -313,13 +460,19 @@
             x =
                 halfWidth;
 
+
             vx =
                 Math.abs(vx);
+
 
             changedDirection =
                 true;
         }
 
+
+        /* ---------------------------------------------
+           RIGHT
+        --------------------------------------------- */
 
         if (
             x >=
@@ -331,13 +484,19 @@
                 window.innerWidth -
                 halfWidth;
 
+
             vx =
                 -Math.abs(vx);
+
 
             changedDirection =
                 true;
         }
 
+
+        /* ---------------------------------------------
+           TOP
+        --------------------------------------------- */
 
         if (
             y <= halfHeight
@@ -346,13 +505,19 @@
             y =
                 halfHeight;
 
+
             vy =
                 Math.abs(vy);
+
 
             changedDirection =
                 true;
         }
 
+
+        /* ---------------------------------------------
+           BOTTOM
+        --------------------------------------------- */
 
         if (
             y >=
@@ -364,22 +529,23 @@
                 window.innerHeight -
                 halfHeight;
 
+
             vy =
                 -Math.abs(vy);
+
 
             changedDirection =
                 true;
         }
 
 
-        /*
-         * If the Eye hit a wall, it just
-         * changed direction.
-         *
-         * Restart the dash noise.
-         */
+        /* ---------------------------------------------
+           NEW DASH SOUND
+        --------------------------------------------- */
 
-        if (changedDirection) {
+        if (
+            changedDirection
+        ) {
 
             playDashSound();
         }
@@ -391,6 +557,7 @@
 
         eye.style.left =
             `${x}px`;
+
 
         eye.style.top =
             `${y}px`;
@@ -425,7 +592,7 @@
 
 
     /* =================================================
-       STOP
+       DEACTIVATE
     ================================================= */
 
     function deactivateEye() {
@@ -437,14 +604,18 @@
             endTimer
         );
 
+
         endTimer = null;
 
 
-        if (animationFrame) {
+        if (
+            animationFrame
+        ) {
 
             cancelAnimationFrame(
                 animationFrame
             );
+
 
             animationFrame = null;
         }
@@ -475,29 +646,14 @@
         eye.style.left =
             "50%";
 
+
         eye.style.top =
             "50%";
+
 
         eye.style.transform =
             "translate(-50%, -50%) scale(0)";
     }
-
-
-    /* =================================================
-       BUTTON
-    ================================================= */
-
-    button.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            activateEye();
-        }
-    );
 
 
     /* =================================================
@@ -512,7 +668,38 @@
 
             event.stopPropagation();
 
+
+            /*
+             * Make the burst BEFORE hiding
+             * the Eye so it appears exactly
+             * at its current position.
+             */
+
+            if (active) {
+
+                createHitBurst();
+            }
+
+
             deactivateEye();
+        }
+    );
+
+
+    /* =================================================
+       BUTTON CLICK
+    ================================================= */
+
+    button.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            activateEye();
         }
     );
 
@@ -545,18 +732,24 @@
         () => {
 
             if (!active) {
+
                 return;
             }
 
 
             const width =
-                eye.offsetWidth || 180;
+                eye.offsetWidth ||
+                180;
+
 
             const height =
-                eye.offsetHeight || 180;
+                eye.offsetHeight ||
+                180;
+
 
             const halfWidth =
                 width / 2;
+
 
             const halfHeight =
                 height / 2;
@@ -607,6 +800,10 @@
         }
     );
 
+
+    /* =================================================
+       READY
+    ================================================= */
 
     console.log(
         "Ralkerie Eye of Cthulhu easter egg ready."
