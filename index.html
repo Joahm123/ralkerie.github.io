@@ -180,6 +180,287 @@
 
 
         /* =================================================
+           EYE OF CTHULHU BUTTON
+        ================================================= */
+
+        .cthulhu-button {
+
+            width: 36px;
+            height: 36px;
+
+            padding: 3px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: #000000;
+
+            border: 0;
+
+            cursor: pointer;
+
+            overflow: hidden;
+
+            box-shadow:
+                inset 2px 2px 0 #222222,
+                inset -2px -2px 0 #000000;
+
+            transition:
+                transform 0.15s ease,
+                background 0.15s ease;
+        }
+
+
+        .cthulhu-button:hover {
+
+            background: #161616;
+
+            transform:
+                scale(1.08);
+        }
+
+
+        .cthulhu-button img {
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: contain;
+
+            image-rendering: pixelated;
+
+            pointer-events: none;
+        }
+
+
+        /* =================================================
+           CTHULHU OVERLAY
+        ================================================= */
+
+        .cthulhu-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 5000;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.82
+                );
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+            transition:
+                opacity 0.2s ease,
+                visibility 0.2s ease;
+        }
+
+
+        .cthulhu-overlay.visible {
+
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: auto;
+        }
+
+
+        .cthulhu-eye {
+
+            width: min(
+                420px,
+                70vw
+            );
+
+            height: min(
+                420px,
+                70vw
+            );
+
+            object-fit: contain;
+
+            image-rendering: pixelated;
+
+            transform:
+                scale(0.15)
+                rotate(-8deg);
+
+            opacity: 0;
+
+            filter:
+                drop-shadow(
+                    0 0 8px
+                    rgba(255,255,255,.7)
+                )
+                drop-shadow(
+                    0 0 25px
+                    rgba(255,50,150,.8)
+                );
+
+            transition:
+                transform 0.25s
+                cubic-bezier(.2,1.5,.4,1),
+                opacity 0.15s ease;
+        }
+
+
+        .cthulhu-overlay.visible
+        .cthulhu-eye {
+
+            transform:
+                scale(1)
+                rotate(0deg);
+
+            opacity: 1;
+        }
+
+
+        /* =================================================
+           CTHULHU DASH EFFECT
+        ================================================= */
+
+        .cthulhu-dash {
+
+            position: absolute;
+
+            width: 100vw;
+            height: 3px;
+
+            background:
+                #ffffff;
+
+            box-shadow:
+                0 0 8px #ffffff,
+                0 0 20px #ff72cf,
+                0 0 40px #ff72cf;
+
+            transform:
+                scaleX(0);
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+
+        .cthulhu-overlay.dashing
+        .cthulhu-dash {
+
+            animation:
+                cthulhuDash
+                0.32s
+                ease-out;
+        }
+
+
+        @keyframes cthulhuDash {
+
+            0% {
+
+                transform:
+                    translateX(-100vw)
+                    scaleX(0.1);
+
+                opacity: 0;
+            }
+
+            20% {
+
+                opacity: 1;
+            }
+
+            50% {
+
+                transform:
+                    translateX(0)
+                    scaleX(1);
+
+                opacity: 1;
+            }
+
+            100% {
+
+                transform:
+                    translateX(100vw)
+                    scaleX(0.1);
+
+                opacity: 0;
+            }
+        }
+
+
+        /* =================================================
+           EYE GLITCH
+        ================================================= */
+
+        .cthulhu-overlay.glitch
+        .cthulhu-eye {
+
+            animation:
+                cthulhuGlitch
+                0.38s
+                steps(5);
+        }
+
+
+        @keyframes cthulhuGlitch {
+
+            0% {
+                transform:
+                    scale(1)
+                    translate(0);
+            }
+
+            20% {
+                transform:
+                    scale(1.03)
+                    translate(-8px, 3px);
+            }
+
+            40% {
+                transform:
+                    scale(.97)
+                    translate(7px, -4px);
+            }
+
+            60% {
+                transform:
+                    scale(1.02)
+                    translate(-4px, -2px);
+            }
+
+            80% {
+                transform:
+                    scale(.99)
+                    translate(5px, 3px);
+            }
+
+            100% {
+                transform:
+                    scale(1)
+                    translate(0);
+            }
+        }
+
+
+        /* =================================================
            MAIN
         ================================================= */
 
@@ -237,7 +518,7 @@
             align-items: center;
             justify-content: center;
 
-            gap: 12px;
+            gap: 24px;
 
             width: 100%;
         }
@@ -251,9 +532,9 @@
 
             display: block;
 
-            width: 300px;
+            width: 520px;
 
-            max-width: 65vw;
+            max-width: 85vw;
 
             height: auto;
 
@@ -278,7 +559,7 @@
             align-items: center;
             justify-content: center;
 
-            width: auto;
+            width: 100%;
 
             max-width: 100%;
 
@@ -287,18 +568,16 @@
 
 
         /* =================================================
-           WAVEFORM WRAPPER
-
-           SMALL + TIGHT AROUND CARD
+           WAVEFORM
         ================================================= */
 
         .waveform-wrapper {
 
             position: relative;
 
-            width: 300px;
+            width: 520px;
 
-            max-width: 82vw;
+            max-width: 85vw;
 
             flex-shrink: 0;
 
@@ -316,7 +595,7 @@
 
             width: 100%;
 
-            padding: 14px;
+            padding: 24px;
 
             background:
                 rgba(
@@ -330,7 +609,7 @@
                 2px solid #ffffff;
 
             box-shadow:
-                4px 4px 0 #000000;
+                6px 6px 0 #000000;
 
             z-index: 10;
         }
@@ -353,7 +632,6 @@
         .discord-avatar {
 
             width: 62px;
-
             height: 62px;
 
             object-fit: cover;
@@ -402,7 +680,7 @@
 
 
         /* =================================================
-           GAME ACTIVITY
+           ACTIVITY
         ================================================= */
 
         .discord-activity {
@@ -476,7 +754,6 @@
         .spotify-art {
 
             width: 48px;
-
             height: 48px;
 
             object-fit: cover;
@@ -779,6 +1056,13 @@
             }
 
 
+            .cthulhu-button {
+
+                width: 32px;
+                height: 32px;
+            }
+
+
             .pixel-page {
 
                 padding:
@@ -790,29 +1074,29 @@
 
             .live-content {
 
-                gap: 10px;
+                gap: 20px;
             }
 
 
             .username-png {
 
-                width: 230px;
+                width: 390px;
 
-                max-width: 60vw;
+                max-width: 88vw;
             }
 
 
             .waveform-wrapper {
 
-                width: 270px;
+                width: 390px;
 
-                max-width: 82vw;
+                max-width: 90vw;
             }
 
 
             .discord-live-card {
 
-                padding: 12px;
+                padding: 18px;
             }
 
 
@@ -843,6 +1127,13 @@
 
                 grid-template-columns:
                     1fr;
+            }
+
+
+            .cthulhu-eye {
+
+                width: 75vw;
+                height: 75vw;
             }
 
         }
@@ -876,7 +1167,9 @@
 <body>
 
 
-    <!-- BACKGROUND -->
+    <!-- =================================================
+         BACKGROUND
+    ================================================= -->
 
     <div
         id="stars"
@@ -890,12 +1183,59 @@
     ></div>
 
 
-    <!-- NAVIGATION -->
+    <!-- =================================================
+         CTHULHU EASTER EGG
+    ================================================= -->
+
+    <div
+        id="cthulhu-overlay"
+        class="cthulhu-overlay"
+        aria-hidden="true"
+    >
+
+        <div
+            class="cthulhu-dash"
+        ></div>
+
+
+        <img
+            id="cthulhu-eye"
+            class="cthulhu-eye"
+            src="./assets/images/eye-of-cthulhu.png"
+            alt="Eye of Cthulhu"
+        >
+
+    </div>
+
+
+    <!-- =================================================
+         NAVIGATION
+    ================================================= -->
 
     <nav
         class="pixel-tabs"
         aria-label="Main navigation"
     >
+
+
+        <!-- EYE BUTTON -->
+
+        <button
+            id="cthulhu-button"
+            class="cthulhu-button"
+            type="button"
+            aria-label="Eye of Cthulhu"
+        >
+
+            <img
+                src="./assets/images/eye-of-cthulhu.png"
+                alt=""
+            >
+
+        </button>
+
+
+        <!-- LIVE -->
 
         <button
             class="pixel-tab active"
@@ -944,12 +1284,16 @@
     </nav>
 
 
-    <!-- MAIN -->
+    <!-- =================================================
+         MAIN
+    ================================================= -->
 
     <main>
 
 
-        <!-- LIVE -->
+        <!-- =================================================
+             LIVE
+        ================================================= -->
 
         <section
             id="live"
@@ -984,7 +1328,9 @@
         </section>
 
 
-        <!-- MUSIC -->
+        <!-- =================================================
+             MUSIC
+        ================================================= -->
 
         <section
             id="music"
@@ -1024,7 +1370,9 @@
         </section>
 
 
-        <!-- LINKS -->
+        <!-- =================================================
+             LINKS
+        ================================================= -->
 
         <section
             id="links"
@@ -1083,7 +1431,9 @@
         </section>
 
 
-        <!-- TOOLS -->
+        <!-- =================================================
+             TOOLS
+        ================================================= -->
 
         <section
             id="tools"
@@ -1109,7 +1459,9 @@
         </section>
 
 
-        <!-- ABOUT -->
+        <!-- =================================================
+             ABOUT
+        ================================================= -->
 
         <section
             id="about"
@@ -1139,7 +1491,9 @@
     </main>
 
 
-    <!-- JAVASCRIPT -->
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================= -->
 
     <script src="./js/stars.js"></script>
 
@@ -1149,9 +1503,245 @@
 
     <script src="./js/discord.js"></script>
 
-    <!-- MUST LOAD AFTER DISCORD -->
-
     <script src="./js/waveform.js"></script>
+
+
+    <!-- =================================================
+         NAVIGATION + CTHULHU
+    ================================================= -->
+
+    <script>
+
+        (() => {
+
+            "use strict";
+
+
+            /* =============================================
+               NORMAL PAGE TABS
+            ============================================= */
+
+            const tabs =
+                document.querySelectorAll(
+                    ".pixel-tab"
+                );
+
+
+            const pages =
+                document.querySelectorAll(
+                    ".pixel-page"
+                );
+
+
+            tabs.forEach(
+                tab => {
+
+                    tab.addEventListener(
+                        "click",
+                        () => {
+
+                            const pageName =
+                                tab.dataset.page;
+
+
+                            if (!pageName) {
+                                return;
+                            }
+
+
+                            tabs.forEach(
+                                other => {
+
+                                    other.classList.toggle(
+                                        "active",
+                                        other === tab
+                                    );
+
+                                }
+                            );
+
+
+                            pages.forEach(
+                                page => {
+
+                                    page.classList.toggle(
+                                        "active",
+                                        page.id === pageName
+                                    );
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =============================================
+               CTHULHU
+            ============================================= */
+
+            const button =
+                document.getElementById(
+                    "cthulhu-button"
+                );
+
+
+            const overlay =
+                document.getElementById(
+                    "cthulhu-overlay"
+                );
+
+
+            if (
+                !button ||
+                !overlay
+            ) {
+
+                return;
+            }
+
+
+            let open =
+                false;
+
+
+            function openCthulhu() {
+
+                open = true;
+
+
+                overlay.classList.add(
+                    "visible"
+                );
+
+
+                overlay.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+
+                /*
+                 * Trigger dash after
+                 * the eye starts appearing.
+                 */
+
+                requestAnimationFrame(
+                    () => {
+
+                        overlay.classList.remove(
+                            "dashing"
+                        );
+
+                        overlay.classList.remove(
+                            "glitch"
+                        );
+
+
+                        void overlay.offsetWidth;
+
+
+                        overlay.classList.add(
+                            "dashing"
+                        );
+
+
+                        overlay.classList.add(
+                            "glitch"
+                        );
+
+                    }
+                );
+
+            }
+
+
+            function closeCthulhu() {
+
+                open = false;
+
+
+                overlay.classList.remove(
+                    "visible"
+                );
+
+                overlay.classList.remove(
+                    "dashing"
+                );
+
+                overlay.classList.remove(
+                    "glitch"
+                );
+
+
+                overlay.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+
+                    if (open) {
+
+                        closeCthulhu();
+
+                    } else {
+
+                        openCthulhu();
+
+                    }
+
+                }
+            );
+
+
+            overlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target === overlay
+                    ) {
+
+                        closeCthulhu();
+
+                    }
+
+                }
+            );
+
+
+            document.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Escape" &&
+                        open
+                    ) {
+
+                        closeCthulhu();
+
+                    }
+
+                }
+            );
+
+
+        })();
+
+    </script>
 
 
 </body>
