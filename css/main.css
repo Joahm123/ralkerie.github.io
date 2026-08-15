@@ -188,3 +188,21 @@
 
     pointer-events: none !important;
 }
+/* =====================================================
+   RALKERIE DISCORD CARD SIZE
+===================================================== */
+
+#discord-card-container {
+    width: 340px !important;
+    max-width: 340px !important;
+    min-height: 0 !important;
+}
+
+#discord-card-container .discord-live-card {
+    width: 340px !important;
+    max-width: 340px !important;
+    min-height: 0 !important;
+    height: auto !important;
+
+    box-sizing: border-box !important;
+}
