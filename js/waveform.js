@@ -1,28 +1,12 @@
 /* =====================================================
-   RALKERIE
-   FOUR-SIDED BAR VISUALIZER
-
-   The bars form a frame around the Discord card.
-
-             ↑ ↑ ↑ ↑ ↑ ↑ ↑
-          ┌─────────────────┐
-       ←  │                 │  →
-       ←  │   DISCORD CARD  │  →
-       ←  │                 │  →
-          └─────────────────┘
-             ↓ ↓ ↓ ↓ ↓ ↓ ↓
-
-   Every bar pulses independently.
+   RALKERIE WAVEFORM
+   FOUR-SIDED PULSING BAR FRAME
 ===================================================== */
 
 (() => {
 
     "use strict";
 
-
-    /* =================================================
-       SETTINGS
-    ================================================= */
 
     const wrapper =
         document.getElementById(
@@ -40,6 +24,10 @@
     }
 
 
+    /* =================================================
+       CREATE FRAME
+    ================================================= */
+
     const border =
         document.createElement("div");
 
@@ -55,18 +43,18 @@
 
 
     /* =================================================
-       CONFIG
+       SETTINGS
     ================================================= */
 
-    const BAR_SIZE = 3;
+    const BAR_WIDTH = 3;
 
-    const BAR_GAP = 6;
+    const BAR_GAP = 5;
 
-    const MIN_LENGTH = 3;
+    const MIN_HEIGHT = 3;
 
-    const MAX_LENGTH = 24;
+    const MAX_HEIGHT = 25;
 
-    const GAP_FROM_CARD = 5;
+    const OUTSIDE_GAP = 5;
 
 
     let bars = [];
@@ -76,7 +64,7 @@
        CREATE BAR
     ================================================= */
 
-    function makeBar(
+    function createBar(
         side,
         position
     ) {
@@ -86,34 +74,7 @@
 
 
         bar.className =
-            `wave-bar ${side}`;
-
-
-        if (
-            side === "top" ||
-            side === "bottom"
-        ) {
-
-            bar.style.width =
-                `${BAR_SIZE}px`;
-
-            bar.style.height =
-                `${MAX_LENGTH}px`;
-
-            bar.style.left =
-                `${position}px`;
-
-        } else {
-
-            bar.style.height =
-                `${BAR_SIZE}px`;
-
-            bar.style.width =
-                `${MAX_LENGTH}px`;
-
-            bar.style.top =
-                `${position}px`;
-        }
+            "wave-bar";
 
 
         border.appendChild(
@@ -127,6 +88,8 @@
 
             side: side,
 
+            position: position,
+
             phase:
                 Math.random() *
                 Math.PI *
@@ -134,17 +97,17 @@
 
             speed:
                 1.5 +
-                Math.random() * 3,
+                Math.random() * 2.5,
 
-            amount:
-                0.5 +
-                Math.random() * 0.5
+            strength:
+                0.65 +
+                Math.random() * 0.35
         });
     }
 
 
     /* =================================================
-       BUILD
+       BUILD FRAME
     ================================================= */
 
     function build() {
@@ -167,9 +130,12 @@
         ================================================= */
 
         const topCount =
-            Math.floor(
+            Math.ceil(
                 width /
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
 
 
@@ -179,10 +145,13 @@
             i++
         ) {
 
-            makeBar(
+            createBar(
                 "top",
                 i *
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
         }
 
@@ -192,9 +161,12 @@
         ================================================= */
 
         const bottomCount =
-            Math.floor(
+            Math.ceil(
                 width /
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
 
 
@@ -204,10 +176,13 @@
             i++
         ) {
 
-            makeBar(
+            createBar(
                 "bottom",
                 i *
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
         }
 
@@ -217,9 +192,12 @@
         ================================================= */
 
         const leftCount =
-            Math.floor(
+            Math.ceil(
                 height /
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
 
 
@@ -229,10 +207,13 @@
             i++
         ) {
 
-            makeBar(
+            createBar(
                 "left",
                 i *
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
         }
 
@@ -242,9 +223,12 @@
         ================================================= */
 
         const rightCount =
-            Math.floor(
+            Math.ceil(
                 height /
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
 
 
@@ -254,32 +238,103 @@
             i++
         ) {
 
-            makeBar(
+            createBar(
                 "right",
                 i *
-                (BAR_SIZE + BAR_GAP)
+                (
+                    BAR_WIDTH +
+                    BAR_GAP
+                )
             );
         }
 
 
         /* =================================================
-           POSITION THE FRAME
+           POSITION BARS
 
-           This is what makes it actually wrap
-           around the Discord card.
+           Every side is positioned relative to
+           the ACTUAL waveform frame.
         ================================================= */
 
-        border.style.left =
-            `${-GAP_FROM_CARD}px`;
+        for (
+            const data of bars
+        ) {
 
-        border.style.right =
-            `${-GAP_FROM_CARD}px`;
+            const bar =
+                data.element;
 
-        border.style.top =
-            `${-GAP_FROM_CARD}px`;
 
-        border.style.bottom =
-            `${-GAP_FROM_CARD}px`;
+            if (
+                data.side === "top"
+            ) {
+
+                bar.style.left =
+                    `${data.position}px`;
+
+                bar.style.bottom =
+                    `${OUTSIDE_GAP}px`;
+
+                bar.style.width =
+                    `${BAR_WIDTH}px`;
+
+                bar.style.height =
+                    `${MIN_HEIGHT}px`;
+            }
+
+
+            else if (
+                data.side === "bottom"
+            ) {
+
+                bar.style.left =
+                    `${data.position}px`;
+
+                bar.style.top =
+                    `${OUTSIDE_GAP}px`;
+
+                bar.style.width =
+                    `${BAR_WIDTH}px`;
+
+                bar.style.height =
+                    `${MIN_HEIGHT}px`;
+            }
+
+
+            else if (
+                data.side === "left"
+            ) {
+
+                bar.style.top =
+                    `${data.position}px`;
+
+                bar.style.right =
+                    `${OUTSIDE_GAP}px`;
+
+                bar.style.height =
+                    `${BAR_WIDTH}px`;
+
+                bar.style.width =
+                    `${MIN_HEIGHT}px`;
+            }
+
+
+            else if (
+                data.side === "right"
+            ) {
+
+                bar.style.top =
+                    `${data.position}px`;
+
+                bar.style.left =
+                    `${OUTSIDE_GAP}px`;
+
+                bar.style.height =
+                    `${BAR_WIDTH}px`;
+
+                bar.style.width =
+                    `${MIN_HEIGHT}px`;
+            }
+        }
     }
 
 
@@ -304,11 +359,7 @@
             const data of bars
         ) {
 
-            /*
-               Main wave.
-            */
-
-            const wave =
+            const primary =
                 (
                     Math.sin(
                         elapsed *
@@ -319,127 +370,93 @@
                 ) / 2;
 
 
-            /*
-               Secondary wave makes
-               the movement less uniform.
-            */
-
-            const wave2 =
+            const secondary =
                 (
                     Math.sin(
                         elapsed *
-                        2.3 +
+                        3.1 +
                         data.phase *
-                        1.4
+                        1.7
                     ) +
                     1
                 ) / 2;
 
 
-            const combined =
+            const value =
                 (
-                    wave *
-                    0.7
+                    primary *
+                    0.75
                 ) +
                 (
-                    wave2 *
-                    0.3
+                    secondary *
+                    0.25
                 );
 
 
-            const length =
-                MIN_LENGTH +
+            const size =
+                MIN_HEIGHT +
                 (
-                    MAX_LENGTH -
-                    MIN_LENGTH
+                    MAX_HEIGHT -
+                    MIN_HEIGHT
                 ) *
-                combined *
-                data.amount;
+                value *
+                data.strength;
+
+
+            const bar =
+                data.element;
 
 
             /* =================================================
                TOP
-
-               Bars grow UP from the card.
             ================================================== */
 
             if (
                 data.side === "top"
             ) {
 
-                data.element.style.height =
-                    `${length}px`;
-
-                data.element.style.bottom =
-                    `${GAP_FROM_CARD}px`;
-
-                data.element.style.transform =
-                    "translateY(0)";
+                bar.style.height =
+                    `${size}px`;
             }
 
 
             /* =================================================
                BOTTOM
-
-               Bars grow DOWN from the card.
             ================================================== */
 
             else if (
                 data.side === "bottom"
             ) {
 
-                data.element.style.height =
-                    `${length}px`;
-
-                data.element.style.top =
-                    `${GAP_FROM_CARD}px`;
-
-                data.element.style.transform =
-                    "translateY(0)";
+                bar.style.height =
+                    `${size}px`;
             }
 
 
             /* =================================================
                LEFT
-
-               Bars grow LEFT.
             ================================================== */
 
             else if (
                 data.side === "left"
             ) {
 
-                data.element.style.width =
-                    `${length}px`;
-
-                data.element.style.right =
-                    `${GAP_FROM_CARD}px`;
-
-                data.element.style.transform =
-                    "translateX(0)";
+                bar.style.width =
+                    `${size}px`;
             }
 
 
             /* =================================================
                RIGHT
-
-               Bars grow RIGHT.
             ================================================== */
 
             else if (
                 data.side === "right"
             ) {
 
-                data.element.style.width =
-                    `${length}px`;
-
-                data.element.style.left =
-                    `${GAP_FROM_CARD}px`;
-
-                data.element.style.transform =
-                    "translateX(0)";
+                bar.style.width =
+                    `${size}px`;
             }
-
         }
 
 
@@ -453,7 +470,7 @@
        RESIZE
     ================================================= */
 
-    let resizeTimer = null;
+    let resizeTimer;
 
 
     window.addEventListener(
