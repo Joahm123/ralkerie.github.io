@@ -1,29 +1,32 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   CARD OVERLAY
+   CLEAN FOUR-SIDED EQUALIZER
 ===================================================== */
+
+.discord-live-card {
+    position: relative !important;
+}
 
 
 /* =====================================================
-   WAVEFORM OVERLAY
+   OVERLAY
 ===================================================== */
 
 .discord-waveform-overlay {
 
     position: absolute;
 
-    inset: 0;
+    inset: -1px;
 
-    width: 100%;
+    width: auto;
 
-    height: 100%;
+    height: auto;
 
     pointer-events: none;
 
     z-index: 50;
 
     overflow: visible;
-
 }
 
 
@@ -38,7 +41,6 @@
     pointer-events: none;
 
     overflow: visible;
-
 }
 
 
@@ -48,13 +50,13 @@
 
 .wave-side-top {
 
-    left: 0;
-
-    right: 0;
-
     top: 0;
 
-    height: 1px;
+    left: 0;
+
+    width: 100%;
+
+    height: 18px;
 
 }
 
@@ -65,13 +67,13 @@
 
 .wave-side-bottom {
 
-    left: 0;
-
-    right: 0;
-
     bottom: 0;
 
-    height: 1px;
+    left: 0;
+
+    width: 100%;
+
+    height: 18px;
 
 }
 
@@ -86,9 +88,9 @@
 
     top: 0;
 
-    bottom: 0;
+    height: 100%;
 
-    width: 1px;
+    width: 18px;
 
 }
 
@@ -103,9 +105,9 @@
 
     top: 0;
 
-    bottom: 0;
+    height: 100%;
 
-    width: 1px;
+    width: 18px;
 
 }
 
@@ -119,10 +121,6 @@
     position: absolute;
 
     display: block;
-
-    width: 3px;
-
-    height: 1px;
 
     margin: 0;
 
@@ -138,16 +136,23 @@
 
     will-change: transform;
 
-    contain: strict;
+    box-shadow:
+        0 0 3px rgba(255, 99, 202, 0.7);
 
 }
 
 
 /* =====================================================
-   TOP
+   TOP BARS
+
+   Start at card edge and grow UP.
 ===================================================== */
 
 .wave-side-top .wave-bar {
+
+    width: 3px;
+
+    height: 1px;
 
     bottom: 0;
 
@@ -157,10 +162,16 @@
 
 
 /* =====================================================
-   BOTTOM
+   BOTTOM BARS
+
+   Start at card edge and grow DOWN.
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
+
+    width: 3px;
+
+    height: 1px;
 
     top: 0;
 
@@ -170,16 +181,18 @@
 
 
 /* =====================================================
-   LEFT
+   LEFT BARS
+
+   Start at card edge and grow LEFT.
 ===================================================== */
 
 .wave-side-left .wave-bar {
 
-    right: 0;
-
     width: 1px;
 
     height: 3px;
+
+    right: 0;
 
     transform-origin: right center;
 
@@ -187,16 +200,18 @@
 
 
 /* =====================================================
-   RIGHT
+   RIGHT BARS
+
+   Start at card edge and grow RIGHT.
 ===================================================== */
 
 .wave-side-right .wave-bar {
 
-    left: 0;
-
     width: 1px;
 
     height: 3px;
+
+    left: 0;
 
     transform-origin: left center;
 
@@ -208,6 +223,15 @@
 ===================================================== */
 
 @media (max-width: 700px) {
+
+    #discord-card-container,
+    #discord-card-container .discord-live-card {
+
+        width: 92vw !important;
+
+        max-width: 340px !important;
+
+    }
 
     .wave-bar {
 
