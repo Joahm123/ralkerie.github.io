@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,7 +117,7 @@
 
 
     <!-- =================================================
-         MAIN CONTENT
+         MAIN
     ================================================== -->
 
     <main>
@@ -131,6 +131,9 @@
             id="live"
             class="pixel-page active"
         >
+
+            <!-- Discord.js replaces this
+                 with the live Discord card -->
 
             <div class="pixel-panel">
 
@@ -170,6 +173,7 @@
                     NOW PLAYING
                 </h1>
 
+
                 <div
                     id="music-card"
                     class="music-card"
@@ -178,6 +182,7 @@
                     <div
                         class="music-cover"
                     ></div>
+
 
                     <div
                         class="music-info"
@@ -345,6 +350,9 @@
         src="./js/main.js"
     ></script>
 
+
+    <!-- Discord.js also creates
+         and updates the local clock -->
 
     <script
         src="./js/discord.js"
