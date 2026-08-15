@@ -1,36 +1,53 @@
 /* =====================================================
    RALKERIE METEORS
-   LIGHTWEIGHT + VISIBLE
-   MOVEMENT: ↘ DOWN + RIGHT
+   PERFORMANCE OPTIMIZED
+
+   - Max 4 meteors
+   - Spawns across the entire top area
+   - Moves DOWN + RIGHT ↘
+   - Meteors stay behind the Discord card
+   - Pauses while tab is hidden
+   - Cleans up automatically
+   - Click meteor to open GIF + audio
 ===================================================== */
 
 (() => {
 
     "use strict";
 
+
+    /* =====================================================
+       CONTAINER
+    ===================================================== */
+
     const container =
         document.getElementById("meteors");
 
+
     if (!container) {
-        console.error("Ralkerie: #meteors not found.");
+
+        console.error(
+            "Ralkerie: #meteors not found."
+        );
+
         return;
     }
 
 
-    /* =================================================
+    /* =====================================================
        SETTINGS
-    ================================================= */
+    ===================================================== */
 
-    const SPAWN_INTERVAL = 1800;
-    const METEOR_LIFETIME = 6000;
+    const SPAWN_INTERVAL = 2200;
+
+    const METEOR_LIFETIME = 5200;
+
     const MAX_METEORS = 4;
 
-    let spawnTimer = null;
 
-
-    /* =================================================
+    /* =====================================================
        AUDIO
-    ================================================= */
+    ===================================================== */
 
     const audio =
         new Audio(
@@ -40,14 +57,16 @@
     audio.preload = "metadata";
 
 
-    /* =================================================
+    /* =====================================================
        POPUP
-    ================================================= */
+    ===================================================== */
 
     const popup =
         document.createElement("div");
 
-    popup.className = "meteor-popup";
+    popup.className =
+        "meteor-popup";
+
 
     popup.innerHTML = `
 
@@ -71,32 +90,52 @@
 
     `;
 
-    document.body.appendChild(popup);
+
+    document.body.appendChild(
+        popup
+    );
 
 
     const closeButton =
-        popup.querySelector(".meteor-popup-close");
+        popup.querySelector(
+            ".meteor-popup-close"
+        );
 
+
+    /* =====================================================
+       OPEN POPUP
+    ===================================================== */
 
     function meteorClicked() {
 
-        popup.classList.add("visible");
+        popup.classList.add(
+            "visible"
+        );
+
 
         audio.currentTime = 0;
 
-        audio.play().catch(() => {});
 
+        audio.play().catch(
+            () => {}
+        );
     }
 
 
+    /* =====================================================
+       CLOSE POPUP
+    ===================================================== */
+
     function closePopup() {
 
-        popup.classList.remove("visible");
+        popup.classList.remove(
+            "visible"
+        );
+
 
         audio.pause();
 
         audio.currentTime = 0;
-
     }
 
 
@@ -110,7 +149,10 @@
         "click",
         event => {
 
-            if (event.target === popup) {
+            if (
+                event.target === popup
+            ) {
+
                 closePopup();
             }
 
@@ -122,7 +164,10 @@
         "keydown",
         event => {
 
-            if (event.key === "Escape") {
+            if (
+                event.key === "Escape"
+            ) {
+
                 closePopup();
             }
 
@@ -130,72 +175,82 @@
     );
 
 
-    /* =================================================
+    /* =====================================================
        CREATE METEOR
-    ================================================= */
+    ===================================================== */
 
     function createMeteor() {
 
-        if (document.hidden) {
-            return;
-        }
+        /*
+         * Don't create more than
+         * MAX_METEORS.
+         */
 
+        if (
+            container.children.length >=
+            MAX_METEORS
+        ) {
 
-        const active =
-            container.querySelectorAll(
-                ".meteor-hitbox"
-            ).length;
-
-
-        if (active >= MAX_METEORS) {
             return;
         }
 
 
         const hitbox =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         hitbox.className =
             "meteor-hitbox";
 
 
         const meteor =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         meteor.className =
             "meteor";
 
 
         /* =================================================
-           SPAWN
+           SPAWN AREA
 
-           Spawn across the ENTIRE top of the screen.
+           Covers the entire width.
 
-           Some start slightly above the screen,
-           while others start inside the top area.
+           Extra space above and
+           outside both sides means
+           meteors can enter naturally.
         ================================================= */
 
-        const width =
-            window.innerWidth;
+        const spawnWidth =
+            window.innerWidth + 700;
 
-        const height =
-            window.innerHeight;
+
+        const spawnHeight =
+            Math.max(
+                300,
+                window.innerHeight * 0.40
+            );
 
 
         const startX =
-            -150 +
+            -350 +
             Math.random() *
-            (width + 300);
+            spawnWidth;
 
 
         const startY =
-            -180 +
+            -350 +
             Math.random() *
-            (height * 0.18);
+            spawnHeight;
 
 
         hitbox.style.left =
             `${startX}px`;
+
 
         hitbox.style.top =
             `${startY}px`;
@@ -224,6 +279,10 @@
         );
 
 
+        /* =================================================
+           ADD TO SCREEN
+        ================================================= */
+
         container.appendChild(
             hitbox
         );
@@ -231,67 +290,131 @@
 
         /* =================================================
            CLEANUP
+
+           Remove meteor after its
+           animation has finished.
         ================================================= */
 
         setTimeout(
             () => {
 
-                if (hitbox.parentNode) {
+                if (
+                    hitbox.parentNode
+                ) {
+
                     hitbox.remove();
                 }
 
             },
             METEOR_LIFETIME
         );
-
     }
 
 
-    /* =================================================
-       SPAWN
-    ================================================= */
+    /* =====================================================
+       INITIAL METEOR
+    ===================================================== */
 
     createMeteor();
 
 
-    spawnTimer =
+    /* =====================================================
+       SPAWN LOOP
+    ===================================================== */
+
+    const spawnTimer =
         setInterval(
-            createMeteor,
+            () => {
+
+                /*
+                 * Don't spawn while the
+                 * browser tab is hidden.
+                 */
+
+                if (
+                    document.hidden
+                ) {
+
+                    return;
+                }
+
+
+                createMeteor();
+
+            },
             SPAWN_INTERVAL
         );
 
 
-    /* =================================================
+    /* =====================================================
        HIDDEN TAB
-    ================================================= */
+    ===================================================== */
 
     document.addEventListener(
         "visibilitychange",
         () => {
 
-            if (document.hidden) {
+            if (
+                document.hidden
+            ) {
 
-                container
-                    .querySelectorAll(
+                /*
+                 * Remove active meteors
+                 * while hidden.
+                 */
+
+                const active =
+                    container.querySelectorAll(
                         ".meteor-hitbox"
-                    )
-                    .forEach(
-                        meteor =>
-                            meteor.remove()
                     );
 
+
+                active.forEach(
+                    meteor => {
+
+                        meteor.remove();
+
+                    }
+                );
+
+            } else {
+
+                /*
+                 * Spawn one immediately
+                 * when returning.
+                 */
+
+                createMeteor();
             }
 
         }
     );
 
 
-    /* =================================================
-       START
-    ================================================= */
+    /* =====================================================
+       CLEANUP ON PAGE EXIT
+    ===================================================== */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            clearInterval(
+                spawnTimer
+            );
+
+            audio.pause();
+
+        }
+    );
+
+
+    /* =====================================================
+       READY
+    ===================================================== */
 
     console.log(
-        "Ralkerie lightweight meteors loaded."
+        "Ralkerie optimized meteors loaded."
     );
 
 })();
