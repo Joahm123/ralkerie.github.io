@@ -1,16 +1,12 @@
 /* =====================================================
-   RALKERIE OSU-STYLE WAVEFORM
-   ANIMATED PINK + WHITE
+   RALKERIE WAVEFORM
+   WRAPS AROUND DISCORD CARD
 ===================================================== */
 
 (() => {
 
     "use strict";
 
-
-    /* =================================================
-       CANVAS
-    ================================================= */
 
     const canvas =
         document.getElementById(
@@ -21,7 +17,7 @@
     if (!canvas) {
 
         console.error(
-            "Ralkerie: #waveform-canvas not found."
+            "Ralkerie: waveform canvas missing."
         );
 
         return;
@@ -35,31 +31,22 @@
     if (!ctx) {
 
         console.error(
-            "Ralkerie: Could not create waveform canvas."
+            "Ralkerie: waveform context failed."
         );
 
         return;
     }
 
 
-    /* =================================================
-       SETTINGS
-    ================================================= */
-
     let width = 0;
-
     let height = 0;
 
-    let centerY = 0;
-
-    let devicePixelRatio =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
+    let dpr = 1;
 
     let time = 0;
+
+    let lastTime =
+        performance.now();
 
 
     /* =================================================
@@ -68,48 +55,38 @@
 
     function resize() {
 
-        devicePixelRatio =
+        dpr =
             Math.min(
                 window.devicePixelRatio || 1,
                 2
             );
 
 
+        const rect =
+            canvas.getBoundingClientRect();
+
+
         width =
-            window.innerWidth;
+            rect.width;
 
 
         height =
-            window.innerHeight;
-
-
-        centerY =
-            height / 2;
+            rect.height;
 
 
         canvas.width =
-            width *
-            devicePixelRatio;
+            width * dpr;
 
 
         canvas.height =
-            height *
-            devicePixelRatio;
-
-
-        canvas.style.width =
-            width + "px";
-
-
-        canvas.style.height =
-            height + "px";
+            height * dpr;
 
 
         ctx.setTransform(
-            devicePixelRatio,
+            dpr,
             0,
             0,
-            devicePixelRatio,
+            dpr,
             0,
             0
         );
@@ -119,10 +96,7 @@
 
     window.addEventListener(
         "resize",
-        resize,
-        {
-            passive: true
-        }
+        resize
     );
 
 
@@ -130,10 +104,62 @@
 
 
     /* =================================================
-       WAVEFORM
+       WAVE FUNCTION
     ================================================= */
 
-    function drawWaveform() {
+    function waveY(
+        x,
+        center
+    ) {
+
+        const wave1 =
+            Math.sin(
+                x * 0.035 +
+                time * 3
+            );
+
+
+        const wave2 =
+            Math.sin(
+                x * 0.085 -
+                time * 4.2
+            );
+
+
+        const wave3 =
+            Math.sin(
+                x * 0.16 +
+                time * 2.1
+            );
+
+
+        const wave4 =
+            Math.sin(
+                x * 0.3 -
+                time * 5
+            );
+
+
+        const combined =
+            (
+                wave1 * 0.45 +
+                wave2 * 0.27 +
+                wave3 * 0.18 +
+                wave4 * 0.10
+            );
+
+
+        return center +
+            combined * 55;
+
+    }
+
+
+    /* =================================================
+       DRAW WAVE
+    ================================================= */
+
+    function draw() {
 
         ctx.clearRect(
             0,
@@ -143,28 +169,13 @@
         );
 
 
-        /*
-         * The waveform is strongest around
-         * the center and fades toward the
-         * edges.
-         */
-
-        const amplitude =
-            Math.min(
-                75,
-                height * 0.09
-            );
-
-
-        const spacing = 5;
+        const center =
+            height / 2;
 
 
         /*
-         * Pink glow
+         * Pink glowing waveform
          */
-
-        ctx.save();
-
 
         ctx.beginPath();
 
@@ -172,79 +183,14 @@
         for (
             let x = 0;
             x <= width;
-            x += spacing
+            x += 3
         ) {
 
-            const normalized =
-                x / width;
-
-
-            /*
-             * Multiple sine waves create
-             * irregular audio-like movement.
-             */
-
-            const wave1 =
-                Math.sin(
-                    x * 0.025 +
-                    time * 2.5
-                );
-
-
-            const wave2 =
-                Math.sin(
-                    x * 0.061 -
-                    time * 3.7
-                );
-
-
-            const wave3 =
-                Math.sin(
-                    x * 0.11 +
-                    time * 1.8
-                );
-
-
-            const wave4 =
-                Math.sin(
-                    x * 0.17 -
-                    time * 4.2
-                );
-
-
-            /*
-             * Combine the waves.
-             */
-
-            let wave =
-                (
-                    wave1 * 0.45 +
-                    wave2 * 0.25 +
-                    wave3 * 0.18 +
-                    wave4 * 0.12
-                );
-
-
-            /*
-             * Make the waveform stronger
-             * around the center.
-             */
-
-            const edgeFade =
-                Math.sin(
-                    normalized *
-                    Math.PI
-                );
-
-
-            wave *=
-                edgeFade;
-
-
             const y =
-                centerY +
-                wave *
-                amplitude;
+                waveY(
+                    x,
+                    center
+                );
 
 
             if (x === 0) {
@@ -260,39 +206,29 @@
                     x,
                     y
                 );
+
             }
 
         }
 
 
         ctx.strokeStyle =
-            "rgba(255, 61, 189, 0.65)";
+            "rgba(255, 45, 181, 0.9)";
 
 
-        ctx.lineWidth =
-            5;
+        ctx.lineWidth = 5;
 
-
-        ctx.shadowBlur =
-            18;
-
+        ctx.shadowBlur = 18;
 
         ctx.shadowColor =
-            "rgba(255, 61, 189, 0.9)";
-
+            "#ff2db5";
 
         ctx.stroke();
 
 
-        ctx.restore();
-
-
-        /* =================================================
-           WHITE CORE
-        ================================================== */
-
-        ctx.save();
-
+        /*
+         * White thin center
+         */
 
         ctx.beginPath();
 
@@ -300,65 +236,14 @@
         for (
             let x = 0;
             x <= width;
-            x += spacing
+            x += 3
         ) {
 
-            const normalized =
-                x / width;
-
-
-            const wave1 =
-                Math.sin(
-                    x * 0.025 +
-                    time * 2.5
-                );
-
-
-            const wave2 =
-                Math.sin(
-                    x * 0.061 -
-                    time * 3.7
-                );
-
-
-            const wave3 =
-                Math.sin(
-                    x * 0.11 +
-                    time * 1.8
-                );
-
-
-            const wave4 =
-                Math.sin(
-                    x * 0.17 -
-                    time * 4.2
-                );
-
-
-            let wave =
-                (
-                    wave1 * 0.45 +
-                    wave2 * 0.25 +
-                    wave3 * 0.18 +
-                    wave4 * 0.12
-                );
-
-
-            const edgeFade =
-                Math.sin(
-                    normalized *
-                    Math.PI
-                );
-
-
-            wave *=
-                edgeFade;
-
-
             const y =
-                centerY +
-                wave *
-                amplitude;
+                waveY(
+                    x,
+                    center
+                );
 
 
             if (x === 0) {
@@ -374,6 +259,7 @@
                     x,
                     y
                 );
+
             }
 
         }
@@ -382,31 +268,19 @@
         ctx.strokeStyle =
             "#ffffff";
 
+        ctx.lineWidth = 1.5;
 
-        ctx.lineWidth =
-            1.2;
-
-
-        ctx.shadowBlur =
-            7;
-
+        ctx.shadowBlur = 8;
 
         ctx.shadowColor =
             "#ff72cf";
 
-
         ctx.stroke();
 
 
-        ctx.restore();
-
-
-        /* =================================================
-           SECOND PINK LINE
-        ================================================== */
-
-        ctx.save();
-
+        /*
+         * Second quieter waveform
+         */
 
         ctx.beginPath();
 
@@ -414,29 +288,16 @@
         for (
             let x = 0;
             x <= width;
-            x += spacing
+            x += 3
         ) {
 
-            const normalized =
-                x / width;
-
-
-            const wave =
-                Math.sin(
-                    x * 0.032 -
-                    time * 2.8
-                ) *
-                Math.sin(
-                    normalized *
-                    Math.PI
-                );
-
-
             const y =
-                centerY +
-                wave *
-                amplitude *
-                0.55;
+                center +
+                Math.sin(
+                    x * 0.045 -
+                    time * 2.5
+                ) *
+                25;
 
 
             if (x === 0) {
@@ -452,6 +313,7 @@
                     x,
                     y
                 );
+
             }
 
         }
@@ -460,15 +322,11 @@
         ctx.strokeStyle =
             "rgba(255, 114, 207, 0.35)";
 
+        ctx.lineWidth = 1;
 
-        ctx.lineWidth =
-            1;
-
+        ctx.shadowBlur = 0;
 
         ctx.stroke();
-
-
-        ctx.restore();
 
     }
 
@@ -477,21 +335,14 @@
        ANIMATION
     ================================================= */
 
-    let lastTime =
-        performance.now();
-
-
-    function animate(currentTime) {
+    function animate(now) {
 
         let delta =
-            (
-                currentTime -
-                lastTime
-            ) / 1000;
+            (now - lastTime) / 1000;
 
 
         lastTime =
-            currentTime;
+            now;
 
 
         if (delta > 0.05) {
@@ -500,17 +351,11 @@
         }
 
 
-        /*
-         * Animation speed.
-         */
-
-        time +=
-            delta;
-
-
         if (!document.hidden) {
 
-            drawWaveform();
+            time += delta;
+
+            draw();
 
         }
 
@@ -521,10 +366,6 @@
 
     }
 
-
-    /* =================================================
-       VISIBILITY FIX
-    ================================================= */
 
     document.addEventListener(
         "visibilitychange",
@@ -537,11 +378,7 @@
     );
 
 
-    /* =================================================
-       START
-    ================================================= */
-
-    drawWaveform();
+    draw();
 
 
     requestAnimationFrame(
