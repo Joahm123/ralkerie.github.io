@@ -2,66 +2,36 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ralkerie</title>
-
-
-    <!-- =================================================
-         FONT
-    ================================================== -->
 
     <style>
 
         @font-face {
-
             font-family: "AndyB";
-
-            src:
-                url("./assets/fonts/ANDYB.TTF")
-                format("truetype");
-
+            src: url("./assets/fonts/ANDYB.TTF") format("truetype");
             font-weight: normal;
-
             font-style: normal;
-
             font-display: swap;
         }
 
-
-        /* =================================================
-           RESET
-        ================================================== */
-
         * {
-
             box-sizing: border-box;
         }
 
-
         html,
         body {
-
             width: 100%;
-
             height: 100%;
-
             margin: 0;
-
             padding: 0;
         }
 
-
         body {
-
             background: #050505;
-
             color: #ffffff;
 
             font-family:
@@ -76,17 +46,14 @@
 
 
         /* =================================================
-           STARS
-        ================================================== */
+           BACKGROUND
+        ================================================= */
 
         #stars {
-
             position: fixed;
-
             inset: 0;
 
             width: 100vw;
-
             height: 100vh;
 
             overflow: hidden;
@@ -94,25 +61,16 @@
             pointer-events: none;
 
             z-index: 0;
+
+            background: transparent;
         }
 
 
-        /* =================================================
-           METEORS
-           
-           STARS = 0
-           METEORS = 2
-           WEBSITE = 10+
-        ================================================== */
-
         #meteors {
-
             position: fixed;
-
             inset: 0;
 
             width: 100vw;
-
             height: 100vh;
 
             overflow: hidden;
@@ -124,20 +82,16 @@
 
 
         /* =================================================
-           NAVIGATION
-        ================================================== */
+           NAV
+        ================================================= */
 
         .pixel-tabs {
-
             position: fixed;
 
             top: 20px;
-
             right: 24px;
 
             display: flex;
-
-            flex-direction: row;
 
             align-items: center;
 
@@ -149,8 +103,7 @@
 
             background: #000000;
 
-            border:
-                2px solid #1c1c1c;
+            border: 2px solid #1c1c1c;
 
             box-shadow:
                 3px 3px 0 #000000;
@@ -160,19 +113,16 @@
 
 
         .pixel-tab {
-
             display: inline-flex;
 
             align-items: center;
-
             justify-content: center;
 
             height: 36px;
 
             min-width: 68px;
 
-            padding:
-                0 13px;
+            padding: 0 13px;
 
             border: 0;
 
@@ -196,13 +146,11 @@
 
 
         .pixel-tab:hover {
-
             background: #161616;
         }
 
 
         .pixel-tab.active {
-
             background: #0b0b0b;
 
             box-shadow:
@@ -213,14 +161,12 @@
 
         /* =================================================
            MAIN
-        ================================================== */
+        ================================================= */
 
         main {
-
             position: relative;
 
             width: 100vw;
-
             height: 100vh;
 
             z-index: 10;
@@ -229,22 +175,18 @@
 
         /* =================================================
            PAGES
-        ================================================== */
+        ================================================= */
 
         .pixel-page {
-
             position: fixed;
-
             inset: 0;
 
             display: none;
 
             align-items: center;
-
             justify-content: center;
 
             width: 100vw;
-
             height: 100vh;
 
             padding:
@@ -257,41 +199,33 @@
 
 
         .pixel-page.active {
-
             display: flex;
         }
 
 
         /* =================================================
-           LIVE CONTENT
-        ================================================== */
+           LIVE
+        ================================================= */
 
         .live-content {
-
-            position: relative;
-
             display: flex;
 
             flex-direction: column;
 
             align-items: center;
-
             justify-content: center;
 
             gap: 18px;
 
             width: 100%;
-
-            z-index: 20;
         }
 
 
         /* =================================================
            RALKERIE PNG
-        ================================================== */
+        ================================================= */
 
         .username-png {
-
             display: block;
 
             width: 340px;
@@ -315,34 +249,38 @@
 
 
         /* =================================================
-           VISUALIZER AREA
-        ================================================== */
+           WAVEFORM FRAME
+
+           This frame is specifically around the
+           Discord card — NOT around the whole wrapper.
+        ================================================= */
 
         .waveform-wrapper {
-
             position: relative;
 
-            width:
-                min(
-                    700px,
-                    90vw
-                );
+            width: min(620px, 90vw);
 
-            padding: 28px;
+            padding: 0;
 
             z-index: 20;
         }
 
 
         /* =================================================
-           VISUALIZER BARS CONTAINER
-        ================================================== */
+           WAVE BORDER
+
+           Slightly larger than the card so the
+           bars sit outside its edges.
+        ================================================= */
 
         .wave-border {
-
             position: absolute;
 
-            inset: 0;
+            left: -22px;
+            right: -22px;
+
+            top: -22px;
+            bottom: -22px;
 
             pointer-events: none;
 
@@ -351,11 +289,10 @@
 
 
         /* =================================================
-           INDIVIDUAL BAR
-        ================================================== */
+           WAVE BARS
+        ================================================= */
 
         .wave-bar {
-
             position: absolute;
 
             display: block;
@@ -365,7 +302,7 @@
                     to bottom,
                     #ffffff 0%,
                     #ffffff 20%,
-                    #ffb5e9 45%,
+                    #ffd4f2 45%,
                     #ff72cf 75%,
                     #ff2db5 100%
                 );
@@ -373,84 +310,32 @@
             box-shadow:
                 0 0 3px #ffffff,
                 0 0 6px #ff9bdd,
-                0 0 10px rgba(
+                0 0 10px
+                rgba(
                     255,
                     45,
                     181,
-                    0.8
+                    0.85
                 );
 
-            opacity: 0.9;
+            border-radius: 1px;
 
-            will-change:
-                transform;
+            opacity: 0.95;
+
+            will-change: transform;
         }
 
 
         /* =================================================
-           TOP / BOTTOM BARS
-        ================================================== */
-
-        .wave-bar.top,
-        .wave-bar.bottom {
-
-            width: 3px;
-
-            transform-origin:
-                center center;
-        }
-
-
-        .wave-bar.top {
-
-            bottom: auto;
-        }
-
-
-        .wave-bar.bottom {
-
-            top: auto;
-        }
-
-
-        /* =================================================
-           LEFT / RIGHT BARS
-        ================================================== */
-
-        .wave-bar.left,
-        .wave-bar.right {
-
-            height: 3px;
-
-            transform-origin:
-                center center;
-        }
-
-
-        .wave-bar.left {
-
-            right: auto;
-        }
-
-
-        .wave-bar.right {
-
-            left: auto;
-        }
-
-
-        /* =================================================
-           DISCORD CARD CONTAINER
-        ================================================== */
+           DISCORD CARD
+        ================================================= */
 
         .discord-card-container {
-
             position: relative;
 
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             width: 100%;
@@ -459,19 +344,10 @@
         }
 
 
-        /* =================================================
-           DISCORD CARD
-        ================================================== */
-
         .discord-live-card {
-
             position: relative;
 
-            width:
-                min(
-                    620px,
-                    90vw
-                );
+            width: 100%;
 
             padding: 24px;
 
@@ -495,10 +371,9 @@
 
         /* =================================================
            DISCORD PROFILE
-        ================================================== */
+        ================================================= */
 
         .discord-profile {
-
             display: flex;
 
             align-items: center;
@@ -508,9 +383,7 @@
 
 
         .discord-avatar {
-
             width: 76px;
-
             height: 76px;
 
             object-fit: cover;
@@ -523,7 +396,6 @@
 
 
         .discord-name {
-
             font-size: 28px;
 
             color: #ffffff;
@@ -531,7 +403,6 @@
 
 
         .discord-status {
-
             margin-top: 5px;
 
             font-size: 14px;
@@ -539,35 +410,30 @@
 
 
         .status-online {
-
             color: #7cff7c;
         }
 
 
         .status-idle {
-
             color: #ffd65c;
         }
 
 
         .status-dnd {
-
             color: #ff6666;
         }
 
 
         .status-offline {
-
             color: #888888;
         }
 
 
         /* =================================================
-           GAME ACTIVITY
-        ================================================== */
+           ACTIVITY
+        ================================================= */
 
         .discord-activity {
-
             margin-top: 24px;
 
             padding-top: 18px;
@@ -578,7 +444,6 @@
 
 
         .discord-activity-title {
-
             font-size: 13px;
 
             color: #ff72cf;
@@ -588,7 +453,6 @@
 
 
         .discord-activity-text {
-
             margin-top: 6px;
 
             font-size: 22px;
@@ -599,10 +463,9 @@
 
         /* =================================================
            SPOTIFY
-        ================================================== */
+        ================================================= */
 
         .discord-spotify {
-
             margin-top: 20px;
 
             padding-top: 18px;
@@ -613,7 +476,6 @@
 
 
         .discord-section-label {
-
             font-size: 13px;
 
             color: #ff72cf;
@@ -623,7 +485,6 @@
 
 
         .spotify-row {
-
             display: flex;
 
             align-items: center;
@@ -635,9 +496,7 @@
 
 
         .spotify-art {
-
             width: 58px;
-
             height: 58px;
 
             object-fit: cover;
@@ -647,7 +506,6 @@
 
 
         .spotify-song {
-
             font-size: 18px;
 
             color: #ffffff;
@@ -655,7 +513,6 @@
 
 
         .spotify-artist {
-
             margin-top: 3px;
 
             font-size: 14px;
@@ -666,10 +523,9 @@
 
         /* =================================================
            CLOCK
-        ================================================== */
+        ================================================= */
 
         .local-clock {
-
             margin-top: 24px;
 
             padding-top: 18px;
@@ -682,7 +538,6 @@
 
 
         .clock-time {
-
             font-size: 32px;
 
             line-height: 1;
@@ -695,7 +550,6 @@
 
 
         .clock-label {
-
             margin-top: 6px;
 
             font-size: 12px;
@@ -708,10 +562,9 @@
 
         /* =================================================
            GENERAL PANELS
-        ================================================== */
+        ================================================= */
 
         .pixel-panel {
-
             position: relative;
 
             width:
@@ -737,13 +590,10 @@
                 6px 6px 0 #000000;
 
             text-align: center;
-
-            z-index: 20;
         }
 
 
         .pixel-label {
-
             margin:
                 0 0 8px;
 
@@ -754,7 +604,6 @@
 
 
         .pixel-panel h1 {
-
             margin:
                 0 0 15px;
 
@@ -775,7 +624,6 @@
 
 
         .pixel-description {
-
             margin: 0;
 
             color: #bdbdbd;
@@ -788,10 +636,9 @@
 
         /* =================================================
            MUSIC
-        ================================================== */
+        ================================================= */
 
         .music-card {
-
             display: flex;
 
             align-items: center;
@@ -812,9 +659,7 @@
 
 
         .music-cover {
-
             width: 55px;
-
             height: 55px;
 
             flex-shrink: 0;
@@ -827,7 +672,6 @@
 
 
         .music-info {
-
             display: flex;
 
             flex-direction: column;
@@ -837,7 +681,6 @@
 
 
         .music-info strong {
-
             color: #ffffff;
 
             font-size: 17px;
@@ -845,7 +688,6 @@
 
 
         .music-info span {
-
             color: #888888;
 
             font-size: 15px;
@@ -854,10 +696,9 @@
 
         /* =================================================
            LINKS
-        ================================================== */
+        ================================================= */
 
         .link-grid {
-
             display: grid;
 
             grid-template-columns:
@@ -876,11 +717,9 @@
 
 
         .pixel-link {
-
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             min-height: 45px;
@@ -899,7 +738,6 @@
 
 
         .pixel-link:hover {
-
             background: #171717;
 
             border-color: #ffffff;
@@ -908,12 +746,11 @@
 
         /* =================================================
            MOBILE
-        ================================================== */
+        ================================================= */
 
         @media (max-width: 700px) {
 
             .pixel-tabs {
-
                 top: 12px;
 
                 right: 12px;
@@ -933,7 +770,6 @@
 
 
             .pixel-tab {
-
                 min-width: 55px;
 
                 height: 32px;
@@ -946,7 +782,6 @@
 
 
             .pixel-page {
-
                 padding:
                     80px
                     15px
@@ -955,29 +790,32 @@
 
 
             .username-png {
-
-                width: 270px;
+                width: 280px;
             }
 
 
             .waveform-wrapper {
+                width: 92vw;
+            }
 
-                width: 96vw;
 
-                padding: 20px;
+            .wave-border {
+                left: -15px;
+                right: -15px;
+
+                top: -15px;
+                bottom: -15px;
             }
 
 
             .discord-live-card {
-
-                width: 92vw;
+                width: 100%;
 
                 padding: 18px;
             }
 
 
             .pixel-panel {
-
                 width: 92vw;
 
                 padding:
@@ -987,9 +825,7 @@
 
 
             .link-grid {
-
-                grid-template-columns:
-                    1fr;
+                grid-template-columns: 1fr;
             }
 
         }
@@ -1003,7 +839,7 @@
 
 
     <!-- =================================================
-         STAR BACKGROUND
+         BACKGROUND
     ================================================== -->
 
     <div
@@ -1011,10 +847,6 @@
         aria-hidden="true"
     ></div>
 
-
-    <!-- =================================================
-         METEORS
-    ================================================== -->
 
     <div
         id="meteors"
@@ -1097,8 +929,6 @@
             <div class="live-content">
 
 
-                <!-- RALKERIE PNG -->
-
                 <img
                     class="username-png"
                     src="./assets/images/username.png"
@@ -1107,22 +937,19 @@
 
 
                 <!-- =================================================
-                     VISUALIZER + DISCORD
+                     WAVEFORM WRAPPER
+
+                     The waveform is generated around THIS CARD.
                 ================================================== -->
 
                 <div
-                    class="waveform-wrapper"
                     id="waveform-wrapper"
+                    class="waveform-wrapper"
                 >
 
-                    <!--
-                        waveform.js automatically creates
-                        the animated bars here.
-                    -->
-
                     <div
-                        class="discord-card-container"
                         id="discord-card-container"
+                        class="discord-card-container"
                     >
 
                         <div class="discord-live-card">
@@ -1155,11 +982,9 @@
                     MUSIC
                 </p>
 
-
                 <h1>
                     NOW PLAYING
                 </h1>
-
 
                 <div class="music-card">
 
@@ -1167,13 +992,11 @@
                         class="music-cover"
                     ></div>
 
-
                     <div class="music-info">
 
                         <strong>
                             No song playing
                         </strong>
-
 
                         <span>
                             Spotify
@@ -1203,14 +1026,11 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     LINKS
                 </h1>
 
-
                 <div class="link-grid">
-
 
                     <a
                         href="#"
@@ -1245,7 +1065,6 @@
                         OTHER
                     </a>
 
-
                 </div>
 
             </div>
@@ -1268,11 +1087,9 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     TOOLS
                 </h1>
-
 
                 <p class="pixel-description">
                     Tools and projects will go here.
@@ -1298,11 +1115,9 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     ABOUT
                 </h1>
-
 
                 <p class="pixel-description">
                     Welcome to my little corner
@@ -1313,12 +1128,11 @@
 
         </section>
 
-
     </main>
 
 
     <!-- =================================================
-         JAVASCRIPT
+         SCRIPTS
     ================================================== -->
 
     <script src="./js/stars.js"></script>
@@ -1330,7 +1144,6 @@
     <script src="./js/main.js"></script>
 
     <script src="./js/discord.js"></script>
-
 
 </body>
 
