@@ -1,11 +1,12 @@
 /* =====================================================
    RALKERIE DISCORD
-   STABLE REFRESH VERSION
+   STABLE + FAST VERSION
 
-   - Keeps the same Discord card element
-   - Prevents 10-second rectangle/stretch glitch
-   - Keeps waveform attached
-   - Updates Discord information without rebuilding
+   - Loads Discord immediately
+   - Keeps the same card alive
+   - Refreshes data every 10 seconds
+   - Never replaces the card
+   - Won't get stuck on Loading
    - Local clock updates every second
 ===================================================== */
 
@@ -30,13 +31,13 @@
        CONTAINER
     ===================================================== */
 
-    const cardContainer =
+    const container =
         document.getElementById(
             "discord-card-container"
         );
 
 
-    if (!cardContainer) {
+    if (!container) {
 
         console.error(
             "Ralkerie: Discord container not found."
@@ -47,28 +48,8 @@
 
 
     console.log(
-        "Ralkerie Discord loaded."
+        "Ralkerie Discord starting..."
     );
-
-
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
-    function escapeHTML(value) {
-
-        const div =
-            document.createElement(
-                "div"
-            );
-
-        div.textContent =
-            value == null
-                ? ""
-                : String(value);
-
-        return div.innerHTML;
-    }
 
 
     /* =====================================================
@@ -110,7 +91,8 @@
 
     function getGame(activities) {
 
-        if (!activities) {
+        if (!Array.isArray(activities)) {
+
             return null;
         }
 
@@ -140,33 +122,34 @@
 
 
     /* =====================================================
-       CREATE CARD ONCE
+       CREATE CARD
     ===================================================== */
 
     function createCard() {
 
-        let card =
-            cardContainer.querySelector(
-                ".discord-live-card"
-            );
-
-
         /*
          * IMPORTANT:
          *
-         * Only create the card if it
-         * doesn't already exist.
+         * Search the ENTIRE container.
          *
-         * This prevents the waveform
-         * from being destroyed every
-         * 10 seconds.
+         * The waveform may wrap the card.
          */
+
+        let card =
+            container.querySelector(
+                ".discord-live-card"
+            );
+
 
         if (card) {
 
             return card;
         }
 
+
+        /* =================================================
+           CREATE
+        ================================================= */
 
         card =
             document.createElement(
@@ -266,13 +249,10 @@
 
 
         /*
-         * Add the card directly.
-         *
-         * The waveform script will
-         * detect it and wrap it once.
+         * Add directly to container.
          */
 
-        cardContainer.appendChild(
+        container.appendChild(
             card
         );
 
@@ -282,22 +262,22 @@
 
 
     /* =====================================================
-       UPDATE EXISTING CARD
+       UPDATE CARD
     ===================================================== */
 
-    function showDiscord(data) {
-
-        const user =
-            data.discord_user;
-
+    function updateCard(data) {
 
         const card =
             createCard();
 
 
         /* =================================================
-           USERNAME
+           USER
         ================================================= */
+
+        const user =
+            data.discord_user || {};
+
 
         const username =
             user.global_name ||
@@ -336,21 +316,9 @@
 
         if (statusElement) {
 
-            /*
-             * Remove old status classes.
-             */
-
-            statusElement.classList.remove(
-                "status-online",
-                "status-idle",
-                "status-dnd",
-                "status-offline"
-            );
-
-
-            statusElement.classList.add(
-                `status-${status}`
-            );
+            statusElement.className =
+                "discord-status " +
+                `status-${status}`;
 
 
             statusElement.textContent =
@@ -362,10 +330,14 @@
            AVATAR
         ================================================= */
 
-        let avatar;
+        let avatar =
+            "https://cdn.discordapp.com/embed/avatars/0.png";
 
 
-        if (user.avatar) {
+        if (
+            user.avatar &&
+            user.id
+        ) {
 
             avatar =
                 "https://cdn.discordapp.com/avatars/" +
@@ -373,11 +345,6 @@
                 "/" +
                 user.avatar +
                 ".png?size=256";
-
-        } else {
-
-            avatar =
-                "https://cdn.discordapp.com/embed/avatars/0.png";
         }
 
 
@@ -387,13 +354,15 @@
             );
 
 
-        if (
-            avatarElement &&
-            avatarElement.src !== avatar
-        ) {
+        if (avatarElement) {
 
-            avatarElement.src =
-                avatar;
+            if (
+                avatarElement.src !== avatar
+            ) {
+
+                avatarElement.src =
+                    avatar;
+            }
         }
 
 
@@ -407,7 +376,7 @@
             );
 
 
-        const activity =
+        const activityBox =
             card.querySelector(
                 ".discord-activity"
             );
@@ -421,20 +390,22 @@
 
         if (
             game &&
-            activity &&
+            activityBox &&
             activityText
         ) {
 
-            activity.hidden =
+            activityBox.hidden =
                 false;
 
 
             activityText.textContent =
-                game.name;
+                game.name || "Unknown";
 
-        } else if (activity) {
+        } else if (
+            activityBox
+        ) {
 
-            activity.hidden =
+            activityBox.hidden =
                 true;
         }
 
@@ -506,17 +477,18 @@
                     "";
             }
 
-        } else if (spotifyBox) {
+        } else if (
+            spotifyBox
+        ) {
 
             spotifyBox.hidden =
                 true;
         }
 
 
-        /*
-         * Update clock without
-         * touching card structure.
-         */
+        /* =================================================
+           CLOCK
+        ================================================= */
 
         updateClock();
     }
@@ -530,6 +502,11 @@
 
         try {
 
+            console.log(
+                "Ralkerie: fetching Discord..."
+            );
+
+
             const response =
                 await fetch(
                     API_URL,
@@ -542,7 +519,8 @@
             if (!response.ok) {
 
                 throw new Error(
-                    `HTTP ${response.status}`
+                    "HTTP " +
+                    response.status
                 );
             }
 
@@ -552,6 +530,7 @@
 
 
             if (
+                !result ||
                 !result.success ||
                 !result.data
             ) {
@@ -562,14 +541,20 @@
             }
 
 
-            showDiscord(
+            updateCard(
                 result.data
             );
+
+
+            console.log(
+                "Ralkerie: Discord updated."
+            );
+
 
         } catch (error) {
 
             console.error(
-                "Discord error:",
+                "Ralkerie Discord error:",
                 error
             );
 
@@ -577,15 +562,19 @@
             /*
              * IMPORTANT:
              *
-             * Do NOT destroy the card
-             * when the API temporarily
-             * fails.
+             * Don't destroy the card.
              *
-             * Just update its status.
+             * Just show offline/unavailable.
              */
 
             const card =
                 createCard();
+
+
+            const name =
+                card.querySelector(
+                    ".discord-name"
+                );
 
 
             const status =
@@ -594,38 +583,51 @@
                 );
 
 
+            if (name) {
+
+                name.textContent =
+                    "DISCORD";
+            }
+
+
             if (status) {
 
-                status.classList.remove(
-                    "status-online",
-                    "status-idle",
-                    "status-dnd"
-                );
-
-
-                status.classList.add(
-                    "status-offline"
-                );
+                status.className =
+                    "discord-status status-offline";
 
 
                 status.textContent =
                     "UNAVAILABLE";
             }
+
+
+            updateClock();
         }
     }
 
 
     /* =====================================================
-       START
+       INITIAL CARD
+
+       Create it immediately so the page
+       never waits forever.
     ===================================================== */
 
     createCard();
+
+
+    updateClock();
+
+
+    /* =====================================================
+       FIRST DISCORD REQUEST
+    ===================================================== */
 
     loadDiscord();
 
 
     /* =====================================================
-       DISCORD REFRESH
+       REFRESH EVERY 10 SECONDS
     ===================================================== */
 
     setInterval(
@@ -635,7 +637,7 @@
 
 
     /* =====================================================
-       CLOCK
+       CLOCK EVERY SECOND
     ===================================================== */
 
     setInterval(
@@ -643,5 +645,9 @@
         1000
     );
 
+
+    console.log(
+        "Ralkerie Discord ready."
+    );
 
 })();
