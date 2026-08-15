@@ -1,5 +1,14 @@
 /* =====================================================
    RALKERIE — EYE OF CTHULHU EASTER EGG
+
+   - Small eye button beside LIVE
+   - Click to summon giant Eye of Cthulhu
+   - Dashes around the entire screen
+   - Bounces off screen edges
+   - Faces the direction it is moving
+   - Plays eoc.mp3
+   - Automatically disappears
+   - ESC closes it
 ===================================================== */
 
 (() => {
@@ -12,16 +21,28 @@
     ================================================= */
 
     const button =
-        document.getElementById("eoc-button");
+        document.getElementById(
+            "eoc-button"
+        );
+
 
     const eye =
-        document.getElementById("eoc-easter-egg");
+        document.getElementById(
+            "eoc-easter-egg"
+        );
+
 
     const eyeImage =
-        eye?.querySelector("img");
+        eye
+            ? eye.querySelector("img")
+            : null;
 
 
-    if (!button || !eye || !eyeImage) {
+    if (
+        !button ||
+        !eye ||
+        !eyeImage
+    ) {
 
         console.error(
             "Ralkerie EoC: required elements not found."
@@ -33,14 +54,13 @@
 
     /* =================================================
        AUDIO
-
-       CHANGE THIS IF YOUR MP3 HAS A DIFFERENT NAME
     ================================================= */
 
     const audio =
         new Audio(
             "./assets/audio/eoc.mp3"
         );
+
 
     audio.preload = "auto";
 
@@ -49,28 +69,61 @@
        SETTINGS
     ================================================= */
 
-    const DASH_DURATION = 2600;
-
-    const MIN_SPEED = 8;
-
-    const MAX_SPEED = 18;
+    const DASH_DURATION =
+        2600;
 
 
-    let active = false;
+    const MIN_SPEED =
+        8;
 
-    let animationFrame = null;
 
-    let endTimer = null;
+    const MAX_SPEED =
+        18;
 
-    let x = 0;
 
-    let y = 0;
+    /*
+     * Your PNG faces opposite the movement
+     * direction, so we rotate it 180 degrees.
+     */
 
-    let vx = 0;
+    const ROTATION_OFFSET =
+        180;
 
-    let vy = 0;
 
-    let lastTime = 0;
+    /* =================================================
+       STATE
+    ================================================= */
+
+    let active =
+        false;
+
+
+    let animationFrame =
+        null;
+
+
+    let endTimer =
+        null;
+
+
+    let x =
+        0;
+
+
+    let y =
+        0;
+
+
+    let vx =
+        0;
+
+
+    let vy =
+        0;
+
+
+    let lastTime =
+        0;
 
 
     /* =================================================
@@ -83,6 +136,7 @@
             Math.random() *
             Math.PI *
             2;
+
 
         const speed =
             MIN_SPEED +
@@ -97,6 +151,7 @@
             Math.cos(angle) *
             speed;
 
+
         vy =
             Math.sin(angle) *
             speed;
@@ -104,7 +159,7 @@
 
 
     /* =================================================
-       START
+       START EYE
     ================================================= */
 
     function activateEye() {
@@ -115,20 +170,23 @@
         }
 
 
-        active = true;
+        active =
+            true;
 
 
         /* ---------------------------------------------
-           START IN RANDOM AREA
+           RANDOM START POSITION
         --------------------------------------------- */
 
-        const margin = 100;
+        const margin =
+            120;
 
 
         x =
             margin +
             Math.random() *
-            (
+            Math.max(
+                1,
                 window.innerWidth -
                 margin * 2
             );
@@ -137,11 +195,16 @@
         y =
             margin +
             Math.random() *
-            (
+            Math.max(
+                1,
                 window.innerHeight -
                 margin * 2
             );
 
+
+        /* ---------------------------------------------
+           RANDOM MOVEMENT
+        --------------------------------------------- */
 
         chooseDirection();
 
@@ -150,11 +213,14 @@
            SHOW
         --------------------------------------------- */
 
-        eye.classList.add("active");
+        eye.classList.add(
+            "active"
+        );
 
 
         eye.style.left =
             `${x}px`;
+
 
         eye.style.top =
             `${y}px`;
@@ -165,16 +231,28 @@
 
 
         /* ---------------------------------------------
-           AUDIO
+           RESET IMAGE ROTATION
         --------------------------------------------- */
 
-        audio.currentTime = 0;
-
-        audio.play().catch(() => {});
+        eyeImage.style.transform =
+            "rotate(0deg)";
 
 
         /* ---------------------------------------------
-           START MOVEMENT
+           PLAY SOUND
+        --------------------------------------------- */
+
+        audio.currentTime =
+            0;
+
+
+        audio.play().catch(
+            () => {}
+        );
+
+
+        /* ---------------------------------------------
+           START ANIMATION
         --------------------------------------------- */
 
         lastTime =
@@ -188,7 +266,7 @@
 
 
         /* ---------------------------------------------
-           END
+           AUTO END
         --------------------------------------------- */
 
         clearTimeout(
@@ -205,10 +283,12 @@
 
 
     /* =================================================
-       MOVEMENT
+       MOVE EYE
     ================================================= */
 
-    function moveEye(time) {
+    function moveEye(
+        time
+    ) {
 
         if (!active) {
 
@@ -218,7 +298,8 @@
 
         const delta =
             Math.min(
-                time - lastTime,
+                time -
+                lastTime,
                 40
             );
 
@@ -227,9 +308,9 @@
             time;
 
 
-        /*
-         * Convert velocity to frame movement.
-         */
+        /* ---------------------------------------------
+           MOVE
+        --------------------------------------------- */
 
         x +=
             vx *
@@ -243,95 +324,129 @@
             16.67;
 
 
-        /*
-         * Eye dimensions.
-         */
+        /* ---------------------------------------------
+           GET SIZE
+        --------------------------------------------- */
 
         const width =
             eye.offsetWidth ||
             180;
+
 
         const height =
             eye.offsetHeight ||
             180;
 
 
-        /*
-         * Bounce around the ENTIRE screen.
-         */
+        const halfWidth =
+            width / 2;
+
+
+        const halfHeight =
+            height / 2;
+
+
+        /* ---------------------------------------------
+           LEFT WALL
+        --------------------------------------------- */
 
         if (
-            x <= width / 2
+            x <= halfWidth
         ) {
 
             x =
-                width / 2;
+                halfWidth;
+
 
             vx =
                 Math.abs(vx);
 
-            chooseVerticalDirection();
+
+            changeVerticalDirection();
         }
 
+
+        /* ---------------------------------------------
+           RIGHT WALL
+        --------------------------------------------- */
 
         if (
             x >=
             window.innerWidth -
-            width / 2
+            halfWidth
         ) {
 
             x =
                 window.innerWidth -
-                width / 2;
+                halfWidth;
+
 
             vx =
                 -Math.abs(vx);
 
-            chooseVerticalDirection();
+
+            changeVerticalDirection();
         }
 
 
+        /* ---------------------------------------------
+           TOP WALL
+        --------------------------------------------- */
+
         if (
-            y <= height / 2
+            y <= halfHeight
         ) {
 
             y =
-                height / 2;
+                halfHeight;
+
 
             vy =
                 Math.abs(vy);
 
-            chooseHorizontalDirection();
+
+            changeHorizontalDirection();
         }
 
+
+        /* ---------------------------------------------
+           BOTTOM WALL
+        --------------------------------------------- */
 
         if (
             y >=
             window.innerHeight -
-            height / 2
+            halfHeight
         ) {
 
             y =
                 window.innerHeight -
-                height / 2;
+                halfHeight;
+
 
             vy =
                 -Math.abs(vy);
 
-            chooseHorizontalDirection();
+
+            changeHorizontalDirection();
         }
 
 
+        /* ---------------------------------------------
+           POSITION
+        --------------------------------------------- */
+
         eye.style.left =
             `${x}px`;
+
 
         eye.style.top =
             `${y}px`;
 
 
-        /*
-         * Rotate toward movement.
-         */
+        /* ---------------------------------------------
+           FACE MOVEMENT DIRECTION
+        --------------------------------------------- */
 
         const angle =
             Math.atan2(
@@ -343,8 +458,12 @@
 
 
         eyeImage.style.transform =
-            `rotate(${angle}deg)`;
+            `rotate(${angle + ROTATION_OFFSET}deg)`;
 
+
+        /* ---------------------------------------------
+           NEXT FRAME
+        --------------------------------------------- */
 
         animationFrame =
             requestAnimationFrame(
@@ -354,13 +473,16 @@
 
 
     /* =================================================
-       DIRECTION HELPERS
+       CHANGE VERTICAL DIRECTION
     ================================================= */
 
-    function chooseVerticalDirection() {
+    function changeVerticalDirection() {
 
         const speed =
-            Math.abs(vy);
+            Math.max(
+                Math.abs(vy),
+                MIN_SPEED
+            );
 
 
         vy =
@@ -369,17 +491,21 @@
                     ? 1
                     : -1
             ) *
-            Math.max(
-                speed,
-                MIN_SPEED
-            );
+            speed;
     }
 
 
-    function chooseHorizontalDirection() {
+    /* =================================================
+       CHANGE HORIZONTAL DIRECTION
+    ================================================= */
+
+    function changeHorizontalDirection() {
 
         const speed =
-            Math.abs(vx);
+            Math.max(
+                Math.abs(vx),
+                MIN_SPEED
+            );
 
 
         vx =
@@ -388,10 +514,7 @@
                     ? 1
                     : -1
             ) *
-            Math.max(
-                speed,
-                MIN_SPEED
-            );
+            speed;
     }
 
 
@@ -401,7 +524,8 @@
 
     function deactivateEye() {
 
-        active = false;
+        active =
+            false;
 
 
         clearTimeout(
@@ -409,39 +533,63 @@
         );
 
 
-        if (animationFrame) {
+        endTimer =
+            null;
+
+
+        if (
+            animationFrame
+        ) {
 
             cancelAnimationFrame(
                 animationFrame
             );
 
-            animationFrame = null;
+
+            animationFrame =
+                null;
         }
 
 
+        /* ---------------------------------------------
+           STOP AUDIO
+        --------------------------------------------- */
+
         audio.pause();
 
-        audio.currentTime = 0;
 
+        audio.currentTime =
+            0;
+
+
+        /* ---------------------------------------------
+           HIDE
+        --------------------------------------------- */
 
         eye.classList.remove(
             "active"
         );
 
 
+        /* ---------------------------------------------
+           RESET ROTATION
+        --------------------------------------------- */
+
         eyeImage.style.transform =
             "rotate(0deg)";
 
 
-        /*
-         * Reset position after hiding.
-         */
+        /* ---------------------------------------------
+           RESET POSITION
+        --------------------------------------------- */
 
         eye.style.left =
             "50%";
 
+
         eye.style.top =
             "50%";
+
 
         eye.style.transform =
             "translate(-50%, -50%) scale(0)";
@@ -449,7 +597,7 @@
 
 
     /* =================================================
-       CLICK
+       BUTTON CLICK
     ================================================= */
 
     button.addEventListener(
@@ -460,14 +608,14 @@
 
             event.stopPropagation();
 
-            activateEye();
 
+            activateEye();
         }
     );
 
 
     /* =================================================
-       ALSO ALLOW CLICKING THE BIG EYE
+       BIG EYE CLICK
     ================================================= */
 
     eye.addEventListener(
@@ -478,8 +626,8 @@
 
             event.stopPropagation();
 
-            deactivateEye();
 
+            deactivateEye();
         }
     );
 
@@ -499,7 +647,6 @@
 
                 deactivateEye();
             }
-
         }
     );
 
@@ -522,38 +669,69 @@
                 eye.offsetWidth ||
                 180;
 
+
             const height =
                 eye.offsetHeight ||
                 180;
 
 
+            const halfWidth =
+                width / 2;
+
+
+            const halfHeight =
+                height / 2;
+
+
             x =
                 Math.max(
-                    width / 2,
+                    halfWidth,
                     Math.min(
                         x,
                         window.innerWidth -
-                        width / 2
+                        halfWidth
                     )
                 );
 
 
             y =
                 Math.max(
-                    height / 2,
+                    halfHeight,
                     Math.min(
                         y,
                         window.innerHeight -
-                        height / 2
+                        halfHeight
                     )
                 );
-
         },
         {
             passive: true
         }
     );
 
+
+    /* =================================================
+       PAGE VISIBILITY
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.hidden &&
+                active
+            ) {
+
+                deactivateEye();
+            }
+        }
+    );
+
+
+    /* =================================================
+       READY
+    ================================================= */
 
     console.log(
         "Ralkerie Eye of Cthulhu easter egg ready."
