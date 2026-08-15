@@ -1,9 +1,6 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   LOW CPU / LOW GPU VERSION
-
-   Four-sided equalizer attached directly
-   to the Discord card.
+   LOW CPU + FULL VISUAL QUALITY
 ===================================================== */
 
 
@@ -121,22 +118,60 @@
 
     width: 3px;
 
-    height: 1px;
+    height: 3px;
 
     margin: 0;
 
     padding: 0;
 
-    background: #ff63ca;
-
-    opacity: 0.85;
-
     pointer-events: none;
 
-    /*
-     * GPU compositing.
+    opacity: 0.95;
 
-     * Animation uses ONLY transform.
+
+    background:
+        linear-gradient(
+            to bottom,
+
+            #ffffff 0%,
+
+            #ffffff 18%,
+
+            #ffe0f5 35%,
+
+            #ff9de0 55%,
+
+            #ff63ca 78%,
+
+            #ff2db5 100%
+        );
+
+
+    box-shadow:
+
+        0 0 2px #ffffff,
+
+        0 0 5px #ffffff,
+
+        0 0 8px #ffb0e7,
+
+        0 0 12px #ff5bc6,
+
+        0 0 16px
+        rgba(
+            255,
+            45,
+            181,
+            0.55
+        );
+
+
+    border-radius: 1px;
+
+
+    /*
+     * Only transform changes during
+     * animation.
      */
 
     will-change: transform;
@@ -147,78 +182,83 @@
 
 
 /* =====================================================
-   TOP
+   TOP BARS
 
-   BASE = BOTTOM
+   BASE = CARD
+   GROW UP
 ===================================================== */
 
 .wave-side-top .wave-bar {
 
     bottom: 0;
 
-    transform-origin: center bottom;
+    transform-origin:
+        center bottom;
 
 }
 
 
 /* =====================================================
-   BOTTOM
+   BOTTOM BARS
 
-   BASE = TOP
+   BASE = CARD
+   GROW DOWN
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
 
     top: 0;
 
-    transform-origin: center top;
+    transform-origin:
+        center top;
 
 }
 
 
 /* =====================================================
-   LEFT
+   LEFT BARS
 
-   BASE = RIGHT
+   BASE = CARD
+   GROW LEFT
 ===================================================== */
 
 .wave-side-left .wave-bar {
 
     right: 0;
 
-    width: 1px;
+    width: 3px;
 
     height: 3px;
 
-    transform-origin: right center;
+    transform-origin:
+        right center;
 
 }
 
 
 /* =====================================================
-   RIGHT
+   RIGHT BARS
 
-   BASE = LEFT
+   BASE = CARD
+   GROW RIGHT
 ===================================================== */
 
 .wave-side-right .wave-bar {
 
     left: 0;
 
-    width: 1px;
+    width: 3px;
 
     height: 3px;
 
-    transform-origin: left center;
+    transform-origin:
+        left center;
 
 }
 
 
 /* =====================================================
    DISCORD CARD
-
-   Keeps the waveform attached exactly
-   to the card.
 ===================================================== */
 
 .discord-live-card {
@@ -240,13 +280,15 @@
 
         width: 2px;
 
+        height: 2px;
+
     }
 
 
     .wave-side-left .wave-bar,
     .wave-side-right .wave-bar {
 
-        width: 1px;
+        width: 2px;
 
         height: 2px;
 
