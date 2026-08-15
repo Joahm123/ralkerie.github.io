@@ -1,5 +1,5 @@
 /* =====================================================
-   STAR BACKGROUND
+   RALKERIE STARS
 ===================================================== */
 
 #stars {
@@ -16,47 +16,30 @@
 
     z-index: 0;
 
-    /*
-       NO PINK BACKGROUND.
-       Keep the background transparent.
-    */
-
     background: transparent;
 }
 
 
 /* =====================================================
-   STARS
-   PINK CENTER
-   PINK MIDDLE
-   WHITE EDGE
+   STAR
 ===================================================== */
 
 .star {
     position: absolute;
 
-    border-radius: 50%;
+    display: block;
 
-    /*
-       Pink center.
-    */
+    border-radius: 50%;
 
     background:
         radial-gradient(
             circle,
-
-            #ff69d2 0%,
-            #ff55c9 35%,
-
-            #ff8dde 55%,
-
-            #ffffff 78%,
-            #ffffff 100%
+            #ffffff 0%,
+            #ffffff 30%,
+            #ffb8e9 55%,
+            #ff69d2 75%,
+            #ff3fbd 100%
         );
-
-    /*
-       White outside edge + pink glow.
-    */
 
     box-shadow:
         0 0 2px #ffffff,
@@ -66,61 +49,46 @@
 
     opacity: 0.85;
 
-    /*
-       CSS handles movement.
-    */
+    pointer-events: none;
 
+    will-change: transform;
+
+    contain: layout paint;
+}
+
+
+/* =====================================================
+   SPARKLE
+===================================================== */
+
+.star:nth-child(3n) {
     animation:
-        starMove
-        var(--star-speed)
-        linear
-        infinite,
-
-        starSparkle
-        var(--sparkle-speed)
-        ease-in-out
-        infinite;
-
-    will-change:
-        transform,
-        opacity;
-
-    contain:
-        layout paint;
+        starSparkle 1.8s ease-in-out infinite;
 }
 
-
-/* =====================================================
-   STAR MOVEMENT
-===================================================== */
-
-@keyframes starMove {
-
-    from {
-        transform:
-            translate3d(0, 0, 0);
-    }
-
-    to {
-        transform:
-            translate3d(110vw, 0, 0);
-    }
+.star:nth-child(3n + 1) {
+    animation:
+        starSparkle 2.7s ease-in-out infinite;
 }
 
+.star:nth-child(3n + 2) {
+    animation:
+        starSparkle 3.4s ease-in-out infinite;
+}
 
-/* =====================================================
-   STAR SPARKLE
-===================================================== */
 
 @keyframes starSparkle {
 
-    0%,
-    100% {
-        opacity: 0.45;
+    0% {
+        opacity: 0.35;
     }
 
     50% {
         opacity: 1;
+    }
+
+    100% {
+        opacity: 0.35;
     }
 }
 
@@ -135,5 +103,6 @@
 
     .star {
         animation: none;
+        opacity: 0.8;
     }
 }
