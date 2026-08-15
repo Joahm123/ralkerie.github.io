@@ -1,3 +1,4 @@
+
 /* =====================================================
    RALKERIE MAIN CSS
    TERRARIA FONT
@@ -9,9 +10,11 @@
 ===================================================== */
 
 @font-face {
+
     font-family: "AndyB";
 
-    src: url("../assets/fonts/ANDYB.TTF")
+    src:
+        url("../assets/fonts/ANDYB.TTF")
         format("truetype");
 
     font-weight: normal;
@@ -27,12 +30,14 @@
 ===================================================== */
 
 * {
+
     box-sizing: border-box;
 }
 
 
 html,
 body {
+
     width: 100%;
     height: 100%;
 
@@ -42,6 +47,7 @@ body {
 
 
 body {
+
     background: #050505;
 
     color: #ffffff;
@@ -58,14 +64,20 @@ body {
 
 
 /* =====================================================
-   MAIN
+   MAIN CONTENT
 ===================================================== */
 
 main {
+
     position: relative;
 
     width: 100vw;
     height: 100vh;
+
+    /*
+       Website content is above stars
+       and meteors.
+    */
 
     z-index: 10;
 
@@ -78,6 +90,7 @@ main {
 ===================================================== */
 
 .pixel-tabs {
+
     position: fixed;
 
     top: 20px;
@@ -115,6 +128,7 @@ main {
 ===================================================== */
 
 .pixel-tab {
+
     display: inline-flex;
 
     align-items: center;
@@ -144,8 +158,6 @@ main {
 
     font-weight: normal;
 
-    letter-spacing: 0;
-
     cursor: pointer;
 
     box-shadow:
@@ -158,22 +170,16 @@ main {
 }
 
 
-/* =====================================================
-   TAB HOVER
-===================================================== */
-
 .pixel-tab:hover {
+
     background: #161616;
 
     color: #ffffff;
 }
 
 
-/* =====================================================
-   ACTIVE TAB
-===================================================== */
-
 .pixel-tab.active {
+
     background: #0b0b0b;
 
     color: #ffffff;
@@ -185,10 +191,11 @@ main {
 
 
 /* =====================================================
-   PAGE
+   PAGES
 ===================================================== */
 
 .pixel-page {
+
     position: fixed;
 
     inset: 0;
@@ -208,10 +215,13 @@ main {
         30px;
 
     pointer-events: none;
+
+    z-index: 10;
 }
 
 
 .pixel-page.active {
+
     display: flex;
 }
 
@@ -221,6 +231,7 @@ main {
 ===================================================== */
 
 .pixel-panel {
+
     position: relative;
 
     width:
@@ -250,6 +261,8 @@ main {
     text-align: center;
 
     pointer-events: auto;
+
+    z-index: 11;
 }
 
 
@@ -258,6 +271,7 @@ main {
 ===================================================== */
 
 .pixel-label {
+
     margin:
         0 0 8px;
 
@@ -268,8 +282,6 @@ main {
 
     font-size: 18px;
 
-    letter-spacing: 1px;
-
     color: #aaaaaa;
 }
 
@@ -279,6 +291,7 @@ main {
 ===================================================== */
 
 .pixel-panel h1 {
+
     margin:
         0 0 15px;
 
@@ -296,8 +309,6 @@ main {
 
     font-weight: normal;
 
-    letter-spacing: 1px;
-
     color: #ffffff;
 
     text-shadow:
@@ -310,6 +321,7 @@ main {
 ===================================================== */
 
 .pixel-description {
+
     margin: 0;
 
     color: #bdbdbd;
@@ -330,6 +342,7 @@ main {
 ===================================================== */
 
 .music-card {
+
     display: flex;
 
     align-items: center;
@@ -350,6 +363,7 @@ main {
 
 
 .music-cover {
+
     width: 55px;
     height: 55px;
 
@@ -363,6 +377,7 @@ main {
 
 
 .music-info {
+
     display: flex;
 
     flex-direction: column;
@@ -372,6 +387,7 @@ main {
 
 
 .music-info strong {
+
     color: #ffffff;
 
     font-family:
@@ -384,6 +400,7 @@ main {
 
 
 .music-info span {
+
     color: #888888;
 
     font-family:
@@ -400,6 +417,7 @@ main {
 ===================================================== */
 
 .link-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -418,6 +436,7 @@ main {
 
 
 .pixel-link {
+
     display: flex;
 
     align-items: center;
@@ -449,9 +468,198 @@ main {
 
 
 .pixel-link:hover {
+
     background: #171717;
 
     border-color: #ffffff;
+}
+
+
+/* =====================================================
+   DISCORD LIVE CARD
+===================================================== */
+
+.discord-live-card {
+
+    width:
+        min(
+            620px,
+            90vw
+        );
+
+    padding: 24px;
+
+    background: #050505;
+
+    border:
+        2px solid #ffffff;
+
+    box-shadow:
+        6px 6px 0 #000000;
+
+    text-align: left;
+}
+
+
+.discord-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+
+.discord-avatar {
+
+    width: 76px;
+    height: 76px;
+
+    object-fit: cover;
+
+    image-rendering: pixelated;
+
+    border:
+        2px solid #ffffff;
+}
+
+
+.discord-name {
+
+    font-size: 28px;
+
+    color: #ffffff;
+}
+
+
+.discord-status {
+
+    margin-top: 5px;
+
+    font-size: 14px;
+}
+
+
+.status-online {
+
+    color: #7cff7c;
+}
+
+
+.status-idle {
+
+    color: #ffd65c;
+}
+
+
+.status-dnd {
+
+    color: #ff6666;
+}
+
+
+.status-offline {
+
+    color: #888888;
+}
+
+
+/* =====================================================
+   DISCORD ACTIVITY
+===================================================== */
+
+.discord-activity {
+
+    margin-top: 24px;
+
+    padding-top: 18px;
+
+    border-top:
+        2px solid #222222;
+}
+
+
+.discord-activity-title,
+.discord-section-label {
+
+    font-size: 13px;
+
+    color: #ff72cf;
+
+    letter-spacing: 2px;
+}
+
+
+.discord-activity-text {
+
+    margin-top: 6px;
+
+    font-size: 22px;
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   SPOTIFY
+===================================================== */
+
+.discord-spotify {
+
+    margin-top: 20px;
+
+    padding-top: 18px;
+
+    border-top:
+        2px solid #222222;
+}
+
+
+.spotify-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 10px;
+}
+
+
+.spotify-art {
+
+    width: 58px;
+    height: 58px;
+
+    object-fit: cover;
+
+    image-rendering: pixelated;
+}
+
+
+.spotify-song {
+
+    font-size: 18px;
+
+    color: #ffffff;
+}
+
+
+.spotify-artist {
+
+    margin-top: 3px;
+
+    font-size: 14px;
+
+    color: #aaaaaa;
+}
+
+
+.hidden {
+
+    display: none !important;
 }
 
 
@@ -462,6 +670,7 @@ main {
 @media (max-width: 700px) {
 
     .pixel-tabs {
+
         top: 12px;
 
         right: 12px;
@@ -481,6 +690,7 @@ main {
 
 
     .pixel-tab {
+
         min-width: 55px;
 
         height: 32px;
@@ -493,6 +703,7 @@ main {
 
 
     .pixel-page {
+
         padding:
             80px
             15px
@@ -501,6 +712,7 @@ main {
 
 
     .pixel-panel {
+
         width: 92vw;
 
         padding:
@@ -510,6 +722,7 @@ main {
 
 
     .link-grid {
+
         grid-template-columns:
             1fr;
     }
@@ -525,210 +738,8 @@ main {
 ) {
 
     .pixel-tab {
+
         transition: none;
     }
-}
-```css
-/* =====================================================
-   DISCORD LIVE CARD
-===================================================== */
-
-.discord-live-card {
-
-    width: min(620px, 90vw);
-
-    padding: 24px;
-
-    background: #050505;
-
-    border: 2px solid #ffffff;
-
-    box-shadow:
-        6px 6px 0 #000000;
-
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-.discord-profile {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-}
-
-
-.discord-avatar {
-
-    width: 76px;
-    height: 76px;
-
-    object-fit: cover;
-
-    image-rendering: pixelated;
-
-    border: 2px solid #ffffff;
-
-}
-
-
-.discord-name {
-
-    font-size: 28px;
-
-    color: #ffffff;
-
-}
-
-
-.discord-status {
-
-    margin-top: 5px;
-
-    font-size: 14px;
-
-}
-
-
-/* =====================================================
-   STATUS COLORS
-===================================================== */
-
-.status-online {
-
-    color: #7cff7c;
-
-}
-
-
-.status-idle {
-
-    color: #ffd65c;
-
-}
-
-
-.status-dnd {
-
-    color: #ff6666;
-
-}
-
-
-.status-offline {
-
-    color: #888888;
-
-}
-
-
-/* =====================================================
-   ACTIVITY
-===================================================== */
-
-.discord-activity {
-
-    margin-top: 24px;
-
-    padding-top: 18px;
-
-    border-top: 2px solid #222222;
-
-}
-
-
-.discord-activity-title,
-.discord-section-label {
-
-    font-size: 13px;
-
-    color: #ff72cf;
-
-    letter-spacing: 2px;
-
-}
-
-
-.discord-activity-text {
-
-    margin-top: 6px;
-
-    font-size: 22px;
-
-    color: #ffffff;
-
-}
-
-
-/* =====================================================
-   SPOTIFY
-===================================================== */
-
-.discord-spotify {
-
-    margin-top: 20px;
-
-    padding-top: 18px;
-
-    border-top: 2px solid #222222;
-
-}
-
-
-.spotify-row {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    margin-top: 10px;
-
-}
-
-
-.spotify-art {
-
-    width: 58px;
-    height: 58px;
-
-    object-fit: cover;
-
-    image-rendering: pixelated;
-
-}
-
-
-.spotify-song {
-
-    font-size: 18px;
-
-    color: #ffffff;
-
-}
-
-
-.spotify-artist {
-
-    margin-top: 3px;
-
-    font-size: 14px;
-
-    color: #aaaaaa;
-
-}
-
-
-.hidden {
-
-    display: none !important;
-
 }
 
