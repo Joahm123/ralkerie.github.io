@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,36 +13,226 @@
     <title>Ralkerie</title>
 
 
-    <!-- =================================================
-         CSS
-    ================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="./css/main.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./css/background.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./css/meteors.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./css/waveform.css"
-    >
-
-
-    <!-- =================================================
-         DISCORD CARD CSS
-    ================================================== -->
-
+    <!-- Terraria font -->
     <style>
+
+        @font-face {
+            font-family: "AndyB";
+            src: url("./assets/fonts/ANDYB.TTF")
+                format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+
+        /* =================================================
+           RESET
+        ================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            background: #050505;
+            color: #ffffff;
+
+            font-family:
+                "AndyB",
+                Arial,
+                sans-serif;
+
+            overflow: hidden;
+
+            image-rendering: pixelated;
+        }
+
+
+        /* =================================================
+           BACKGROUND LAYERS
+        ================================================= */
+
+        #stars {
+            position: fixed;
+
+            inset: 0;
+
+            width: 100vw;
+            height: 100vh;
+
+            z-index: 0;
+
+            pointer-events: none;
+        }
+
+
+        #meteors {
+            position: fixed;
+
+            inset: 0;
+
+            width: 100vw;
+            height: 100vh;
+
+            z-index: 1;
+
+            pointer-events: none;
+        }
+
+
+        /* =================================================
+           NAVIGATION
+        ================================================= */
+
+        .pixel-tabs {
+
+            position: fixed;
+
+            top: 20px;
+            right: 24px;
+
+            display: flex;
+
+            flex-direction: row;
+
+            align-items: center;
+
+            gap: 4px;
+
+            padding: 5px;
+
+            z-index: 1000;
+
+            background: #000000;
+
+            border: 2px solid #1c1c1c;
+
+            box-shadow:
+                3px 3px 0 #000000;
+
+            white-space: nowrap;
+
+        }
+
+
+        .pixel-tab {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            height: 36px;
+
+            min-width: 68px;
+
+            padding: 0 13px;
+
+            border: 0;
+
+            background: #000000;
+
+            color: #ffffff;
+
+            font-family:
+                "AndyB",
+                Arial,
+                sans-serif;
+
+            font-size: 18px;
+
+            cursor: pointer;
+
+            box-shadow:
+                inset 2px 2px 0 #222222,
+                inset -2px -2px 0 #000000;
+
+        }
+
+
+        .pixel-tab:hover {
+
+            background: #161616;
+
+        }
+
+
+        .pixel-tab.active {
+
+            background: #0b0b0b;
+
+            box-shadow:
+                inset 0 -2px 0 #ffffff,
+                inset 2px 2px 0 #292929;
+
+        }
+
+
+        /* =================================================
+           MAIN
+        ================================================= */
+
+        main {
+
+            position: relative;
+
+            width: 100vw;
+            height: 100vh;
+
+            z-index: 10;
+
+        }
+
+
+        /* =================================================
+           PAGES
+        ================================================= */
+
+        .pixel-page {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 100vw;
+            height: 100vh;
+
+            padding:
+                100px
+                30px
+                30px;
+
+        }
+
+
+        .pixel-page.active {
+
+            display: flex;
+
+        }
+
+
+        /* =================================================
+           LIVE
+        ================================================= */
 
         .live-content {
 
@@ -61,6 +250,10 @@
 
         }
 
+
+        /* =================================================
+           USERNAME PNG
+        ================================================= */
 
         .username-png {
 
@@ -83,6 +276,10 @@
         }
 
 
+        /* =================================================
+           DISCORD CONTAINER
+        ================================================= */
+
         .discord-card-container {
 
             display: flex;
@@ -96,6 +293,10 @@
         }
 
 
+        /* =================================================
+           DISCORD CARD
+        ================================================= */
+
         .discord-live-card {
 
             width: min(
@@ -105,15 +306,26 @@
 
             padding: 24px;
 
-            background: #050505;
+            background:
+                rgba(
+                    5,
+                    5,
+                    5,
+                    0.92
+                );
 
-            border: 2px solid #ffffff;
+            border:
+                2px solid #ffffff;
 
             box-shadow:
                 6px 6px 0 #000000;
 
         }
 
+
+        /* =================================================
+           DISCORD PROFILE
+        ================================================= */
 
         .discord-profile {
 
@@ -136,7 +348,8 @@
 
             image-rendering: pixelated;
 
-            border: 2px solid #ffffff;
+            border:
+                2px solid #ffffff;
 
         }
 
@@ -187,6 +400,10 @@
         }
 
 
+        /* =================================================
+           GAME ACTIVITY
+        ================================================= */
+
         .discord-activity {
 
             margin-top: 24px;
@@ -220,6 +437,10 @@
 
         }
 
+
+        /* =================================================
+           SPOTIFY
+        ================================================= */
 
         .discord-spotify {
 
@@ -291,8 +512,8 @@
 
 
         /* =================================================
-           LOCAL CLOCK
-        ================================================== */
+           CLOCK
+        ================================================= */
 
         .local-clock {
 
@@ -335,13 +556,274 @@
         }
 
 
+        /* =================================================
+           GENERAL PANELS
+        ================================================= */
+
+        .pixel-panel {
+
+            position: relative;
+
+            width:
+                min(
+                    700px,
+                    85vw
+                );
+
+            padding: 35px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.82
+                );
+
+            border:
+                2px solid #ffffff;
+
+            box-shadow:
+                6px 6px 0 #000000;
+
+            text-align: center;
+
+        }
+
+
+        .pixel-label {
+
+            margin:
+                0 0 8px;
+
+            font-size: 18px;
+
+            color: #aaaaaa;
+
+        }
+
+
+        .pixel-panel h1 {
+
+            margin:
+                0 0 15px;
+
+            font-size:
+                clamp(
+                    36px,
+                    5vw,
+                    64px
+                );
+
+            font-weight: normal;
+
+            color: #ffffff;
+
+            text-shadow:
+                3px 3px 0 #000000;
+
+        }
+
+
+        .pixel-description {
+
+            margin: 0;
+
+            color: #bdbdbd;
+
+            font-size: 18px;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =================================================
+           MUSIC
+        ================================================= */
+
+        .music-card {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-top: 25px;
+
+            padding: 12px;
+
+            background: #080808;
+
+            border:
+                1px solid #333333;
+
+            text-align: left;
+
+        }
+
+
+        .music-cover {
+
+            width: 55px;
+
+            height: 55px;
+
+            flex-shrink: 0;
+
+            background: #151515;
+
+            border:
+                1px solid #444444;
+
+        }
+
+
+        .music-info {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 5px;
+
+        }
+
+
+        .music-info strong {
+
+            color: #ffffff;
+
+            font-size: 17px;
+
+        }
+
+
+        .music-info span {
+
+            color: #888888;
+
+            font-size: 15px;
+
+        }
+
+
+        /* =================================================
+           LINKS
+        ================================================= */
+
+        .link-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap: 8px;
+
+            margin-top: 25px;
+
+        }
+
+
+        .pixel-link {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 45px;
+
+            background: #050505;
+
+            border:
+                1px solid #333333;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 18px;
+
+        }
+
+
+        .pixel-link:hover {
+
+            background: #171717;
+
+            border-color: #ffffff;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
         @media (max-width: 700px) {
 
-            .username-png {
+            .pixel-tabs {
 
-                width: 220px;
+                top: 12px;
 
-                max-width: 65vw;
+                right: 12px;
+
+                left: 12px;
+
+                max-width:
+                    calc(
+                        100vw - 24px
+                    );
+
+                overflow-x: auto;
+
+                justify-content:
+                    flex-start;
+
+            }
+
+
+            .pixel-tab {
+
+                min-width: 55px;
+
+                height: 32px;
+
+                padding:
+                    0 9px;
+
+                font-size: 15px;
+
+            }
+
+
+            .pixel-page {
+
+                padding:
+                    80px
+                    15px
+                    20px;
+
+            }
+
+
+            .pixel-panel {
+
+                width: 92vw;
+
+                padding:
+                    25px
+                    18px;
 
             }
 
@@ -351,6 +833,21 @@
                 width: 92vw;
 
                 padding: 18px;
+
+            }
+
+
+            .username-png {
+
+                width: 220px;
+
+            }
+
+
+            .link-grid {
+
+                grid-template-columns:
+                    1fr;
 
             }
 
@@ -397,7 +894,6 @@
             LIVE
         </button>
 
-
         <button
             class="pixel-tab"
             data-page="music"
@@ -405,7 +901,6 @@
         >
             MUSIC
         </button>
-
 
         <button
             class="pixel-tab"
@@ -415,7 +910,6 @@
             LINKS
         </button>
 
-
         <button
             class="pixel-tab"
             data-page="tools"
@@ -423,7 +917,6 @@
         >
             TOOLS
         </button>
-
 
         <button
             class="pixel-tab"
@@ -443,9 +936,9 @@
     <main>
 
 
-        <!-- =============================================
+        <!-- =================================================
              LIVE
-        ============================================== -->
+        ================================================== -->
 
         <section
             id="live"
@@ -455,9 +948,7 @@
             <div class="live-content">
 
 
-                <!-- =====================================
-                     USERNAME PNG
-                ====================================== -->
+                <!-- YOUR PNG -->
 
                 <img
                     class="username-png"
@@ -466,28 +957,16 @@
                 >
 
 
-                <!-- =====================================
-                     DISCORD
-                ====================================== -->
+                <!-- DISCORD -->
 
                 <div
                     id="discord-card-container"
                     class="discord-card-container"
                 >
 
-                    <div class="pixel-panel">
+                    <div class="discord-live-card">
 
-                        <p class="pixel-label">
-                            RALKERIE
-                        </p>
-
-                        <h1>
-                            LIVE
-                        </h1>
-
-                        <p class="pixel-description">
-                            Loading Discord...
-                        </p>
+                        Loading Discord...
 
                     </div>
 
@@ -498,9 +977,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              MUSIC
-        ============================================== -->
+        ================================================== -->
 
         <section
             id="music"
@@ -517,20 +996,11 @@
                     NOW PLAYING
                 </h1>
 
+                <div class="music-card">
 
-                <div
-                    id="music-card"
-                    class="music-card"
-                >
+                    <div class="music-cover"></div>
 
-                    <div
-                        class="music-cover"
-                    ></div>
-
-
-                    <div
-                        class="music-info"
-                    >
+                    <div class="music-info">
 
                         <strong>
                             No song playing
@@ -549,9 +1019,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              LINKS
-        ============================================== -->
+        ================================================== -->
 
         <section
             id="links"
@@ -568,7 +1038,6 @@
                     LINKS
                 </h1>
 
-
                 <div class="link-grid">
 
                     <a
@@ -577,7 +1046,6 @@
                     >
                         DISCORD
                     </a>
-
 
                     <a
                         href="https://github.com/Joahm123/ralkerie.github.io"
@@ -588,14 +1056,12 @@
                         GITHUB
                     </a>
 
-
                     <a
                         href="#"
                         class="pixel-link"
                     >
                         SPOTIFY
                     </a>
-
 
                     <a
                         href="#"
@@ -611,9 +1077,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TOOLS
-        ============================================== -->
+        ================================================== -->
 
         <section
             id="tools"
@@ -639,9 +1105,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              ABOUT
-        ============================================== -->
+        ================================================== -->
 
         <section
             id="about"
@@ -675,32 +1141,19 @@
          JAVASCRIPT
     ================================================== -->
 
-    <script
-        src="./js/stars.js"
-    ></script>
+    <script src="./js/stars.js"></script>
 
+    <script src="./js/meteors.js"></script>
 
-    <script
-        src="./js/meteors.js"
-    ></script>
+    <!-- Waveform disabled because the current
+         waveform.js was looking for a missing element. -->
+    <script src="./js/waveform.js"></script>
 
+    <script src="./js/main.js"></script>
 
-    <script
-        src="./js/waveform.js"
-    ></script>
-
-
-    <script
-        src="./js/main.js"
-    ></script>
-
-
-    <script
-        src="./js/discord.js"
-    ></script>
+    <script src="./js/discord.js"></script>
 
 
 </body>
 
 </html>
-
