@@ -1,400 +1,371 @@
 /* =====================================================
    RALKERIE METEORS
+   PERFORMANCE OPTIMIZED
+
+   - Limited meteor count
+   - No console spam per meteor
+   - Automatically pauses spawning in hidden tabs
+   - Automatically cleans old meteors
+   - Keeps click functionality
 ===================================================== */
 
+(() => {
 
-/* =====================================================
-   METEOR CONTAINER
-===================================================== */
-
-#meteors {
-
-    position: fixed;
-
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    pointer-events: none;
-
-    z-index: 20;
-}
+    "use strict";
 
 
-/* =====================================================
-   METEOR HITBOX
-===================================================== */
-
-.meteor-hitbox {
-
-    position: absolute;
-
-    width: 110px;
-    height: 110px;
-
-    margin-left: -48px;
-    margin-top: -48px;
-
-    pointer-events: auto;
-
-    cursor: pointer;
-
-    background: transparent;
-
-    z-index: 21;
-
-    animation:
-        meteorMove
-        5s
-        linear
-        forwards;
-}
-
-
-/* =====================================================
-   METEOR HEAD
-===================================================== */
-
-.meteor {
-
-    position: absolute;
-
-    left: 48px;
-    top: 48px;
-
-    width: 10px;
-    height: 10px;
-
-    background: #ffffff;
-
-    transform: rotate(35deg);
-
-    z-index: 22;
-
-    pointer-events: none;
-
-    box-shadow:
-        0 0 3px #ffffff,
-        0 0 7px #ffffff,
-        0 0 12px #ffb3e7,
-        0 0 20px #ff66cc,
-        0 0 30px #ff2db5;
-}
-
-
-/* =====================================================
-   PIXEL METEOR HEAD
-===================================================== */
-
-.meteor::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: -4px;
-    top: -4px;
-
-    width: 18px;
-    height: 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-
-            #ff55c9 0%,
-            #ff55c9 18%,
-
-            #ffffff 18%,
-            #ffffff 55%,
-
-            #ff8bdd 55%,
-            #ff8bdd 75%,
-
-            #ff2db5 75%
+    const container =
+        document.getElementById(
+            "meteors"
         );
 
-    clip-path:
-        polygon(
-            50% 0%,
-            100% 50%,
-            50% 100%,
-            0% 50%
-        );
-}
 
+    if (!container) {
 
-/* =====================================================
-   METEOR TRAIL
-===================================================== */
-
-.meteor::before {
-
-    content: "";
-
-    position: absolute;
-
-    right: 5px;
-
-    top: 50%;
-
-    width: 700px;
-
-    height: 18px;
-
-    transform:
-        translateY(-50%);
-
-    background:
-        linear-gradient(
-            to left,
-
-            #ffffff 0%,
-            #ffffff 5%,
-
-            #ffd8f3 12%,
-            #ff9bdd 25%,
-
-            #ff63cb 45%,
-            #ff3dbd 65%,
-
-            rgba(
-                255,
-                61,
-                189,
-                0.25
-            ) 86%,
-
-            transparent 100%
+        console.error(
+            "Ralkerie: #meteors not found."
         );
 
-    pointer-events: none;
+        return;
+    }
 
-    clip-path:
-        polygon(
-            0% 15%,
-            15% 22%,
-            40% 30%,
-            65% 38%,
-            100% 48%,
-            100% 52%,
-            65% 62%,
-            40% 70%,
-            15% 78%,
-            0% 85%
+
+    /* =================================================
+       SETTINGS
+    ================================================= */
+
+    const SPAWN_INTERVAL = 2200;
+
+    const METEOR_LIFETIME = 5200;
+
+    const MAX_METEORS = 4;
+
+
+    /* =================================================
+       AUDIO
+    ================================================= */
+
+    const audio =
+        new Audio(
+            "./assets/audio/Rune%20of%20September.mp3"
         );
-}
+
+    audio.preload = "metadata";
 
 
-/* =====================================================
-   MOVEMENT
-===================================================== */
+    /* =================================================
+       POPUP
+    ================================================= */
 
-@keyframes meteorMove {
+    const popup =
+        document.createElement(
+            "div"
+        );
 
-    from {
+    popup.className =
+        "meteor-popup";
 
-        transform:
-            translate3d(
-                0,
-                -100px,
-                0
+
+    popup.innerHTML = `
+
+        <div class="meteor-popup-box">
+
+            <button
+                class="meteor-popup-close"
+                type="button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+            <img
+                class="meteor-popup-gif"
+                src="./assets/images/meteor.gif"
+                alt="Meteor"
+            >
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        popup
+    );
+
+
+    const closeButton =
+        popup.querySelector(
+            ".meteor-popup-close"
+        );
+
+
+    /* =================================================
+       OPEN
+    ================================================= */
+
+    function meteorClicked() {
+
+        popup.classList.add(
+            "visible"
+        );
+
+
+        audio.currentTime = 0;
+
+
+        audio.play().catch(
+            () => {}
+        );
+    }
+
+
+    /* =================================================
+       CLOSE
+    ================================================= */
+
+    function closePopup() {
+
+        popup.classList.remove(
+            "visible"
+        );
+
+
+        audio.pause();
+
+        audio.currentTime = 0;
+    }
+
+
+    closeButton.addEventListener(
+        "click",
+        closePopup
+    );
+
+
+    popup.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === popup
+            ) {
+
+                closePopup();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closePopup();
+            }
+
+        }
+    );
+
+
+    /* =================================================
+       CREATE METEOR
+    ================================================= */
+
+    function createMeteor() {
+
+        /*
+         * Never allow a huge number of
+         * meteor elements to accumulate.
+         */
+
+        const existing =
+            container.children.length;
+
+
+        if (
+            existing >= MAX_METEORS
+        ) {
+
+            return;
+        }
+
+
+        const hitbox =
+            document.createElement(
+                "div"
             );
 
-        opacity: 0;
-    }
+
+        hitbox.className =
+            "meteor-hitbox";
 
 
-    8% {
-
-        opacity: 1;
-    }
-
-
-    90% {
-
-        opacity: 1;
-    }
-
-
-    to {
-
-        transform:
-            translate3d(
-                calc(100vw + 500px),
-                calc(100vh + 500px),
-                0
+        const meteor =
+            document.createElement(
+                "div"
             );
 
-        opacity: 0;
-    }
 
-}
+        meteor.className =
+            "meteor";
 
 
-/* =====================================================
-   POPUP
-===================================================== */
+        /* =================================================
+           SPAWN AREA
 
-.meteor-popup {
+           Entire top section of screen.
+        ================================================= */
 
-    position: fixed;
+        const spawnWidth =
+            window.innerWidth +
+            500;
 
-    inset: 0;
 
-    display: flex;
+        const spawnHeight =
+            window.innerHeight *
+            0.40;
 
-    align-items: center;
 
-    justify-content: center;
+        const startX =
+            -250 +
+            Math.random() *
+            spawnWidth;
 
-    padding: 20px;
 
-    background:
-        rgba(
-            0,
-            0,
-            0,
-            0.75
+        const startY =
+            -250 +
+            Math.random() *
+            spawnHeight;
+
+
+        hitbox.style.left =
+            `${startX}px`;
+
+
+        hitbox.style.top =
+            `${startY}px`;
+
+
+        hitbox.appendChild(
+            meteor
         );
 
-    opacity: 0;
 
-    visibility: hidden;
+        /* =================================================
+           CLICK
+        ================================================= */
 
-    pointer-events: none;
+        hitbox.addEventListener(
+            "click",
+            event => {
 
-    z-index: 9999;
+                event.preventDefault();
 
-    transition:
-        opacity 0.15s ease;
-}
+                event.stopPropagation();
 
+                meteorClicked();
 
-.meteor-popup.visible {
-
-    opacity: 1;
-
-    visibility: visible;
-
-    pointer-events: auto;
-}
-
-
-/* =====================================================
-   POPUP BOX
-===================================================== */
-
-.meteor-popup-box {
-
-    position: relative;
-
-    padding: 8px;
-
-    background: #000000;
-
-    border:
-        2px solid #ffffff;
-
-    box-shadow:
-        0 0 25px
-        rgba(
-            255,
-            70,
-            190,
-            0.4
+            }
         );
-}
 
 
-/* =====================================================
-   GIF
-===================================================== */
-
-.meteor-popup-gif {
-
-    display: block;
-
-    max-width: 80vw;
-
-    max-height: 75vh;
-
-    width: auto;
-    height: auto;
-
-    image-rendering: pixelated;
-}
+        container.appendChild(
+            hitbox
+        );
 
 
-/* =====================================================
-   CLOSE BUTTON
-===================================================== */
+        /* =================================================
+           CLEANUP
+        ================================================= */
 
-.meteor-popup-close {
+        setTimeout(
+            () => {
 
-    position: absolute;
+                if (
+                    hitbox.parentNode
+                ) {
 
-    top: -16px;
+                    hitbox.remove();
+                }
 
-    right: -16px;
-
-    width: 30px;
-    height: 30px;
-
-    padding: 0;
-
-    border:
-        2px solid #ffffff;
-
-    background: #000000;
-
-    color: #ffffff;
-
-    font-family:
-        "AndyB",
-        Arial,
-        sans-serif;
-
-    font-size: 23px;
-
-    cursor: pointer;
-
-    z-index: 10;
-}
-
-
-.meteor-popup-close:hover {
-
-    color: #ff8bdc;
-
-    background: #222222;
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 700px) {
-
-    .meteor-hitbox {
-
-        width: 130px;
-        height: 130px;
-
-        margin-left: -58px;
-        margin-top: -58px;
+            },
+            METEOR_LIFETIME
+        );
     }
 
 
-    .meteor-popup-gif {
+    /* =================================================
+       INITIAL METEOR
+    ================================================= */
 
-        max-width: 90vw;
+    createMeteor();
 
-        max-height: 70vh;
-    }
 
-}
+    /* =================================================
+       SPAWN LOOP
+    ================================================= */
+
+    const spawnTimer =
+        setInterval(
+            () => {
+
+                if (
+                    document.hidden
+                ) {
+
+                    return;
+                }
+
+
+                createMeteor();
+
+            },
+            SPAWN_INTERVAL
+        );
+
+
+    /* =================================================
+       HIDDEN TAB CLEANUP
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.hidden
+            ) {
+
+                /*
+                 * Remove active meteors.
+                 * They'll respawn normally when
+                 * the page becomes visible.
+                 */
+
+                const active =
+                    container.querySelectorAll(
+                        ".meteor-hitbox"
+                    );
+
+
+                active.forEach(
+                    meteor => meteor.remove()
+                );
+
+            }
+
+        }
+    );
+
+
+    console.log(
+        "Ralkerie optimized meteors loaded."
+    );
+
+})();
