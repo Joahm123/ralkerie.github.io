@@ -1,13 +1,24 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   DENSE + STABLE + LOW CPU
+   SPOTIFY-SYNCED / LOW CPU
 
-   - Wraps Discord card
-   - Dense top/bottom waveform
-   - Continuous left/right waveform
-   - No flashing during Discord refresh
-   - Transform-only animation
+   - Syncs to current Spotify song
+   - Syncs to Spotify playback position
+   - ~20 visual updates/sec
+   - No Web Audio processing
+   - Low CPU usage
+   - Four-sided waveform
+   - Wraps around Discord card
+   - Automatically detects Discord card
+   - Rebuilds safely when card changes
    - Pauses when tab is hidden
+
+   IMPORTANT:
+   Spotify does not expose raw audio frequency data
+   through Lanyard, so this creates a deterministic
+   waveform based on:
+       song ID + playback position
+   rather than pretending to read the actual audio.
 ===================================================== */
 
 (() => {
@@ -19,32 +30,24 @@
        SETTINGS
     ================================================= */
 
-    const BAR_SIZE = 4;
+    const BAR_SIZE = 3;
 
-    const GAP = 1;
+    const GAP = 5;
+
+    const UPDATE_INTERVAL = 50;
 
     const MIN_SCALE = 0.15;
 
-    const MAX_SCALE = 7;
+    const MAX_SCALE = 8.5;
 
-    /*
-     * Around 22 updates per second.
-     */
-    const UPDATE_INTERVAL = 45;
+    const SPOTIFY_UPDATE_INTERVAL = 2000;
 
-
-    /*
-     * Vertical sides get their own spacing.
-     *
-     * This prevents holes down the left/right edges.
-     */
-    const VERTICAL_BAR_SIZE = 5;
-
-    const VERTICAL_GAP = 0;
+    const API_URL =
+        "https://api.lanyard.rest/v1/users/1044800788817510460";
 
 
     /* =================================================
-       CONTAINER
+       ELEMENTS
     ================================================= */
 
     const container =
@@ -56,42 +59,148 @@
     if (!container) {
 
         console.error(
-            "Ralkerie waveform: container not found."
+            "Ralkerie waveform: Discord container not found."
         );
 
         return;
     }
 
 
+    /* =================================================
+       STATE
+    ================================================= */
+
     let wrapper = null;
 
     let bars = [];
 
+    let lastFrame = 0;
+
     let animationFrame = null;
 
-    let lastUpdate = 0;
+    let spotifyTimer = null;
 
-    let startTime =
-        performance.now();
+    let resizeTimer = null;
+
+    let currentSongId = "";
+
+    let currentSongName = "";
+
+    let currentArtist = "";
+
+    let spotifyProgress = 0;
+
+    let spotifyDuration = 0;
+
+    let spotifyPlaying = false;
+
+    let spotifyReceivedAt = 0;
+
+    let seed = 1;
+
+
+    /* =================================================
+       HASH
+       
+       Creates the same seed for the same song.
+    ================================================= */
+
+    function hashString(value) {
+
+        let hash = 2166136261;
+
+
+        for (
+            let i = 0;
+            i < value.length;
+            i++
+        ) {
+
+            hash ^= value.charCodeAt(i);
+
+            hash +=
+                (
+                    hash << 1
+                ) +
+                (
+                    hash << 4
+                ) +
+                (
+                    hash << 7
+                ) +
+                (
+                    hash << 8
+                ) +
+                (
+                    hash << 24
+                );
+
+        }
+
+
+        return hash >>> 0;
+    }
+
+
+    /* =================================================
+       SEEDED RANDOM
+    ================================================= */
+
+    function seededRandom(index) {
+
+        let x =
+            (
+                seed +
+                index * 374761393
+            ) >>> 0;
+
+
+        x =
+            (
+                x ^
+                (x >>> 13)
+            ) >>> 0;
+
+
+        x =
+            (
+                x *
+                1274126177
+            ) >>> 0;
+
+
+        x =
+            (
+                x ^
+                (x >>> 16)
+            ) >>> 0;
+
+
+        return (
+            x /
+            4294967296
+        );
+
+    }
 
 
     /* =================================================
        CREATE SIDE
     ================================================= */
 
-    function createSide(name) {
+    function createSide(side) {
 
-        const side =
+        const element =
             document.createElement(
                 "div"
             );
 
 
-        side.className =
-            `wave-side wave-side-${name}`;
+        element.className =
+            `wave-side wave-side-${side}`;
 
 
-        return side;
+        return element;
     }
 
 
@@ -102,7 +211,8 @@
     function createBar(
         parent,
         side,
-        position
+        position,
+        index
     ) {
 
         const bar =
@@ -116,7 +226,7 @@
 
 
         /*
-         * Horizontal sides use left.
+         * Position each bar only once.
          */
 
         if (
@@ -129,45 +239,39 @@
 
         }
 
-        /*
-         * Vertical sides use top.
-         */
-
         else {
 
             bar.style.top =
                 `${position}px`;
+
         }
 
 
         /*
-         * Random values are generated
-         * only once.
-         *
-         * They are NOT recreated every
-         * Discord refresh.
+         * Different waveform characteristics
+         * for every bar.
          */
 
-        const data = {
+        const random =
+            seededRandom(index);
 
-            element: bar,
 
-            side: side,
+        const phase =
+            random *
+            Math.PI *
+            2;
 
-            phase:
-                Math.random() *
-                Math.PI *
-                2,
 
-            speed:
-                1.0 +
-                Math.random() * 1.5,
+        const frequency =
+            0.55 +
+            random *
+            1.7;
 
-            strength:
-                0.65 +
-                Math.random() * 0.35
 
-        };
+        const strength =
+            0.65 +
+            random *
+            0.35;
 
 
         parent.appendChild(
@@ -175,7 +279,24 @@
         );
 
 
-        return data;
+        return {
+
+            element: bar,
+
+            side: side,
+
+            index: index,
+
+            phase: phase,
+
+            frequency: frequency,
+
+            strength: strength,
+
+            random: random
+
+        };
+
     }
 
 
@@ -183,7 +304,7 @@
        BUILD WAVEFORM
     ================================================= */
 
-    function buildWaveform() {
+    function buildBars() {
 
         if (!wrapper) {
             return;
@@ -195,18 +316,15 @@
                 ".wave-side-top"
             );
 
-
         const bottom =
             wrapper.querySelector(
                 ".wave-side-bottom"
             );
 
-
         const left =
             wrapper.querySelector(
                 ".wave-side-left"
             );
-
 
         const right =
             wrapper.querySelector(
@@ -225,24 +343,20 @@
         }
 
 
-        /*
-         * VERY IMPORTANT:
-         *
-         * Do not rebuild the waveform when
-         * Discord updates its card.
-         */
+        top.replaceChildren();
 
-        if (
-            bars.length > 0
-        ) {
+        bottom.replaceChildren();
 
-            return;
-        }
+        left.replaceChildren();
+
+        right.replaceChildren();
+
+
+        bars = [];
 
 
         const width =
             wrapper.clientWidth;
-
 
         const height =
             wrapper.clientHeight;
@@ -257,97 +371,94 @@
         }
 
 
+        let index = 0;
+
+
         /* =================================================
-           TOP + BOTTOM
+           TOP
         ================================================= */
-
-        const horizontalStep =
-            BAR_SIZE + GAP;
-
 
         for (
             let x = 0;
-            x <= width;
-            x += horizontalStep
+            x < width;
+            x += BAR_SIZE + GAP
         ) {
 
             bars.push(
                 createBar(
                     top,
                     "top",
-                    x
+                    x,
+                    index++
                 )
             );
 
+        }
+
+
+        /* =================================================
+           BOTTOM
+        ================================================= */
+
+        for (
+            let x = 0;
+            x < width;
+            x += BAR_SIZE + GAP
+        ) {
 
             bars.push(
                 createBar(
                     bottom,
                     "bottom",
-                    x
+                    x,
+                    index++
                 )
             );
+
         }
 
 
         /* =================================================
-           LEFT + RIGHT
-
-           SPECIAL DENSE MODE
-
-           These use a separate smaller step
-           so there aren't gaps down the sides.
+           LEFT
         ================================================= */
-
-        const verticalStep =
-            VERTICAL_BAR_SIZE +
-            VERTICAL_GAP;
-
 
         for (
             let y = 0;
-            y <= height;
-            y += verticalStep
+            y < height;
+            y += BAR_SIZE + GAP
         ) {
 
-            const leftBar =
+            bars.push(
                 createBar(
                     left,
                     "left",
-                    y
-                );
+                    y,
+                    index++
+                )
+            );
+
+        }
 
 
-            const rightBar =
+        /* =================================================
+           RIGHT
+        ================================================= */
+
+        for (
+            let y = 0;
+            y < height;
+            y += BAR_SIZE + GAP
+        ) {
+
+            bars.push(
                 createBar(
                     right,
                     "right",
-                    y
-                );
-
-
-            /*
-             * Slight overlap between vertical bars.
-             *
-             * This removes visible holes.
-             */
-
-            leftBar.element.style.height =
-                "5px";
-
-
-            rightBar.element.style.height =
-                "5px";
-
-
-            bars.push(
-                leftBar
+                    y,
+                    index++
+                )
             );
 
-
-            bars.push(
-                rightBar
-            );
         }
 
 
@@ -355,14 +466,15 @@
             "Ralkerie waveform bars:",
             bars.length
         );
+
     }
 
 
     /* =================================================
-       ATTACH WAVEFORM
+       FIND / ATTACH DISCORD CARD
     ================================================= */
 
-    function attach() {
+    function findCard() {
 
         const card =
             container.querySelector(
@@ -376,8 +488,7 @@
 
 
         /*
-         * If already wrapped,
-         * leave EVERYTHING alone.
+         * Already wrapped.
          */
 
         if (
@@ -387,51 +498,40 @@
             )
         ) {
 
-            wrapper =
-                card.parentElement;
-
-
-            /*
-             * Only build if this is
-             * a brand-new wrapper.
-             */
-
             if (
-                bars.length === 0
+                wrapper !== card.parentElement
             ) {
 
-                requestAnimationFrame(
-                    buildWaveform
-                );
-            }
+                wrapper =
+                    card.parentElement;
 
+                requestAnimationFrame(
+                    buildBars
+                );
+
+            }
 
             return;
         }
 
 
         /*
-         * If an old wrapper exists,
-         * preserve the card.
+         * Remove old wrapper.
          */
 
-        const oldWrapper =
-            container.querySelector(
-                ".waveform-wrapper"
-            );
+        if (
+            wrapper &&
+            wrapper.parentNode
+        ) {
 
+            wrapper.remove();
 
-        if (oldWrapper) {
-
-            oldWrapper.replaceWith(
-                card
-            );
         }
 
 
-        /* =================================================
-           CREATE WRAPPER
-        ================================================= */
+        /*
+         * Create wrapper.
+         */
 
         wrapper =
             document.createElement(
@@ -443,56 +543,34 @@
             "waveform-wrapper";
 
 
-        /* =================================================
-           CREATE FOUR SIDES
-        ================================================= */
+        /*
+         * Four sides.
+         */
 
         const top =
-            createSide(
-                "top"
-            );
-
+            createSide("top");
 
         const bottom =
-            createSide(
-                "bottom"
-            );
-
+            createSide("bottom");
 
         const left =
-            createSide(
-                "left"
-            );
-
+            createSide("left");
 
         const right =
-            createSide(
-                "right"
-            );
+            createSide("right");
 
 
-        wrapper.appendChild(
-            top
-        );
+        wrapper.appendChild(top);
 
+        wrapper.appendChild(bottom);
 
-        wrapper.appendChild(
-            bottom
-        );
+        wrapper.appendChild(left);
 
-
-        wrapper.appendChild(
-            left
-        );
-
-
-        wrapper.appendChild(
-            right
-        );
+        wrapper.appendChild(right);
 
 
         /*
-         * Put wrapper into the container.
+         * Put wrapper into container.
          */
 
         container.appendChild(
@@ -501,7 +579,7 @@
 
 
         /*
-         * Put Discord card inside wrapper.
+         * Put card inside wrapper.
          */
 
         wrapper.appendChild(
@@ -509,22 +587,389 @@
         );
 
 
-        bars = [];
-
-
         /*
-         * Wait for browser layout.
+         * Build after layout.
          */
 
         requestAnimationFrame(
             () => {
 
-                requestAnimationFrame(
-                    buildWaveform
-                );
+                if (
+                    wrapper
+                ) {
+
+                    buildBars();
+
+                }
 
             }
         );
+
+    }
+
+
+    /* =================================================
+       SPOTIFY DATA
+    ================================================= */
+
+    async function updateSpotify() {
+
+        if (
+            document.hidden
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (
+                !response.ok
+            ) {
+
+                return;
+            }
+
+
+            const result =
+                await response.json();
+
+
+            if (
+                !result ||
+                !result.success ||
+                !result.data
+            ) {
+
+                return;
+            }
+
+
+            const data =
+                result.data;
+
+
+            const spotify =
+                data.spotify;
+
+
+            /*
+             * No Spotify.
+             */
+
+            if (
+                !data.listening_to_spotify ||
+                !spotify
+            ) {
+
+                spotifyPlaying = false;
+
+                currentSongId = "";
+
+                return;
+            }
+
+
+            /*
+             * Song ID.
+             */
+
+            const newSongId =
+                spotify.track_id ||
+                (
+                    spotify.song +
+                    "|" +
+                    spotify.artist
+                );
+
+
+            /*
+             * Detect new song.
+             */
+
+            if (
+                newSongId !==
+                currentSongId
+            ) {
+
+                currentSongId =
+                    newSongId;
+
+
+                currentSongName =
+                    spotify.song ||
+                    "";
+
+
+                currentArtist =
+                    spotify.artist ||
+                    "";
+
+
+                /*
+                 * New deterministic waveform.
+                 */
+
+                seed =
+                    hashString(
+                        currentSongId
+                    );
+
+
+                /*
+                 * Reset position.
+                 */
+
+                spotifyProgress =
+                    spotify.timestamps &&
+                    typeof spotify.timestamps.start ===
+                    "number"
+                        ? spotify.timestamps.start
+                        : 0;
+
+            }
+
+
+            /*
+             * Lanyard timestamps are UNIX
+             * milliseconds.
+             */
+
+            if (
+                spotify.timestamps
+            ) {
+
+                const start =
+                    Number(
+                        spotify.timestamps.start
+                    );
+
+
+                const end =
+                    Number(
+                        spotify.timestamps.end
+                    );
+
+
+                if (
+                    Number.isFinite(start)
+                ) {
+
+                    spotifyProgress =
+                        Date.now() -
+                        start;
+
+                }
+
+
+                if (
+                    Number.isFinite(end) &&
+                    Number.isFinite(start)
+                ) {
+
+                    spotifyDuration =
+                        end -
+                        start;
+
+                }
+
+            }
+
+
+            spotifyPlaying = true;
+
+            spotifyReceivedAt =
+                performance.now();
+
+        }
+
+        catch (error) {
+
+            /*
+             * Don't spam console.
+             */
+
+        }
+
+    }
+
+
+    /* =================================================
+       GET CURRENT PROGRESS
+    ================================================= */
+
+    function getProgress() {
+
+        if (
+            !spotifyPlaying
+        ) {
+
+            return 0;
+        }
+
+
+        /*
+         * Continue advancing between
+         * Lanyard API updates.
+         */
+
+        const elapsed =
+            performance.now() -
+            spotifyReceivedAt;
+
+
+        let progress =
+            spotifyProgress +
+            elapsed;
+
+
+        if (
+            spotifyDuration > 0
+        ) {
+
+            progress =
+                Math.min(
+                    progress,
+                    spotifyDuration
+                );
+
+        }
+
+
+        return progress;
+
+    }
+
+
+    /* =================================================
+       WAVEFORM VALUE
+       
+       Generates a song-specific waveform
+       based on playback position.
+    ================================================= */
+
+    function getWaveValue(
+        bar,
+        progress
+    ) {
+
+        /*
+         * Convert milliseconds into
+         * waveform time.
+         */
+
+        const seconds =
+            progress / 1000;
+
+
+        /*
+         * Each bar gets a slightly
+         * different frequency.
+         */
+
+        const t =
+            seconds *
+            bar.frequency;
+
+
+        /*
+         * Main waveform.
+         */
+
+        const wave1 =
+            (
+                Math.sin(
+                    t * 5.7 +
+                    bar.phase
+                ) +
+                1
+            ) *
+            0.5;
+
+
+        /*
+         * Secondary waveform.
+         */
+
+        const wave2 =
+            (
+                Math.sin(
+                    t * 11.3 +
+                    bar.phase * 1.7
+                ) +
+                1
+            ) *
+            0.5;
+
+
+        /*
+         * Bass-style pulse.
+         */
+
+        const bass =
+            (
+                Math.sin(
+                    seconds *
+                    2.2 +
+                    bar.phase
+                ) +
+                1
+            ) *
+            0.5;
+
+
+        /*
+         * Song-specific variation.
+         */
+
+        const variation =
+            seededRandom(
+                bar.index +
+                Math.floor(
+                    progress /
+                    180
+                )
+            );
+
+
+        /*
+         * Combine everything.
+         */
+
+        let value =
+            wave1 * 0.42 +
+            wave2 * 0.25 +
+            bass * 0.18 +
+            variation * 0.15;
+
+
+        /*
+         * Add stronger movement
+         * when Spotify is active.
+         */
+
+        value *=
+            bar.strength;
+
+
+        return Math.max(
+            0,
+            Math.min(
+                1,
+                value
+            )
+        );
+
     }
 
 
@@ -538,7 +983,7 @@
 
 
         /*
-         * Don't animate hidden tabs.
+         * Completely stop while hidden.
          */
 
         if (
@@ -546,16 +991,17 @@
         ) {
 
             return;
+
         }
 
 
         /*
-         * Throttle actual waveform updates.
+         * ~20 updates per second.
          */
 
         if (
             time -
-            lastUpdate <
+            lastFrame <
             UPDATE_INTERVAL
         ) {
 
@@ -565,101 +1011,97 @@
                 );
 
             return;
+
         }
 
 
-        lastUpdate =
+        lastFrame =
             time;
 
 
-        const elapsed =
-            (
-                time -
-                startTime
-            ) / 1000;
+        const progress =
+            getProgress();
 
 
-        /* =================================================
-           ANIMATE BARS
-        ================================================= */
+        /*
+         * Update every bar.
+         */
 
         for (
-            const data of bars
+            let i = 0;
+            i < bars.length;
+            i++
         ) {
 
-            /*
-             * Main wave.
-             */
-
-            const wave =
-                (
-                    Math.sin(
-                        elapsed *
-                        data.speed +
-                        data.phase
-                    ) +
-                    1
-                ) * 0.5;
+            const bar =
+                bars[i];
 
 
-            /*
-             * Secondary wave.
-             */
+            let value;
 
-            const secondary =
-                (
-                    Math.sin(
-                        elapsed *
-                        2.7 +
-                        data.phase *
-                        1.7
-                    ) +
-                    1
-                ) * 0.5;
-
-
-            /*
-             * Combine waves.
-             */
-
-            const value =
-                wave * 0.72 +
-                secondary * 0.28;
-
-
-            /*
-             * Calculate size.
-             */
-
-            const scale =
-                MIN_SCALE +
-                value *
-                MAX_SCALE *
-                data.strength;
-
-
-            /*
-             * TOP + BOTTOM
-             */
 
             if (
-                data.side === "top" ||
-                data.side === "bottom"
+                spotifyPlaying
             ) {
 
-                data.element.style.transform =
-                    `scaleY(${scale})`;
+                value =
+                    getWaveValue(
+                        bar,
+                        progress
+                    );
+
+            }
+
+            else {
+
+                /*
+                 * Very subtle idle animation
+                 * when Spotify isn't playing.
+                 */
+
+                const idleTime =
+                    time / 1000;
+
+
+                value =
+                    (
+                        Math.sin(
+                            idleTime *
+                            bar.frequency +
+                            bar.phase
+                        ) +
+                        1
+                    ) *
+                    0.5 *
+                    0.22;
 
             }
 
 
+            const scale =
+                MIN_SCALE +
+                value *
+                MAX_SCALE;
+
+
             /*
-             * LEFT + RIGHT
+             * Transform only.
+             * No width/height changes.
              */
+
+            if (
+                bar.side === "top" ||
+                bar.side === "bottom"
+            ) {
+
+                bar.element.style.transform =
+                    `scaleY(${scale})`;
+
+            }
 
             else {
 
-                data.element.style.transform =
+                bar.element.style.transform =
                     `scaleX(${scale})`;
 
             }
@@ -671,15 +1113,61 @@
             requestAnimationFrame(
                 animate
             );
+
     }
+
+
+    /* =================================================
+       VISIBILITY
+    ================================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            lastFrame = 0;
+
+
+            if (
+                document.hidden
+            ) {
+
+                if (
+                    animationFrame
+                ) {
+
+                    cancelAnimationFrame(
+                        animationFrame
+                    );
+
+                    animationFrame =
+                        null;
+
+                }
+
+                return;
+
+            }
+
+
+            if (
+                !animationFrame
+            ) {
+
+                animationFrame =
+                    requestAnimationFrame(
+                        animate
+                    );
+
+            }
+
+        }
+    );
 
 
     /* =================================================
        RESIZE
     ================================================= */
-
-    let resizeTimer = null;
-
 
     window.addEventListener(
         "resize",
@@ -694,38 +1182,10 @@
                 setTimeout(
                     () => {
 
-                        if (!wrapper) {
-                            return;
-                        }
-
-
-                        /*
-                         * Browser dimensions changed,
-                         * so rebuild the positions.
-                         */
-
-                        bars = [];
-
-
-                        const sides =
-                            wrapper.querySelectorAll(
-                                ".wave-side"
-                            );
-
-
-                        sides.forEach(
-                            side => {
-
-                                side.replaceChildren();
-
-                            }
-                        );
-
-
-                        buildWaveform();
+                        buildBars();
 
                     },
-                    300
+                    250
                 );
 
         },
@@ -736,54 +1196,22 @@
 
 
     /* =================================================
-       MUTATION OBSERVER
+       DISCORD OBSERVER
     ================================================= */
-
-    let observerTimer = null;
-
 
     const observer =
         new MutationObserver(
             () => {
 
                 clearTimeout(
-                    observerTimer
+                    observer.timer
                 );
 
 
-                observerTimer =
+                observer.timer =
                     setTimeout(
-                        () => {
-
-                            const card =
-                                container.querySelector(
-                                    ".discord-live-card"
-                                );
-
-
-                            /*
-                             * Only fix the wrapper if
-                             * the actual card was moved.
-                             *
-                             * Normal Discord content
-                             * changes do NOTHING here.
-                             */
-
-                            if (
-                                card &&
-                                (
-                                    !wrapper ||
-                                    card.parentElement !==
-                                    wrapper
-                                )
-                            ) {
-
-                                attach();
-
-                            }
-
-                        },
-                        250
+                        findCard,
+                        150
                     );
 
             }
@@ -800,46 +1228,31 @@
 
 
     /* =================================================
-       VISIBILITY
+       START
     ================================================= */
 
-    document.addEventListener(
-        "visibilitychange",
-        () => {
-
-            startTime =
-                performance.now();
+    findCard();
 
 
-            lastUpdate = 0;
+    updateSpotify();
 
 
-            if (
-                !document.hidden &&
-                !animationFrame
-            ) {
-
-                animationFrame =
-                    requestAnimationFrame(
-                        animate
-                    );
-
-            }
-
-        }
-    );
+    spotifyTimer =
+        setInterval(
+            updateSpotify,
+            SPOTIFY_UPDATE_INTERVAL
+        );
 
 
-    /* =================================================
-       INITIAL ATTACH
-    ================================================= */
+    animationFrame =
+        requestAnimationFrame(
+            animate
+        );
 
-    attach();
 
-
-    /* =================================================
-       DISCORD LOAD RETRY
-    ================================================= */
+    /*
+     * Discord loads asynchronously.
+     */
 
     let attempts = 0;
 
@@ -850,13 +1263,12 @@
 
                 attempts++;
 
-
-                attach();
+                findCard();
 
 
                 if (
                     wrapper ||
-                    attempts >= 80
+                    attempts >= 100
                 ) {
 
                     clearInterval(
@@ -870,18 +1282,8 @@
         );
 
 
-    /* =================================================
-       START ANIMATION
-    ================================================= */
-
-    animationFrame =
-        requestAnimationFrame(
-            animate
-        );
-
-
     console.log(
-        "Ralkerie dense continuous waveform ready."
+        "Ralkerie Spotify-synced waveform ready."
     );
 
 })();
