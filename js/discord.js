@@ -1,9 +1,9 @@
-
 (function () {
 
     "use strict";
 
-    var USER_ID = "1044800788817510460";
+    var USER_ID =
+        "1044800788817510460";
 
     var API_URL =
         "https://api.lanyard.rest/v1/users/" +
@@ -14,12 +14,17 @@
             "discord-card-container"
         );
 
+
     if (!cardContainer) {
+
         console.error(
-            "Ralkerie: discord-card-container not found."
+            "Ralkerie: Discord container not found."
         );
+
         return;
+
     }
+
 
     console.log(
         "Ralkerie Discord loaded."
@@ -27,7 +32,7 @@
 
 
     /* =====================================================
-       ESCAPE TEXT
+       ESCAPE HTML
     ===================================================== */
 
     function escapeHTML(value) {
@@ -41,6 +46,7 @@
                 : String(value);
 
         return div.innerHTML;
+
     }
 
 
@@ -62,40 +68,75 @@
     }
 
 
-    function startClock() {
+    /* =====================================================
+       UPDATE CLOCK
+    ===================================================== */
 
-        function update() {
+    function updateClock() {
 
-            var clock =
-                document.getElementById(
-                    "clock-time"
-                );
+        var clock =
+            document.getElementById(
+                "clock-time"
+            );
 
-            if (clock) {
-                clock.textContent =
-                    getTime();
-            }
+
+        if (clock) {
+
+            clock.textContent =
+                getTime();
 
         }
-
-        update();
-
-        setInterval(
-            update,
-            1000
-        );
 
     }
 
 
     /* =====================================================
-       DISCORD CARD
+       FIND GAME
+    ===================================================== */
+
+    function getGame(activities) {
+
+        if (!activities) {
+            return null;
+        }
+
+
+        for (
+            var i = 0;
+            i < activities.length;
+            i++
+        ) {
+
+            var activity =
+                activities[i];
+
+
+            if (
+                activity &&
+                activity.type === 0
+            ) {
+
+                return activity;
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       DISPLAY DISCORD
     ===================================================== */
 
     function showDiscord(data) {
 
         var user =
             data.discord_user;
+
 
         var username =
             user.global_name ||
@@ -110,6 +151,7 @@
 
 
         var avatar;
+
 
         if (user.avatar) {
 
@@ -132,46 +174,34 @@
            GAME
         ================================================= */
 
+        var game =
+            getGame(
+                data.activities
+            );
+
+
         var gameHTML = "";
 
-        var activities =
-            data.activities || [];
 
+        if (game) {
 
-        for (
-            var i = 0;
-            i < activities.length;
-            i++
-        ) {
+            gameHTML = `
 
-            var activity =
-                activities[i];
+                <div class="discord-activity">
 
-
-            if (
-                activity.type === 0
-            ) {
-
-                gameHTML = `
-
-                    <div class="discord-activity">
-
-                        <div class="discord-activity-title">
-                            PLAYING
-                        </div>
-
-                        <div class="discord-activity-text">
-                            ${escapeHTML(
-                                activity.name
-                            )}
-                        </div>
-
+                    <div class="discord-activity-title">
+                        PLAYING
                     </div>
 
-                `;
+                    <div class="discord-activity-text">
+                        ${escapeHTML(
+                            game.name
+                        )}
+                    </div>
 
-                break;
-            }
+                </div>
+
+            `;
 
         }
 
@@ -299,13 +329,13 @@
         `;
 
 
-        startClock();
+        updateClock();
 
     }
 
 
     /* =====================================================
-       LOAD
+       LOAD DISCORD
     ===================================================== */
 
     function loadDiscord() {
@@ -339,6 +369,7 @@
 
                 }
 
+
                 showDiscord(
                     result.data
                 );
@@ -354,6 +385,7 @@
                     error
                 );
 
+
                 cardContainer.innerHTML = `
 
                     <div class="discord-live-card">
@@ -362,7 +394,10 @@
                             DISCORD
                         </div>
 
-                        <div class="discord-status status-offline">
+                        <div class="
+                            discord-status
+                            status-offline
+                        ">
                             UNAVAILABLE
                         </div>
 
@@ -383,12 +418,20 @@
     loadDiscord();
 
 
-    /* Refresh Discord every 10 seconds */
+    /* Refresh Discord */
 
     setInterval(
         loadDiscord,
         10000
     );
 
-})();
 
+    /* Clock */
+
+    setInterval(
+        updateClock,
+        1000
+    );
+
+
+})();
