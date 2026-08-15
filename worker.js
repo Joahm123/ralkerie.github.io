@@ -4,35 +4,62 @@ export default {
         const url = new URL(request.url);
 
         /*
-         * Discord presence endpoint
+         * Discord presence API
          */
 
         if (url.pathname === "/api/discord") {
 
-            const response = await fetch(
-                "https://api.lanyard.rest/v1/users/1044800788817510460"
-            );
+            try {
 
-            return new Response(
-                await response.text(),
-                {
-                    status: response.status,
+                const response = await fetch(
+                    "https://api.lanyard.rest/v1/users/1044800788817510460"
+                );
 
-                    headers: {
-                        "Content-Type": "application/json",
+                return new Response(
+                    await response.text(),
+                    {
+                        status: response.status,
 
-                        "Access-Control-Allow-Origin": "*",
+                        headers: {
+                            "Content-Type":
+                                "application/json",
 
-                        "Cache-Control": "no-store"
+                            "Access-Control-Allow-Origin":
+                                "*",
+
+                            "Cache-Control":
+                                "no-store"
+                        }
                     }
-                }
-            );
+                );
+
+            } catch (error) {
+
+                return new Response(
+                    JSON.stringify({
+                        error:
+                            "Discord presence request failed"
+                    }),
+                    {
+                        status: 500,
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Access-Control-Allow-Origin":
+                                "*"
+                        }
+                    }
+                );
+
+            }
         }
 
 
         /*
          * Everything else goes to
-         * your existing website files.
+         * your normal website.
          */
 
         return env.ASSETS.fetch(request);
