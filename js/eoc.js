@@ -2,12 +2,13 @@
    RALKERIE — EYE OF CTHULHU EASTER EGG
 
    - Small button summons Eye
-   - Large invisible hitbox follows Eye
    - Eye dashes around screen
    - Bounces off edges
-   - eoc.mp3 restarts every direction change
+   - eoc.mp3 plays on every new dash
    - Eye faces movement direction
-   - Clicking anywhere on Eye hitbox creates burst
+   - Clicking Eye creates pixel burst
+   - Clicking Eye plays eockill.mp3
+   - Kill sound plays once per kill
 ===================================================== */
 
 (() => {
@@ -29,16 +30,12 @@
     if (!button || !eye) {
 
         console.error(
-            "Ralkerie EoC: missing #eoc-button or #eoc-easter-egg."
+            "Ralkerie EoC: missing required elements."
         );
 
         return;
     }
 
-
-    /* =================================================
-       IMAGE
-    ================================================= */
 
     const eyeImage =
         eye.querySelector("img");
@@ -55,7 +52,7 @@
 
 
     /* =================================================
-       FORCE HITBOX
+       HITBOX
     ================================================= */
 
     eye.style.pointerEvents =
@@ -69,15 +66,28 @@
 
 
     /* =================================================
-       AUDIO
+       DASH AUDIO
     ================================================= */
 
-    const audio =
+    const dashAudio =
         new Audio(
             "./assets/audio/eoc.mp3"
         );
 
-    audio.preload =
+    dashAudio.preload =
+        "auto";
+
+
+    /* =================================================
+       KILL AUDIO
+    ================================================= */
+
+    const killAudio =
+        new Audio(
+            "./assets/audio/eockill.mp3"
+        );
+
+    killAudio.preload =
         "auto";
 
 
@@ -94,6 +104,9 @@
     const MAX_SPEED =
         20;
 
+    /*
+     * The PNG faces backwards by default.
+     */
     const ROTATION_OFFSET =
         180;
 
@@ -128,24 +141,56 @@
 
 
     /* =================================================
-       SOUND
+       PLAY DASH SOUND
     ================================================= */
 
     function playDashSound() {
 
-        audio.pause();
+        dashAudio.pause();
 
-        audio.currentTime =
+        dashAudio.currentTime =
             0;
 
-        audio.play().catch(
+        dashAudio.play().catch(
             () => {}
         );
     }
 
 
     /* =================================================
-       NEW DIRECTION
+       PLAY KILL SOUND
+    ================================================= */
+
+    function playKillSound() {
+
+        /*
+         * Stop the dash sound immediately.
+         */
+
+        dashAudio.pause();
+
+        dashAudio.currentTime =
+            0;
+
+
+        /*
+         * Restart kill sound from
+         * the beginning.
+         */
+
+        killAudio.pause();
+
+        killAudio.currentTime =
+            0;
+
+        killAudio.play().catch(
+            () => {}
+        );
+    }
+
+
+    /* =================================================
+       CHOOSE DIRECTION
     ================================================= */
 
     function chooseDirection() {
@@ -179,7 +224,7 @@
 
 
     /* =================================================
-       HIT EFFECT
+       HIT BURST
     ================================================= */
 
     function createHitBurst() {
@@ -206,9 +251,13 @@
         );
 
 
+        const particleCount =
+            32;
+
+
         for (
             let i = 0;
-            i < 32;
+            i < particleCount;
             i++
         ) {
 
@@ -286,7 +335,7 @@
 
 
     /* =================================================
-       START
+       ACTIVATE
     ================================================= */
 
     function activateEye() {
@@ -339,7 +388,6 @@
         eye.style.top =
             `${y}px`;
 
-
         eye.style.transform =
             "translate(-50%, -50%) scale(1)";
 
@@ -368,7 +416,7 @@
 
 
     /* =================================================
-       MOVE
+       MOVE EYE
     ================================================= */
 
     function moveEye(time) {
@@ -419,11 +467,13 @@
             height / 2;
 
 
-        let changed =
+        let changedDirection =
             false;
 
 
-        /* LEFT */
+        /* ---------------------------------------------
+           LEFT WALL
+        --------------------------------------------- */
 
         if (
             x <= halfWidth
@@ -435,12 +485,14 @@
             vx =
                 Math.abs(vx);
 
-            changed =
+            changedDirection =
                 true;
         }
 
 
-        /* RIGHT */
+        /* ---------------------------------------------
+           RIGHT WALL
+        --------------------------------------------- */
 
         if (
             x >=
@@ -455,12 +507,14 @@
             vx =
                 -Math.abs(vx);
 
-            changed =
+            changedDirection =
                 true;
         }
 
 
-        /* TOP */
+        /* ---------------------------------------------
+           TOP WALL
+        --------------------------------------------- */
 
         if (
             y <= halfHeight
@@ -472,12 +526,14 @@
             vy =
                 Math.abs(vy);
 
-            changed =
+            changedDirection =
                 true;
         }
 
 
-        /* BOTTOM */
+        /* ---------------------------------------------
+           BOTTOM WALL
+        --------------------------------------------- */
 
         if (
             y >=
@@ -492,18 +548,26 @@
             vy =
                 -Math.abs(vy);
 
-            changed =
+            changedDirection =
                 true;
         }
 
 
-        if (changed) {
+        /*
+         * New direction = new dash sound.
+         */
+
+        if (
+            changedDirection
+        ) {
 
             playDashSound();
         }
 
 
-        /* POSITION */
+        /* ---------------------------------------------
+           POSITION
+        --------------------------------------------- */
 
         eye.style.left =
             `${x}px`;
@@ -512,7 +576,9 @@
             `${y}px`;
 
 
-        /* ROTATION */
+        /* ---------------------------------------------
+           ROTATION
+        --------------------------------------------- */
 
         const angle =
             Math.atan2(
@@ -526,6 +592,10 @@
         eyeImage.style.transform =
             `rotate(${angle + ROTATION_OFFSET}deg)`;
 
+
+        /* ---------------------------------------------
+           NEXT FRAME
+        --------------------------------------------- */
 
         animationFrame =
             requestAnimationFrame(
@@ -566,9 +636,9 @@
         }
 
 
-        audio.pause();
+        dashAudio.pause();
 
-        audio.currentTime =
+        dashAudio.currentTime =
             0;
 
 
@@ -594,7 +664,7 @@
 
 
     /* =================================================
-       EYE CLICK
+       CLICK EYE — KILL
     ================================================= */
 
     eye.addEventListener(
@@ -612,7 +682,23 @@
             }
 
 
+            /*
+             * Create impact effect.
+             */
+
             createHitBurst();
+
+
+            /*
+             * Play kill sound.
+             */
+
+            playKillSound();
+
+
+            /*
+             * Remove Eye.
+             */
 
             deactivateEye();
         }
@@ -620,7 +706,7 @@
 
 
     /* =================================================
-       BUTTON CLICK
+       SUMMON BUTTON
     ================================================= */
 
     button.addEventListener(
@@ -734,8 +820,12 @@
     );
 
 
+    /* =================================================
+       READY
+    ================================================= */
+
     console.log(
-        "Ralkerie Eye of Cthulhu easter egg ready."
+        "Ralkerie Eye of Cthulhu kill system ready."
     );
 
 })();
