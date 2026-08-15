@@ -1,22 +1,21 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   EXACT DISCORD CARD WRAP
+   CLEAN 4-SIDED WRAP
 ===================================================== */
 
 .waveform-wrapper {
     position: relative;
 
-    width: 100%;
+    width: 340px;
+    max-width: 90vw;
+
     flex-shrink: 0;
 
-    /*
-     * The wrapper must hug the card.
-     */
-    display: block;
-
-    box-sizing: border-box;
-
     z-index: 20;
+
+    /* IMPORTANT:
+       wrapper follows the card's actual height */
+    display: block;
 }
 
 
@@ -24,32 +23,29 @@
    DISCORD CARD
 ===================================================== */
 
-.waveform-wrapper > .discord-live-card {
-
+.waveform-wrapper .discord-live-card {
     position: relative;
 
     width: 100%;
 
     box-sizing: border-box;
 
-    margin: 0;
+    z-index: 10;
 }
 
 
 /* =====================================================
-   ALL SIDES
+   WAVE SIDES
 ===================================================== */
 
 .wave-side {
-
     position: absolute;
 
     pointer-events: none;
 
-    overflow: visible;
-
     z-index: 50;
 
+    overflow: visible;
 }
 
 
@@ -58,15 +54,14 @@
 ===================================================== */
 
 .wave-side-top {
+    position: absolute;
 
     left: 0;
-
     right: 0;
 
-    top: 0;
+    top: -2px;
 
     height: 1px;
-
 }
 
 
@@ -75,15 +70,14 @@
 ===================================================== */
 
 .wave-side-bottom {
+    position: absolute;
 
     left: 0;
-
     right: 0;
 
-    bottom: 0;
+    bottom: -2px;
 
     height: 1px;
-
 }
 
 
@@ -92,15 +86,14 @@
 ===================================================== */
 
 .wave-side-left {
+    position: absolute;
 
-    left: 0;
+    left: -2px;
 
     top: 0;
-
     bottom: 0;
 
     width: 1px;
-
 }
 
 
@@ -109,119 +102,99 @@
 ===================================================== */
 
 .wave-side-right {
+    position: absolute;
 
-    right: 0;
+    right: -2px;
 
     top: 0;
-
     bottom: 0;
 
     width: 1px;
-
 }
 
 
 /* =====================================================
-   BARS
+   WAVE BARS
 ===================================================== */
 
 .wave-bar {
-
     position: absolute;
 
     display: block;
 
     margin: 0;
-
     padding: 0;
 
-    width: 3px;
-
-    height: 1px;
-
-    border-radius: 2px;
-
-    background: #ffffff;
+    background: #ff63ca;
 
     opacity: 0.95;
 
     pointer-events: none;
 
-    box-shadow:
-        0 0 2px #ffffff,
-        0 0 4px #ffffff,
-        0 0 7px #ffb5ed,
-        0 0 11px #ff63ca,
-        0 0 16px rgba(
-            255,
-            99,
-            202,
-            0.65
-        );
-
     will-change: transform;
+
+    /* White center/glow */
+    box-shadow:
+        0 0 3px #ffffff,
+        0 0 6px rgba(255, 99, 202, 0.9);
 
     contain: strict;
 }
 
 
 /* =====================================================
-   TOP
+   TOP BARS
 ===================================================== */
 
 .wave-side-top .wave-bar {
-
     bottom: 0;
 
-    transform-origin: center bottom;
+    width: 3px;
+    height: 2px;
 
+    transform-origin: center bottom;
 }
 
 
 /* =====================================================
-   BOTTOM
+   BOTTOM BARS
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
-
     top: 0;
 
-    transform-origin: center top;
+    width: 3px;
+    height: 2px;
 
+    transform-origin: center top;
 }
 
 
 /* =====================================================
-   LEFT
+   LEFT BARS
 ===================================================== */
 
 .wave-side-left .wave-bar {
-
     right: 0;
 
-    width: 1px;
-
+    width: 2px;
     height: 3px;
 
     transform-origin: right center;
-
 }
 
 
 /* =====================================================
-   RIGHT
+   RIGHT BARS
 ===================================================== */
 
 .wave-side-right .wave-bar {
-
     left: 0;
 
-    width: 1px;
-
+    width: 2px;
     height: 3px;
 
     transform-origin: left center;
-
 }
 
 
@@ -231,16 +204,19 @@
 
 @media (max-width: 700px) {
 
-    .wave-bar {
+    .waveform-wrapper {
+        width: 340px;
+        max-width: 88vw;
+    }
+
+    .wave-side-top .wave-bar,
+    .wave-side-bottom .wave-bar {
         width: 2px;
     }
 
     .wave-side-left .wave-bar,
     .wave-side-right .wave-bar {
-
-        width: 1px;
-
+        width: 2px;
         height: 2px;
     }
-
 }
