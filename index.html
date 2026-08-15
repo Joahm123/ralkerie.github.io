@@ -255,7 +255,7 @@
 
             justify-content: center;
 
-            gap: 18px;
+            gap: 20px;
 
             width: 100%;
         }
@@ -269,9 +269,9 @@
 
             display: block;
 
-            width: 330px;
+            width: 430px;
 
-            max-width: 75vw;
+            max-width: 80vw;
 
             height: auto;
 
@@ -297,25 +297,25 @@
 
             justify-content: center;
 
-            width: 100%;
+            width: auto;
+
+            max-width: 100%;
+
+            flex-shrink: 0;
         }
 
 
         /* =================================================
            WAVEFORM WRAPPER
-
-           This is created around the Discord card
-           by waveform.js.
         ================================================== */
 
         .waveform-wrapper {
 
             position: relative;
 
-            width: min(
-                620px,
-                90vw
-            );
+            width: 360px;
+
+            max-width: 85vw;
 
             flex-shrink: 0;
 
@@ -333,7 +333,7 @@
 
             width: 100%;
 
-            padding: 24px;
+            padding: 18px;
 
             background:
                 rgba(
@@ -814,13 +814,23 @@
 
             .username-png {
 
-                width: 260px;
+                width: 330px;
+
+                max-width: 82vw;
+            }
+
+
+            .waveform-wrapper {
+
+                width: 330px;
+
+                max-width: 88vw;
             }
 
 
             .discord-live-card {
 
-                padding: 18px;
+                padding: 16px;
             }
 
 
@@ -846,12 +856,32 @@
 
 
     <!-- =================================================
+         MAIN CSS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="./css/main.css"
+    >
+
+
+    <!-- =================================================
          BACKGROUND CSS
     ================================================== -->
 
     <link
         rel="stylesheet"
         href="./css/background.css"
+    >
+
+
+    <!-- =================================================
+         METEORS CSS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="./css/meteors.css"
     >
 
 
@@ -961,12 +991,16 @@
             <div class="live-content">
 
 
+                <!-- BIG USERNAME PNG -->
+
                 <img
                     class="username-png"
                     src="./assets/images/username.png"
                     alt="Ralkerie"
                 >
 
+
+                <!-- DISCORD CARD -->
 
                 <div
                     id="discord-card-container"
@@ -1162,6 +1196,7 @@
     <script src="./js/discord.js"></script>
 
     <!-- MUST COME AFTER DISCORD -->
+
     <script src="./js/waveform.js"></script>
 
 
