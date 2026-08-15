@@ -13,9 +13,9 @@
     <title>Ralkerie</title>
 
 
-    <!-- =================================================
-         TERRARIA FONT
-    ================================================== -->
+    <!-- =====================================================
+         FONT
+    ====================================================== -->
 
     <style>
 
@@ -37,7 +37,7 @@
 
         /* =================================================
            RESET
-        ================================================== */
+        ================================================= */
 
         * {
 
@@ -49,11 +49,9 @@
         body {
 
             width: 100%;
-
             height: 100%;
 
             margin: 0;
-
             padding: 0;
         }
 
@@ -62,7 +60,7 @@
 
             background: #050505;
 
-            color: #ffffff;
+            color: white;
 
             font-family:
                 "AndyB",
@@ -77,7 +75,7 @@
 
         /* =================================================
            BACKGROUND
-        ================================================== */
+        ================================================= */
 
         #stars {
 
@@ -86,7 +84,6 @@
             inset: 0;
 
             width: 100vw;
-
             height: 100vh;
 
             overflow: hidden;
@@ -94,6 +91,8 @@
             pointer-events: none;
 
             z-index: 0;
+
+            background: transparent;
         }
 
 
@@ -104,20 +103,364 @@
             inset: 0;
 
             width: 100vw;
-
             height: 100vh;
 
-            overflow: hidden;
+            overflow: visible;
 
             pointer-events: none;
 
-            z-index: 2;
+            z-index: 3;
+        }
+
+
+        /* =================================================
+           METEOR
+        ================================================= */
+
+        .meteor-hitbox {
+
+            position: absolute;
+
+            width: 20px;
+            height: 20px;
+
+            margin: -10px;
+
+            pointer-events: auto;
+
+            cursor: pointer;
+
+            z-index: 3;
+
+            animation:
+                meteorMove
+                5.5s
+                linear
+                forwards;
+        }
+
+
+        .meteor {
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 12px;
+            height: 12px;
+
+            background: white;
+
+            transform: rotate(45deg);
+
+            pointer-events: none;
+
+            z-index: 5;
+
+            box-shadow:
+
+                0 0 4px white,
+
+                0 0 8px white,
+
+                0 0 14px #ffb3e7,
+
+                0 0 22px #ff66cc,
+
+                0 0 35px #ff2db5;
+        }
+
+
+        /* =================================================
+           METEOR HEAD
+        ================================================= */
+
+        .meteor::after {
+
+            content: "";
+
+            position: absolute;
+
+            left: -5px;
+            top: -5px;
+
+            width: 22px;
+            height: 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+
+                    #ff42c2 0%,
+                    #ff42c2 20%,
+
+                    #ffffff 20%,
+                    #ffffff 58%,
+
+                    #ff9de0 58%,
+                    #ff9de0 78%,
+
+                    #ff2db5 78%
+                );
+
+            clip-path:
+                polygon(
+                    50% 0%,
+                    100% 50%,
+                    50% 100%,
+                    0% 50%
+                );
+        }
+
+
+        /* =================================================
+           METEOR TRAIL
+
+           Extends BEHIND the meteor.
+        ================================================= */
+
+        .meteor::before {
+
+            content: "";
+
+            position: absolute;
+
+            right: 7px;
+
+            top: 50%;
+
+            width: 600px;
+
+            height: 14px;
+
+            transform:
+                translateY(-50%);
+
+            transform-origin:
+                right center;
+
+            background:
+                linear-gradient(
+                    to left,
+
+                    #ffffff 0%,
+
+                    #ffffff 4%,
+
+                    #ffd8f3 10%,
+
+                    #ff9bdd 24%,
+
+                    #ff63cb 45%,
+
+                    #ff3dbd 68%,
+
+                    rgba(
+                        255,
+                        61,
+                        189,
+                        0.2
+                    ) 88%,
+
+                    transparent 100%
+                );
+
+            clip-path:
+                polygon(
+                    0 15%,
+                    12% 25%,
+                    40% 35%,
+                    70% 43%,
+                    100% 48%,
+                    100% 52%,
+                    70% 57%,
+                    40% 65%,
+                    12% 75%,
+                    0 85%
+                );
+
+            pointer-events: none;
+        }
+
+
+        /* =================================================
+           METEOR MOVEMENT
+
+           Starts above/right and travels
+           diagonally down-left.
+        ================================================= */
+
+        @keyframes meteorMove {
+
+            from {
+
+                transform:
+                    translate3d(
+                        0,
+                        0,
+                        0
+                    );
+
+                opacity: 0;
+            }
+
+
+            7% {
+
+                opacity: 1;
+            }
+
+
+            85% {
+
+                opacity: 1;
+            }
+
+
+            to {
+
+                transform:
+                    translate3d(
+                        -120vw,
+                        120vh,
+                        0
+                    );
+
+                opacity: 0;
+            }
+
+        }
+
+
+        /* =================================================
+           METEOR POPUP
+        ================================================= */
+
+        .meteor-popup {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.78
+                );
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+            z-index: 99999;
+
+            transition:
+                opacity 0.15s ease;
+        }
+
+
+        .meteor-popup.visible {
+
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: auto;
+        }
+
+
+        .meteor-popup-box {
+
+            position: relative;
+
+            padding: 8px;
+
+            background: black;
+
+            border:
+                2px solid white;
+
+            box-shadow:
+                0 0 30px
+                rgba(
+                    255,
+                    70,
+                    190,
+                    0.5
+                );
+        }
+
+
+        .meteor-popup-gif {
+
+            display: block;
+
+            max-width: 80vw;
+
+            max-height: 75vh;
+
+            image-rendering: pixelated;
+        }
+
+
+        .meteor-popup-close {
+
+            position: absolute;
+
+            top: -16px;
+
+            right: -16px;
+
+            width: 30px;
+
+            height: 30px;
+
+            padding: 0;
+
+            border:
+                2px solid white;
+
+            background: black;
+
+            color: white;
+
+            font-family:
+                "AndyB",
+                Arial,
+                sans-serif;
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            z-index: 10;
+        }
+
+
+        .meteor-popup-close:hover {
+
+            background: #222;
+
+            color: #ff8bdc;
         }
 
 
         /* =================================================
            NAVIGATION
-        ================================================== */
+        ================================================= */
 
         .pixel-tabs {
 
@@ -129,8 +472,6 @@
 
             display: flex;
 
-            flex-direction: row;
-
             align-items: center;
 
             gap: 4px;
@@ -139,13 +480,13 @@
 
             z-index: 1000;
 
-            background: #000000;
+            background: black;
 
             border:
                 2px solid #1c1c1c;
 
             box-shadow:
-                3px 3px 0 #000000;
+                3px 3px 0 black;
 
             white-space: nowrap;
         }
@@ -156,7 +497,6 @@
             display: inline-flex;
 
             align-items: center;
-
             justify-content: center;
 
             height: 36px;
@@ -167,9 +507,9 @@
 
             border: 0;
 
-            background: #000000;
+            background: black;
 
-            color: #ffffff;
+            color: white;
 
             font-family:
                 "AndyB",
@@ -181,8 +521,8 @@
             cursor: pointer;
 
             box-shadow:
-                inset 2px 2px 0 #222222,
-                inset -2px -2px 0 #000000;
+                inset 2px 2px 0 #222,
+                inset -2px -2px 0 #000;
         }
 
 
@@ -197,14 +537,14 @@
             background: #0b0b0b;
 
             box-shadow:
-                inset 0 -2px 0 #ffffff,
+                inset 0 -2px 0 white,
                 inset 2px 2px 0 #292929;
         }
 
 
         /* =================================================
            MAIN
-        ================================================== */
+        ================================================= */
 
         main {
 
@@ -219,8 +559,8 @@
 
 
         /* =================================================
-           PAGES
-        ================================================== */
+           PAGE
+        ================================================= */
 
         .pixel-page {
 
@@ -254,8 +594,8 @@
 
 
         /* =================================================
-           LIVE CONTENT
-        ================================================== */
+           LIVE
+        ================================================= */
 
         .live-content {
 
@@ -267,23 +607,23 @@
 
             justify-content: center;
 
-            gap: 18px;
+            gap: 28px;
 
             width: 100%;
         }
 
 
         /* =================================================
-           RALKERIE PNG
-        ================================================== */
+           BIGGER RALKERIE PNG
+        ================================================= */
 
         .username-png {
 
             display: block;
 
-            width: 340px;
+            width: 430px;
 
-            max-width: 75vw;
+            max-width: 82vw;
 
             height: auto;
 
@@ -304,8 +644,8 @@
         /* =================================================
            WAVEFORM WRAPPER
 
-           The waveform surrounds this entire area.
-        ================================================== */
+           Width is EXACTLY the Discord card width.
+        ================================================= */
 
         .waveform-wrapper {
 
@@ -323,19 +663,21 @@
 
         /* =================================================
            WAVEFORM FRAME
-        ================================================== */
+
+           This surrounds the card.
+        ================================================= */
 
         .wave-border {
 
             position: absolute;
 
-            left: -22px;
+            left: -28px;
 
-            right: -22px;
+            right: -28px;
 
-            top: -22px;
+            top: -28px;
 
-            bottom: -22px;
+            bottom: -28px;
 
             pointer-events: none;
 
@@ -345,7 +687,7 @@
 
         /* =================================================
            WAVE BARS
-        ================================================== */
+        ================================================= */
 
         .wave-bar {
 
@@ -357,24 +699,24 @@
                 linear-gradient(
                     to bottom,
 
-                    #ffffff 0%,
+                    white 0%,
 
-                    #ffffff 20%,
+                    white 20%,
 
-                    #ffd4f2 45%,
+                    #ffd5f3 45%,
 
-                    #ff72cf 75%,
+                    #ff72cf 70%,
 
                     #ff2db5 100%
                 );
 
             box-shadow:
 
-                0 0 3px #ffffff,
+                0 0 3px white,
 
                 0 0 6px #ff9bdd,
 
-                0 0 10px
+                0 0 11px
                 rgba(
                     255,
                     45,
@@ -395,8 +737,8 @@
 
 
         /* =================================================
-           DISCORD CARD CONTAINER
-        ================================================== */
+           DISCORD CONTAINER
+        ================================================= */
 
         .discord-card-container {
 
@@ -416,7 +758,7 @@
 
         /* =================================================
            DISCORD CARD
-        ================================================== */
+        ================================================= */
 
         .discord-live-card {
 
@@ -431,22 +773,22 @@
                     5,
                     5,
                     5,
-                    0.96
+                    0.97
                 );
 
             border:
-                2px solid #ffffff;
+                2px solid white;
 
             box-shadow:
-                6px 6px 0 #000000;
+                6px 6px 0 black;
 
             z-index: 10;
         }
 
 
         /* =================================================
-           DISCORD PROFILE
-        ================================================== */
+           DISCORD
+        ================================================= */
 
         .discord-profile {
 
@@ -469,7 +811,7 @@
             image-rendering: pixelated;
 
             border:
-                2px solid #ffffff;
+                2px solid white;
         }
 
 
@@ -477,7 +819,7 @@
 
             font-size: 28px;
 
-            color: #ffffff;
+            color: white;
         }
 
 
@@ -509,13 +851,13 @@
 
         .status-offline {
 
-            color: #888888;
+            color: #888;
         }
 
 
         /* =================================================
-           GAME ACTIVITY
-        ================================================== */
+           ACTIVITY
+        ================================================= */
 
         .discord-activity {
 
@@ -524,7 +866,7 @@
             padding-top: 18px;
 
             border-top:
-                2px solid #222222;
+                2px solid #222;
         }
 
 
@@ -544,13 +886,13 @@
 
             font-size: 22px;
 
-            color: #ffffff;
+            color: white;
         }
 
 
         /* =================================================
            SPOTIFY
-        ================================================== */
+        ================================================= */
 
         .discord-spotify {
 
@@ -559,7 +901,7 @@
             padding-top: 18px;
 
             border-top:
-                2px solid #222222;
+                2px solid #222;
         }
 
 
@@ -601,7 +943,7 @@
 
             font-size: 18px;
 
-            color: #ffffff;
+            color: white;
         }
 
 
@@ -611,13 +953,13 @@
 
             font-size: 14px;
 
-            color: #aaaaaa;
+            color: #aaa;
         }
 
 
         /* =================================================
            CLOCK
-        ================================================== */
+        ================================================= */
 
         .local-clock {
 
@@ -626,7 +968,7 @@
             padding-top: 18px;
 
             border-top:
-                2px solid #222222;
+                2px solid #222;
 
             text-align: center;
         }
@@ -638,10 +980,10 @@
 
             line-height: 1;
 
-            color: #ffffff;
+            color: white;
 
             text-shadow:
-                3px 3px 0 #000000;
+                3px 3px 0 black;
         }
 
 
@@ -658,8 +1000,8 @@
 
 
         /* =================================================
-           GENERAL PANELS
-        ================================================== */
+           PANELS
+        ================================================= */
 
         .pixel-panel {
 
@@ -682,10 +1024,10 @@
                 );
 
             border:
-                2px solid #ffffff;
+                2px solid white;
 
             box-shadow:
-                6px 6px 0 #000000;
+                6px 6px 0 black;
 
             text-align: center;
         }
@@ -698,7 +1040,7 @@
 
             font-size: 18px;
 
-            color: #aaaaaa;
+            color: #aaa;
         }
 
 
@@ -716,10 +1058,10 @@
 
             font-weight: normal;
 
-            color: #ffffff;
+            color: white;
 
             text-shadow:
-                3px 3px 0 #000000;
+                3px 3px 0 black;
         }
 
 
@@ -737,7 +1079,7 @@
 
         /* =================================================
            MUSIC
-        ================================================== */
+        ================================================= */
 
         .music-card {
 
@@ -754,7 +1096,7 @@
             background: #080808;
 
             border:
-                1px solid #333333;
+                1px solid #333;
 
             text-align: left;
         }
@@ -771,7 +1113,7 @@
             background: #151515;
 
             border:
-                1px solid #444444;
+                1px solid #444;
         }
 
 
@@ -787,7 +1129,7 @@
 
         .music-info strong {
 
-            color: #ffffff;
+            color: white;
 
             font-size: 17px;
         }
@@ -795,7 +1137,7 @@
 
         .music-info span {
 
-            color: #888888;
+            color: #888;
 
             font-size: 15px;
         }
@@ -803,7 +1145,7 @@
 
         /* =================================================
            LINKS
-        ================================================== */
+        ================================================= */
 
         .link-grid {
 
@@ -837,9 +1179,9 @@
             background: #050505;
 
             border:
-                1px solid #333333;
+                1px solid #333;
 
-            color: #ffffff;
+            color: white;
 
             text-decoration: none;
 
@@ -851,13 +1193,13 @@
 
             background: #171717;
 
-            border-color: #ffffff;
+            border-color: white;
         }
 
 
         /* =================================================
            MOBILE
-        ================================================== */
+        ================================================= */
 
         @media (max-width: 700px) {
 
@@ -903,9 +1245,15 @@
             }
 
 
+            .live-content {
+
+                gap: 22px;
+            }
+
+
             .username-png {
 
-                width: 280px;
+                width: 330px;
             }
 
 
@@ -917,19 +1265,17 @@
 
             .wave-border {
 
-                left: -15px;
+                left: -20px;
 
-                right: -15px;
+                right: -20px;
 
-                top: -15px;
+                top: -20px;
 
-                bottom: -15px;
+                bottom: -20px;
             }
 
 
             .discord-live-card {
-
-                width: 100%;
 
                 padding: 18px;
             }
@@ -956,10 +1302,9 @@
     </style>
 
 
-    <!-- =================================================
-         THIS WAS MISSING
-         LOADS YOUR ACTUAL background.css
-    ================================================== -->
+    <!-- =====================================================
+         STAR CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -972,9 +1317,9 @@
 <body>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          STARS
-    ================================================== -->
+    ====================================================== -->
 
     <div
         id="stars"
@@ -982,9 +1327,9 @@
     ></div>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          METEORS
-    ================================================== -->
+    ====================================================== -->
 
     <div
         id="meteors"
@@ -992,9 +1337,9 @@
     ></div>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          NAVIGATION
-    ================================================== -->
+    ====================================================== -->
 
     <nav
         class="pixel-tabs"
@@ -1048,9 +1393,9 @@
     </nav>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          MAIN
-    ================================================== -->
+    ====================================================== -->
 
     <main>
 
@@ -1067,9 +1412,7 @@
             <div class="live-content">
 
 
-                <!-- =================================================
-                     RALKERIE PNG
-                ================================================== -->
+                <!-- BIGGER PNG -->
 
                 <img
                     class="username-png"
@@ -1078,9 +1421,7 @@
                 >
 
 
-                <!-- =================================================
-                     WAVEFORM + DISCORD
-                ================================================== -->
+                <!-- WAVEFORM WRAPS THIS -->
 
                 <div
                     id="waveform-wrapper"
@@ -1124,11 +1465,9 @@
                     MUSIC
                 </p>
 
-
                 <h1>
                     NOW PLAYING
                 </h1>
-
 
                 <div class="music-card">
 
@@ -1136,13 +1475,11 @@
                         class="music-cover"
                     ></div>
 
-
                     <div class="music-info">
 
                         <strong>
                             No song playing
                         </strong>
-
 
                         <span>
                             Spotify
@@ -1172,11 +1509,9 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     LINKS
                 </h1>
-
 
                 <div class="link-grid">
 
@@ -1235,11 +1570,9 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     TOOLS
                 </h1>
-
 
                 <p class="pixel-description">
                     Tools and projects will go here.
@@ -1265,11 +1598,9 @@
                     RALKERIE
                 </p>
 
-
                 <h1>
                     ABOUT
                 </h1>
-
 
                 <p class="pixel-description">
                     Welcome to my little corner
@@ -1283,9 +1614,9 @@
     </main>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          JAVASCRIPT
-    ================================================== -->
+    ====================================================== -->
 
     <script src="./js/stars.js"></script>
 
@@ -1296,7 +1627,6 @@
     <script src="./js/main.js"></script>
 
     <script src="./js/discord.js"></script>
-
 
 </body>
 
