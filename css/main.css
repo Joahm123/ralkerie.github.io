@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: center;
 
-    gap: 22px;
+    gap: 20px;
 
     width: 100%;
 }
@@ -21,7 +21,6 @@
 .username-png {
     display: block;
 
-    /* BIGGER */
     width: 430px;
     max-width: 80vw;
 
@@ -46,7 +45,6 @@
     align-items: center;
     justify-content: center;
 
-    /* DON'T STRETCH ACROSS THE SCREEN */
     width: auto;
     max-width: 100%;
 
@@ -61,7 +59,6 @@
 .waveform-wrapper {
     position: relative;
 
-    /* SMALL COMPACT BOX */
     width: 360px;
     max-width: 85vw;
 
@@ -72,7 +69,7 @@
 
 
 /* =====================================================
-   DISCORD CARD
+   DISCORD LIVE CARD
 ===================================================== */
 
 .discord-live-card {
@@ -102,26 +99,17 @@
         gap: 18px;
     }
 
-
     .username-png {
         width: 330px;
         max-width: 82vw;
     }
-
-
-    .discord-card-container {
-        width: auto;
-    }
-
 
     .waveform-wrapper {
         width: 330px;
         max-width: 88vw;
     }
 
-
     .discord-live-card {
         padding: 16px;
     }
-
 }
