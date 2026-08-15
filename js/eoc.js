@@ -4,10 +4,9 @@
    - Small eye button beside LIVE
    - Click to summon giant Eye of Cthulhu
    - Dashes around the entire screen
-   - Bounces off screen edges
-   - Faces the direction it is moving
-   - Plays eoc.mp3
-   - Automatically disappears
+   - Changes direction at screen edges
+   - Restarts eoc.mp3 on every new dash
+   - Eye faces movement direction
    - ESC closes it
 ===================================================== */
 
@@ -25,12 +24,10 @@
             "eoc-button"
         );
 
-
     const eye =
         document.getElementById(
             "eoc-easter-egg"
         );
-
 
     const eyeImage =
         eye
@@ -61,7 +58,6 @@
             "./assets/audio/eoc.mp3"
         );
 
-
     audio.preload = "auto";
 
 
@@ -69,65 +65,62 @@
        SETTINGS
     ================================================= */
 
-    const DASH_DURATION =
-        2600;
+    const DASH_DURATION = 10000;
 
+    const MIN_SPEED = 10;
 
-    const MIN_SPEED =
-        8;
-
-
-    const MAX_SPEED =
-        18;
-
+    const MAX_SPEED = 20;
 
     /*
-     * Your PNG faces opposite the movement
-     * direction, so we rotate it 180 degrees.
+     * PNG points opposite the movement direction.
      */
-
-    const ROTATION_OFFSET =
-        180;
+    const ROTATION_OFFSET = 180;
 
 
     /* =================================================
        STATE
     ================================================= */
 
-    let active =
-        false;
+    let active = false;
 
+    let animationFrame = null;
 
-    let animationFrame =
-        null;
+    let endTimer = null;
 
+    let x = 0;
 
-    let endTimer =
-        null;
+    let y = 0;
 
+    let vx = 0;
 
-    let x =
-        0;
+    let vy = 0;
 
-
-    let y =
-        0;
-
-
-    let vx =
-        0;
-
-
-    let vy =
-        0;
-
-
-    let lastTime =
-        0;
+    let lastTime = 0;
 
 
     /* =================================================
-       RANDOM DIRECTION
+       PLAY DASH SOUND
+    ================================================= */
+
+    function playDashSound() {
+
+        /*
+         * Restart the sound every time
+         * the Eye starts a new dash.
+         */
+
+        audio.pause();
+
+        audio.currentTime = 0;
+
+        audio.play().catch(
+            () => {}
+        );
+    }
+
+
+    /* =================================================
+       CHOOSE RANDOM DIRECTION
     ================================================= */
 
     function chooseDirection() {
@@ -137,7 +130,6 @@
             Math.PI *
             2;
 
-
         const speed =
             MIN_SPEED +
             Math.random() *
@@ -146,41 +138,40 @@
                 MIN_SPEED
             );
 
-
         vx =
             Math.cos(angle) *
             speed;
 
-
         vy =
             Math.sin(angle) *
             speed;
+
+        /*
+         * New direction = new dash sound.
+         */
+
+        playDashSound();
     }
 
 
     /* =================================================
-       START EYE
+       START
     ================================================= */
 
     function activateEye() {
 
         if (active) {
-
             return;
         }
 
-
-        active =
-            true;
+        active = true;
 
 
         /* ---------------------------------------------
-           RANDOM START POSITION
+           RANDOM START
         --------------------------------------------- */
 
-        const margin =
-            120;
-
+        const margin = 140;
 
         x =
             margin +
@@ -190,7 +181,6 @@
                 window.innerWidth -
                 margin * 2
             );
-
 
         y =
             margin +
@@ -203,7 +193,7 @@
 
 
         /* ---------------------------------------------
-           RANDOM MOVEMENT
+           FIRST DASH
         --------------------------------------------- */
 
         chooseDirection();
@@ -217,38 +207,14 @@
             "active"
         );
 
-
         eye.style.left =
             `${x}px`;
-
 
         eye.style.top =
             `${y}px`;
 
-
         eye.style.transform =
             "translate(-50%, -50%) scale(1)";
-
-
-        /* ---------------------------------------------
-           RESET IMAGE ROTATION
-        --------------------------------------------- */
-
-        eyeImage.style.transform =
-            "rotate(0deg)";
-
-
-        /* ---------------------------------------------
-           PLAY SOUND
-        --------------------------------------------- */
-
-        audio.currentTime =
-            0;
-
-
-        audio.play().catch(
-            () => {}
-        );
 
 
         /* ---------------------------------------------
@@ -257,7 +223,6 @@
 
         lastTime =
             performance.now();
-
 
         animationFrame =
             requestAnimationFrame(
@@ -273,7 +238,6 @@
             endTimer
         );
 
-
         endTimer =
             setTimeout(
                 deactivateEye,
@@ -283,26 +247,21 @@
 
 
     /* =================================================
-       MOVE EYE
+       MOVE
     ================================================= */
 
-    function moveEye(
-        time
-    ) {
+    function moveEye(time) {
 
         if (!active) {
-
             return;
         }
 
 
         const delta =
             Math.min(
-                time -
-                lastTime,
+                time - lastTime,
                 40
             );
-
 
         lastTime =
             time;
@@ -317,7 +276,6 @@
             delta /
             16.67;
 
-
         y +=
             vy *
             delta /
@@ -325,30 +283,28 @@
 
 
         /* ---------------------------------------------
-           GET SIZE
+           SIZE
         --------------------------------------------- */
 
         const width =
-            eye.offsetWidth ||
-            180;
-
+            eye.offsetWidth || 180;
 
         const height =
-            eye.offsetHeight ||
-            180;
-
+            eye.offsetHeight || 180;
 
         const halfWidth =
             width / 2;
-
 
         const halfHeight =
             height / 2;
 
 
         /* ---------------------------------------------
-           LEFT WALL
+           WALL COLLISION
         --------------------------------------------- */
+
+        let changedDirection = false;
+
 
         if (
             x <= halfWidth
@@ -357,18 +313,13 @@
             x =
                 halfWidth;
 
-
             vx =
                 Math.abs(vx);
 
-
-            changeVerticalDirection();
+            changedDirection =
+                true;
         }
 
-
-        /* ---------------------------------------------
-           RIGHT WALL
-        --------------------------------------------- */
 
         if (
             x >=
@@ -380,18 +331,13 @@
                 window.innerWidth -
                 halfWidth;
 
-
             vx =
                 -Math.abs(vx);
 
-
-            changeVerticalDirection();
+            changedDirection =
+                true;
         }
 
-
-        /* ---------------------------------------------
-           TOP WALL
-        --------------------------------------------- */
 
         if (
             y <= halfHeight
@@ -400,18 +346,13 @@
             y =
                 halfHeight;
 
-
             vy =
                 Math.abs(vy);
 
-
-            changeHorizontalDirection();
+            changedDirection =
+                true;
         }
 
-
-        /* ---------------------------------------------
-           BOTTOM WALL
-        --------------------------------------------- */
 
         if (
             y >=
@@ -423,12 +364,24 @@
                 window.innerHeight -
                 halfHeight;
 
-
             vy =
                 -Math.abs(vy);
 
+            changedDirection =
+                true;
+        }
 
-            changeHorizontalDirection();
+
+        /*
+         * If the Eye hit a wall, it just
+         * changed direction.
+         *
+         * Restart the dash noise.
+         */
+
+        if (changedDirection) {
+
+            playDashSound();
         }
 
 
@@ -439,13 +392,12 @@
         eye.style.left =
             `${x}px`;
 
-
         eye.style.top =
             `${y}px`;
 
 
         /* ---------------------------------------------
-           FACE MOVEMENT DIRECTION
+           ROTATION
         --------------------------------------------- */
 
         const angle =
@@ -473,93 +425,38 @@
 
 
     /* =================================================
-       CHANGE VERTICAL DIRECTION
-    ================================================= */
-
-    function changeVerticalDirection() {
-
-        const speed =
-            Math.max(
-                Math.abs(vy),
-                MIN_SPEED
-            );
-
-
-        vy =
-            (
-                Math.random() > 0.5
-                    ? 1
-                    : -1
-            ) *
-            speed;
-    }
-
-
-    /* =================================================
-       CHANGE HORIZONTAL DIRECTION
-    ================================================= */
-
-    function changeHorizontalDirection() {
-
-        const speed =
-            Math.max(
-                Math.abs(vx),
-                MIN_SPEED
-            );
-
-
-        vx =
-            (
-                Math.random() > 0.5
-                    ? 1
-                    : -1
-            ) *
-            speed;
-    }
-
-
-    /* =================================================
        STOP
     ================================================= */
 
     function deactivateEye() {
 
-        active =
-            false;
+        active = false;
 
 
         clearTimeout(
             endTimer
         );
 
-
-        endTimer =
-            null;
+        endTimer = null;
 
 
-        if (
-            animationFrame
-        ) {
+        if (animationFrame) {
 
             cancelAnimationFrame(
                 animationFrame
             );
 
-
-            animationFrame =
-                null;
+            animationFrame = null;
         }
 
 
         /* ---------------------------------------------
-           STOP AUDIO
+           STOP SOUND
         --------------------------------------------- */
 
         audio.pause();
 
-
-        audio.currentTime =
-            0;
+        audio.currentTime = 0;
 
 
         /* ---------------------------------------------
@@ -571,25 +468,15 @@
         );
 
 
-        /* ---------------------------------------------
-           RESET ROTATION
-        --------------------------------------------- */
-
         eyeImage.style.transform =
             "rotate(0deg)";
 
 
-        /* ---------------------------------------------
-           RESET POSITION
-        --------------------------------------------- */
-
         eye.style.left =
             "50%";
 
-
         eye.style.top =
             "50%";
-
 
         eye.style.transform =
             "translate(-50%, -50%) scale(0)";
@@ -597,7 +484,7 @@
 
 
     /* =================================================
-       BUTTON CLICK
+       BUTTON
     ================================================= */
 
     button.addEventListener(
@@ -608,14 +495,13 @@
 
             event.stopPropagation();
 
-
             activateEye();
         }
     );
 
 
     /* =================================================
-       BIG EYE CLICK
+       EYE CLICK
     ================================================= */
 
     eye.addEventListener(
@@ -625,7 +511,6 @@
             event.preventDefault();
 
             event.stopPropagation();
-
 
             deactivateEye();
         }
@@ -652,7 +537,7 @@
 
 
     /* =================================================
-       RESIZE SAFETY
+       RESIZE
     ================================================= */
 
     window.addEventListener(
@@ -660,24 +545,18 @@
         () => {
 
             if (!active) {
-
                 return;
             }
 
 
             const width =
-                eye.offsetWidth ||
-                180;
-
+                eye.offsetWidth || 180;
 
             const height =
-                eye.offsetHeight ||
-                180;
-
+                eye.offsetHeight || 180;
 
             const halfWidth =
                 width / 2;
-
 
             const halfHeight =
                 height / 2;
@@ -711,7 +590,7 @@
 
 
     /* =================================================
-       PAGE VISIBILITY
+       HIDDEN TAB
     ================================================= */
 
     document.addEventListener(
@@ -728,10 +607,6 @@
         }
     );
 
-
-    /* =================================================
-       READY
-    ================================================= */
 
     console.log(
         "Ralkerie Eye of Cthulhu easter egg ready."
