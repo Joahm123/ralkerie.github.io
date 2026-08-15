@@ -1,45 +1,41 @@
-```javascript
+
 (function () {
 
     "use strict";
 
-    /*
-       Your Discord user ID
-    */
 
-    var DISCORD_ID =
-        "1044800788817510460";
-
-
-    /*
-       Change this to your Cloudflare Worker URL.
-
-       Example:
-
-       https://ralkerie-discord.yourname.workers.dev
-    */
+    /* =====================================================
+       SETTINGS
+    ===================================================== */
 
     var API_URL =
-        "https://YOUR-WORKER-URL.workers.dev";
+        "/api/discord";
 
+
+    /* =====================================================
+       FIND LIVE SECTION
+    ===================================================== */
 
     var liveSection =
         document.getElementById("live");
 
 
     if (!liveSection) {
+
         console.error(
             "Ralkerie Discord: #live not found."
         );
+
         return;
     }
 
 
-    /*
-       Build the LIVE card
-    */
+    /* =====================================================
+       CREATE LIVE CARD
+    ===================================================== */
 
     liveSection.innerHTML = `
+
         <div class="discord-live-card">
 
             <div class="discord-profile">
@@ -77,15 +73,18 @@
                 class="discord-activity"
             >
 
-                <div class="discord-activity-title">
-                    NOTHING PLAYING
+                <div
+                    id="discord-activity-title"
+                    class="discord-activity-title"
+                >
+                    LOADING
                 </div>
 
                 <div
                     id="discord-activity-text"
                     class="discord-activity-text"
                 >
-                    Waiting for Discord...
+                    Checking Discord...
                 </div>
 
             </div>
@@ -97,7 +96,7 @@
             >
 
                 <div class="discord-section-label">
-                    LISTENING
+                    LISTENING ON SPOTIFY
                 </div>
 
                 <div class="spotify-row">
@@ -132,67 +131,94 @@
             </div>
 
         </div>
+
     `;
 
 
-    function element(id) {
+    /* =====================================================
+       HELPER
+    ===================================================== */
+
+    function get(id) {
+
         return document.getElementById(id);
+
     }
 
 
-    /*
-       Update the card
-    */
+    /* =====================================================
+       UPDATE DISCORD
+    ===================================================== */
 
-    function updateDiscord(data) {
+    function updateDiscord(response) {
 
-        if (!data) {
+        if (
+            !response ||
+            !response.success ||
+            !response.data
+        ) {
+
+            console.error(
+                "Invalid Discord response:",
+                response
+            );
+
             return;
         }
+
+
+        var data =
+            response.data;
 
 
         var user =
             data.discord_user || {};
 
+
         var status =
-            data.discord_status || "offline";
+            data.discord_status ||
+            "offline";
 
 
-        /*
-           Username
-        */
+        /* =================================================
+           USERNAME
+        ================================================= */
 
-        element("discord-name").textContent =
+        get("discord-name").textContent =
             user.global_name ||
             user.username ||
-            "Ralkerie";
+            "Ralk";
 
 
-        /*
-           Status
-        */
+        /* =================================================
+           STATUS
+        ================================================= */
 
-        element("discord-status").textContent =
+        get("discord-status").textContent =
             status.toUpperCase();
 
 
-        element("discord-status").className =
-            "discord-status status-" + status;
+        get("discord-status").className =
+            "discord-status status-" +
+            status;
 
 
-        /*
-           Avatar
-        */
+        /* =================================================
+           AVATAR
+        ================================================= */
 
-        if (user.id && user.avatar) {
+        if (
+            user.id &&
+            user.avatar
+        ) {
 
             var extension =
-                user.avatar.startsWith("a_")
+                user.avatar.indexOf("a_") === 0
                     ? "gif"
                     : "png";
 
 
-            element("discord-avatar").src =
+            get("discord-avatar").src =
                 "https://cdn.discordapp.com/avatars/" +
                 user.id +
                 "/" +
@@ -204,9 +230,9 @@
         }
 
 
-        /*
-           Spotify
-        */
+        /* =================================================
+           SPOTIFY
+        ================================================= */
 
         if (
             data.listening_to_spotify &&
@@ -217,41 +243,56 @@
                 data.spotify;
 
 
-            element("discord-spotify")
-                .classList.remove("hidden");
+            get(
+                "discord-spotify"
+            ).classList.remove(
+                "hidden"
+            );
 
 
-            element("spotify-art").src =
-                spotify.album_art_url || "";
+            get(
+                "spotify-art"
+            ).src =
+                spotify.album_art_url ||
+                "";
 
 
-            element("spotify-song")
-                .textContent =
-                spotify.song || "Unknown song";
+            get(
+                "spotify-song"
+            ).textContent =
+                spotify.song ||
+                "Unknown song";
 
 
-            element("spotify-artist")
-                .textContent =
-                spotify.artist || "Unknown artist";
+            get(
+                "spotify-artist"
+            ).textContent =
+                spotify.artist ||
+                "Unknown artist";
 
 
         } else {
 
-            element("discord-spotify")
-                .classList.add("hidden");
+            get(
+                "discord-spotify"
+            ).classList.add(
+                "hidden"
+            );
 
         }
 
 
-        /*
-           Discord activities
-        */
+        /* =================================================
+           ACTIVITIES
+        ================================================= */
 
         var activities =
-            data.activities || [];
+            data.activities ||
+            [];
 
 
-        var activity = null;
+        var activity =
+            null;
 
 
         for (
@@ -259,6 +300,10 @@
             i < activities.length;
             i++
         ) {
+
+            /*
+               Type 4 is custom status.
+            */
 
             if (
                 activities[i].type !== 4
@@ -275,45 +320,70 @@
 
         if (activity) {
 
-            element(
-                "discord-activity"
-            ).classList.remove("hidden");
-
-
             var activityType =
+                "ACTIVITY";
+
+
+            if (
                 activity.type === 0
-                    ? "PLAYING"
-                    : activity.type === 1
-                    ? "STREAMING"
-                    : activity.type === 2
-                    ? "LISTENING"
-                    : activity.type === 3
-                    ? "WATCHING"
-                    : activity.type === 5
-                    ? "COMPETING"
-                    : "ACTIVITY";
+            ) {
+
+                activityType =
+                    "PLAYING";
+
+            } else if (
+                activity.type === 1
+            ) {
+
+                activityType =
+                    "STREAMING";
+
+            } else if (
+                activity.type === 2
+            ) {
+
+                activityType =
+                    "LISTENING";
+
+            } else if (
+                activity.type === 3
+            ) {
+
+                activityType =
+                    "WATCHING";
+
+            } else if (
+                activity.type === 5
+            ) {
+
+                activityType =
+                    "COMPETING";
+
+            }
 
 
-            element(
+            get(
                 "discord-activity-title"
             ).textContent =
                 activityType;
 
 
-            element(
+            get(
                 "discord-activity-text"
             ).textContent =
-                activity.name || "Unknown";
+                activity.name ||
+                "Unknown activity";
+
 
         } else {
 
-            element(
+            get(
                 "discord-activity-title"
             ).textContent =
                 "NOTHING PLAYING";
 
 
-            element(
+            get(
                 "discord-activity-text"
             ).textContent =
                 "No current activity";
@@ -323,16 +393,14 @@
     }
 
 
-    /*
-       Get presence
-    */
+    /* =====================================================
+       LOAD DISCORD
+    ===================================================== */
 
     function loadDiscord() {
 
         fetch(
-            API_URL +
-            "/presence/" +
-            DISCORD_ID,
+            API_URL,
             {
                 cache: "no-store"
             }
@@ -358,7 +426,9 @@
         .then(
             function (data) {
 
-                updateDiscord(data);
+                updateDiscord(
+                    data
+                );
 
             }
         )
@@ -371,7 +441,8 @@
                     error
                 );
 
-                element(
+
+                get(
                     "discord-status"
                 ).textContent =
                     "UNAVAILABLE";
@@ -382,16 +453,16 @@
     }
 
 
-    /*
-       Initial load
-    */
+    /* =====================================================
+       INITIAL LOAD
+    ===================================================== */
 
     loadDiscord();
 
 
-    /*
-       Refresh every 15 seconds
-    */
+    /* =====================================================
+       REFRESH
+    ===================================================== */
 
     setInterval(
         loadDiscord,
@@ -400,4 +471,4 @@
 
 
 })();
-```
+
