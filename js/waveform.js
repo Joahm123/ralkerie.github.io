@@ -1,12 +1,19 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED BAR FRAME
+   FOUR-SIDED EQUALIZER BORDER
+
+   Bars are FLAT against the Discord box
+   and pulse outward.
 ===================================================== */
 
 (() => {
 
     "use strict";
 
+
+    /* =================================================
+       FIND WRAPPER
+    ================================================= */
 
     const wrapper =
         document.getElementById(
@@ -17,28 +24,15 @@
     if (!wrapper) {
 
         console.error(
-            "Ralkerie waveform: wrapper not found."
+            "Ralkerie waveform: #waveform-wrapper not found."
         );
 
         return;
     }
 
 
-    /* =================================================
-       CREATE BORDER
-    ================================================= */
-
-    const border =
-        document.createElement("div");
-
-
-    border.className =
-        "wave-border";
-
-
-    wrapper.insertBefore(
-        border,
-        wrapper.firstChild
+    console.log(
+        "Ralkerie waveform loaded."
     );
 
 
@@ -46,16 +40,46 @@
        SETTINGS
     ================================================= */
 
-    const BAR_WIDTH = 3;
+    const BAR_SIZE = 3;
 
     const BAR_GAP = 5;
 
     const MIN_SIZE = 3;
 
-    const MAX_SIZE = 27;
+    const MAX_SIZE = 30;
 
-    const OUTSIDE_GAP = 5;
 
+    /* =================================================
+       CREATE BORDER
+    ================================================= */
+
+    let border =
+        wrapper.querySelector(
+            ".wave-border"
+        );
+
+
+    if (!border) {
+
+        border =
+            document.createElement(
+                "div"
+            );
+
+        border.className =
+            "wave-border";
+
+
+        wrapper.insertBefore(
+            border,
+            wrapper.firstChild
+        );
+    }
+
+
+    /* =================================================
+       BAR DATA
+    ================================================= */
 
     let bars = [];
 
@@ -70,11 +94,25 @@
     ) {
 
         const bar =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
 
+
+        /*
+         * IMPORTANT:
+         *
+         * Gives each bar its direction class.
+         *
+         * wave-top
+         * wave-bottom
+         * wave-left
+         * wave-right
+         */
 
         bar.className =
-            "wave-bar";
+            "wave-bar wave-" +
+            side;
 
 
         border.appendChild(
@@ -107,7 +145,7 @@
 
 
     /* =================================================
-       BUILD FRAME
+       BUILD WAVEFORM
     ================================================= */
 
     function build() {
@@ -133,7 +171,7 @@
             Math.ceil(
                 width /
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -147,9 +185,10 @@
 
             createBar(
                 "top",
+
                 i *
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -164,7 +203,7 @@
             Math.ceil(
                 width /
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -178,9 +217,10 @@
 
             createBar(
                 "bottom",
+
                 i *
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -195,7 +235,7 @@
             Math.ceil(
                 height /
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -209,9 +249,10 @@
 
             createBar(
                 "left",
+
                 i *
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -226,7 +267,7 @@
             Math.ceil(
                 height /
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -240,9 +281,10 @@
 
             createBar(
                 "right",
+
                 i *
                 (
-                    BAR_WIDTH +
+                    BAR_SIZE +
                     BAR_GAP
                 )
             );
@@ -250,7 +292,7 @@
 
 
         /* =================================================
-           POSITION
+           POSITION BARS
         ================================================= */
 
         for (
@@ -261,6 +303,13 @@
                 data.element;
 
 
+            /* =============================================
+               TOP
+
+               Bottom edge of bar touches
+               the top edge of the box.
+            ============================================= */
+
             if (
                 data.side === "top"
             ) {
@@ -268,16 +317,23 @@
                 bar.style.left =
                     `${data.position}px`;
 
-                bar.style.bottom =
-                    `${OUTSIDE_GAP}px`;
+                bar.style.top =
+                    "0px";
 
                 bar.style.width =
-                    `${BAR_WIDTH}px`;
+                    `${BAR_SIZE}px`;
 
                 bar.style.height =
                     `${MIN_SIZE}px`;
             }
 
+
+            /* =============================================
+               BOTTOM
+
+               Top edge of bar touches
+               bottom edge of box.
+            ============================================= */
 
             else if (
                 data.side === "bottom"
@@ -286,16 +342,23 @@
                 bar.style.left =
                     `${data.position}px`;
 
-                bar.style.top =
-                    `${OUTSIDE_GAP}px`;
+                bar.style.bottom =
+                    "0px";
 
                 bar.style.width =
-                    `${BAR_WIDTH}px`;
+                    `${BAR_SIZE}px`;
 
                 bar.style.height =
                     `${MIN_SIZE}px`;
             }
 
+
+            /* =============================================
+               LEFT
+
+               Right edge of bar touches
+               left edge of box.
+            ============================================= */
 
             else if (
                 data.side === "left"
@@ -304,16 +367,23 @@
                 bar.style.top =
                     `${data.position}px`;
 
-                bar.style.right =
-                    `${OUTSIDE_GAP}px`;
+                bar.style.left =
+                    "0px";
 
                 bar.style.height =
-                    `${BAR_WIDTH}px`;
+                    `${BAR_SIZE}px`;
 
                 bar.style.width =
                     `${MIN_SIZE}px`;
             }
 
+
+            /* =============================================
+               RIGHT
+
+               Left edge of bar touches
+               right edge of box.
+            ============================================= */
 
             else if (
                 data.side === "right"
@@ -322,15 +392,16 @@
                 bar.style.top =
                     `${data.position}px`;
 
-                bar.style.left =
-                    `${OUTSIDE_GAP}px`;
+                bar.style.right =
+                    "0px";
 
                 bar.style.height =
-                    `${BAR_WIDTH}px`;
+                    `${BAR_SIZE}px`;
 
                 bar.style.width =
                     `${MIN_SIZE}px`;
             }
+
         }
     }
 
@@ -339,16 +410,18 @@
        ANIMATION
     ================================================= */
 
-    const start =
+    const startTime =
         performance.now();
 
 
-    function animate(time) {
+    function animate(
+        currentTime
+    ) {
 
         const elapsed =
             (
-                time -
-                start
+                currentTime -
+                startTime
             ) / 1000;
 
 
@@ -356,7 +429,11 @@
             const data of bars
         ) {
 
-            const primary =
+            /*
+             * Main waveform movement.
+             */
+
+            const wave =
                 (
                     Math.sin(
                         elapsed *
@@ -366,6 +443,10 @@
                     1
                 ) / 2;
 
+
+            /*
+             * Smaller secondary movement.
+             */
 
             const secondary =
                 (
@@ -379,9 +460,13 @@
                 ) / 2;
 
 
+            /*
+             * Combine both waves.
+             */
+
             const value =
                 (
-                    primary *
+                    wave *
                     0.75
                 ) +
                 (
@@ -389,6 +474,10 @@
                     0.25
                 );
 
+
+            /*
+             * Calculate bar size.
+             */
 
             const size =
                 MIN_SIZE +
@@ -404,6 +493,14 @@
                 data.element;
 
 
+            /* =============================================
+               TOP / BOTTOM
+
+               Height changes.
+
+               Width stays flat.
+            ============================================= */
+
             if (
                 data.side === "top" ||
                 data.side === "bottom"
@@ -414,11 +511,20 @@
             }
 
 
+            /* =============================================
+               LEFT / RIGHT
+
+               Width changes.
+
+               Height stays flat.
+            ============================================= */
+
             else {
 
                 bar.style.width =
                     `${size}px`;
             }
+
         }
 
 
@@ -432,7 +538,7 @@
        RESIZE
     ================================================= */
 
-    let resizeTimer;
+    let resizeTimer = null;
 
 
     window.addEventListener(
@@ -446,7 +552,11 @@
 
             resizeTimer =
                 setTimeout(
-                    build,
+                    () => {
+
+                        build();
+
+                    },
                     150
                 );
 
@@ -458,18 +568,19 @@
 
 
     /* =================================================
-       START
+       INITIAL BUILD
     ================================================= */
 
     build();
+
+
+    /* =================================================
+       START ANIMATION
+    ================================================= */
 
     requestAnimationFrame(
         animate
     );
 
-
-    console.log(
-        "Ralkerie waveform loaded."
-    );
 
 })();
