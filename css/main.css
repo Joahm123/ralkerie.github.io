@@ -1,22 +1,16 @@
-```css
 /* =====================================================
    LIVE CONTENT
 ===================================================== */
 
 .live-content {
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
-    gap: 18px;
+    gap: 22px;
 
     width: 100%;
-
 }
 
 
@@ -25,12 +19,11 @@
 ===================================================== */
 
 .username-png {
-
     display: block;
 
-    width: 280px;
-
-    max-width: 70vw;
+    /* BIGGER */
+    width: 430px;
+    max-width: 80vw;
 
     height: auto;
 
@@ -39,9 +32,7 @@
     image-rendering: pixelated;
 
     user-select: none;
-
     pointer-events: none;
-
 }
 
 
@@ -50,15 +41,54 @@
 ===================================================== */
 
 .discord-card-container {
-
     display: flex;
 
     align-items: center;
-
     justify-content: center;
+
+    /* DON'T STRETCH ACROSS THE SCREEN */
+    width: auto;
+    max-width: 100%;
+
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+   WAVEFORM WRAPPER
+===================================================== */
+
+.waveform-wrapper {
+    position: relative;
+
+    /* SMALL COMPACT BOX */
+    width: 360px;
+    max-width: 85vw;
+
+    flex-shrink: 0;
+
+    z-index: 20;
+}
+
+
+/* =====================================================
+   DISCORD CARD
+===================================================== */
+
+.discord-live-card {
+    position: relative;
 
     width: 100%;
 
+    padding: 18px;
+
+    background: rgba(5, 5, 5, 0.92);
+
+    border: 2px solid #ffffff;
+
+    box-shadow: 6px 6px 0 #000000;
+
+    z-index: 10;
 }
 
 
@@ -68,13 +98,30 @@
 
 @media (max-width: 700px) {
 
+    .live-content {
+        gap: 18px;
+    }
+
+
     .username-png {
+        width: 330px;
+        max-width: 82vw;
+    }
 
-        width: 220px;
 
-        max-width: 65vw;
+    .discord-card-container {
+        width: auto;
+    }
 
+
+    .waveform-wrapper {
+        width: 330px;
+        max-width: 88vw;
+    }
+
+
+    .discord-live-card {
+        padding: 16px;
     }
 
 }
-```
