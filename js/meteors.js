@@ -1,14 +1,13 @@
+/* =====================================================
+   RALKERIE METEORS
+===================================================== */
 
-(function () {
+(() => {
 
     "use strict";
 
 
-    /* =====================================================
-       FIND METEOR CONTAINER
-    ===================================================== */
-
-    var container =
+    const container =
         document.getElementById("meteors");
 
 
@@ -27,11 +26,11 @@
     );
 
 
-    /* =====================================================
+    /* =================================================
        AUDIO
-    ===================================================== */
+    ================================================= */
 
-    var audio =
+    const audio =
         new Audio(
             "./assets/audio/Rune%20of%20September.mp3"
         );
@@ -39,11 +38,11 @@
     audio.preload = "auto";
 
 
-    /* =====================================================
+    /* =================================================
        POPUP
-    ===================================================== */
+    ================================================= */
 
-    var popup =
+    const popup =
         document.createElement("div");
 
     popup.className =
@@ -77,15 +76,15 @@
     );
 
 
-    var closeButton =
+    const closeButton =
         popup.querySelector(
             ".meteor-popup-close"
         );
 
 
-    /* =====================================================
-       OPEN METEOR
-    ===================================================== */
+    /* =================================================
+       OPEN
+    ================================================= */
 
     function meteorClicked() {
 
@@ -97,24 +96,15 @@
         audio.currentTime = 0;
 
 
-        audio.play()
-            .catch(
-                function (error) {
-
-                    console.error(
-                        "Meteor audio error:",
-                        error
-                    );
-
-                }
-            );
-
+        audio.play().catch(
+            () => {}
+        );
     }
 
 
-    /* =====================================================
-       CLOSE POPUP
-    ===================================================== */
+    /* =================================================
+       CLOSE
+    ================================================= */
 
     function closePopup() {
 
@@ -126,7 +116,6 @@
         audio.pause();
 
         audio.currentTime = 0;
-
     }
 
 
@@ -138,43 +127,39 @@
 
     popup.addEventListener(
         "click",
-        function (event) {
+        event => {
 
             if (
                 event.target === popup
             ) {
 
                 closePopup();
-
             }
-
         }
     );
 
 
     document.addEventListener(
         "keydown",
-        function (event) {
+        event => {
 
             if (
                 event.key === "Escape"
             ) {
 
                 closePopup();
-
             }
-
         }
     );
 
 
-    /* =====================================================
+    /* =================================================
        CREATE METEOR
-    ===================================================== */
+    ================================================= */
 
     function createMeteor() {
 
-        var hitbox =
+        const hitbox =
             document.createElement("div");
 
 
@@ -182,7 +167,7 @@
             "meteor-hitbox";
 
 
-        var meteor =
+        const meteor =
             document.createElement("div");
 
 
@@ -190,30 +175,35 @@
             "meteor";
 
 
-        /*
-         * SPAWN POSITION
-         *
-         * Much farther toward the right.
-         *
-         * The random amount prevents every
-         * meteor from appearing at exactly
-         * the same height.
-         */
+        /* =================================================
+           SPAWN
+
+           Start above/right of the visible screen.
+        ================================================= */
+
+        const startX =
+            window.innerWidth *
+            (
+                0.65 +
+                Math.random() * 0.5
+            );
+
+
+        const startY =
+            -50 +
+            Math.random() *
+            (
+                window.innerHeight *
+                0.55
+            );
+
 
         hitbox.style.left =
-            (
-                300 +
-                Math.random() * 180
-            ) +
-            "px";
+            `${startX}px`;
 
 
         hitbox.style.top =
-            (
-                5 +
-                Math.random() * 75
-            ) +
-            "vh";
+            `${startY}px`;
 
 
         hitbox.appendChild(
@@ -227,14 +217,13 @@
 
         hitbox.addEventListener(
             "click",
-            function (event) {
+            event => {
 
                 event.preventDefault();
 
                 event.stopPropagation();
 
                 meteorClicked();
-
             }
         );
 
@@ -249,7 +238,9 @@
 
 
         console.log(
-            "Meteor spawned."
+            "Meteor spawned:",
+            Math.round(startX),
+            Math.round(startY)
         );
 
 
@@ -258,49 +249,39 @@
         ================================================= */
 
         setTimeout(
-            function () {
+            () => {
 
                 hitbox.remove();
 
             },
-            5500
+            6000
         );
-
     }
 
 
-    /* =====================================================
+    /* =================================================
        FIRST METEOR
-    ===================================================== */
+    ================================================= */
 
     createMeteor();
 
 
-    /* =====================================================
-       SPAWN LOOP
-    ===================================================== */
-
-    /*
-     * Lower number = more meteors.
-     *
-     * 2200ms = about one every 2.2 seconds.
-     */
+    /* =================================================
+       LOOP
+    ================================================= */
 
     setInterval(
-        function () {
+        () => {
 
             if (
                 !document.hidden
             ) {
 
                 createMeteor();
-
             }
 
         },
         2200
     );
 
-
 })();
-
