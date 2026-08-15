@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE METEORS
-   HUGE TOP SPAWN AREA
+   LIGHTWEIGHT + VISIBLE
    MOVEMENT: ↘ DOWN + RIGHT
 ===================================================== */
 
@@ -8,28 +8,24 @@
 
     "use strict";
 
-
-    /* =================================================
-       FIND CONTAINER
-    ================================================= */
-
     const container =
         document.getElementById("meteors");
 
-
     if (!container) {
-
-        console.error(
-            "Ralkerie: #meteors not found."
-        );
-
+        console.error("Ralkerie: #meteors not found.");
         return;
     }
 
 
-    console.log(
-        "Ralkerie meteors loaded."
-    );
+    /* =================================================
+       SETTINGS
+    ================================================= */
+
+    const SPAWN_INTERVAL = 1800;
+    const METEOR_LIFETIME = 6000;
+    const MAX_METEORS = 4;
+
+    let spawnTimer = null;
 
 
     /* =================================================
@@ -41,7 +37,7 @@
             "./assets/audio/Rune%20of%20September.mp3"
         );
 
-    audio.preload = "auto";
+    audio.preload = "metadata";
 
 
     /* =================================================
@@ -51,9 +47,7 @@
     const popup =
         document.createElement("div");
 
-    popup.className =
-        "meteor-popup";
-
+    popup.className = "meteor-popup";
 
     popup.innerHTML = `
 
@@ -62,6 +56,7 @@
             <button
                 class="meteor-popup-close"
                 type="button"
+                aria-label="Close"
             >
                 ×
             </button>
@@ -76,52 +71,32 @@
 
     `;
 
-
-    document.body.appendChild(
-        popup
-    );
+    document.body.appendChild(popup);
 
 
     const closeButton =
-        popup.querySelector(
-            ".meteor-popup-close"
-        );
+        popup.querySelector(".meteor-popup-close");
 
-
-    /* =================================================
-       OPEN
-    ================================================= */
 
     function meteorClicked() {
 
-        popup.classList.add(
-            "visible"
-        );
-
+        popup.classList.add("visible");
 
         audio.currentTime = 0;
 
+        audio.play().catch(() => {});
 
-        audio.play().catch(
-            () => {}
-        );
     }
 
 
-    /* =================================================
-       CLOSE
-    ================================================= */
-
     function closePopup() {
 
-        popup.classList.remove(
-            "visible"
-        );
-
+        popup.classList.remove("visible");
 
         audio.pause();
 
         audio.currentTime = 0;
+
     }
 
 
@@ -135,12 +110,10 @@
         "click",
         event => {
 
-            if (
-                event.target === popup
-            ) {
-
+            if (event.target === popup) {
                 closePopup();
             }
+
         }
     );
 
@@ -149,12 +122,10 @@
         "keydown",
         event => {
 
-            if (
-                event.key === "Escape"
-            ) {
-
+            if (event.key === "Escape") {
                 closePopup();
             }
+
         }
     );
 
@@ -165,9 +136,24 @@
 
     function createMeteor() {
 
+        if (document.hidden) {
+            return;
+        }
+
+
+        const active =
+            container.querySelectorAll(
+                ".meteor-hitbox"
+            ).length;
+
+
+        if (active >= MAX_METEORS) {
+            return;
+        }
+
+
         const hitbox =
             document.createElement("div");
-
 
         hitbox.className =
             "meteor-hitbox";
@@ -176,49 +162,40 @@
         const meteor =
             document.createElement("div");
 
-
         meteor.className =
             "meteor";
 
 
         /* =================================================
-           HUGE SPAWN BOX
+           SPAWN
 
-           X covers the entire width PLUS
-           extra space on both sides.
+           Spawn across the ENTIRE top of the screen.
 
-           Y covers the upper 35% of
-           the screen PLUS space above it.
-
-           This prevents the meteors from
-           only appearing on one side.
+           Some start slightly above the screen,
+           while others start inside the top area.
         ================================================= */
 
-        const spawnWidth =
-            window.innerWidth +
-            600;
+        const width =
+            window.innerWidth;
 
-
-        const spawnHeight =
-            window.innerHeight *
-            0.40;
+        const height =
+            window.innerHeight;
 
 
         const startX =
-            -300 +
+            -150 +
             Math.random() *
-            spawnWidth;
+            (width + 300);
 
 
         const startY =
-            -300 +
+            -180 +
             Math.random() *
-            spawnHeight;
+            (height * 0.18);
 
 
         hitbox.style.left =
             `${startX}px`;
-
 
         hitbox.style.top =
             `${startY}px`;
@@ -242,70 +219,79 @@
                 event.stopPropagation();
 
                 meteorClicked();
+
             }
         );
 
-
-        /* =================================================
-           ADD
-        ================================================= */
 
         container.appendChild(
             hitbox
         );
 
 
-        console.log(
-            "☄️ Meteor spawned",
-            Math.round(startX),
-            Math.round(startY)
-        );
-
-
         /* =================================================
-           REMOVE
+           CLEANUP
         ================================================= */
 
         setTimeout(
             () => {
 
-                if (
-                    hitbox.parentNode
-                ) {
-
+                if (hitbox.parentNode) {
                     hitbox.remove();
                 }
 
             },
-            6000
+            METEOR_LIFETIME
         );
+
     }
 
 
     /* =================================================
-       FIRST METEOR
+       SPAWN
     ================================================= */
 
     createMeteor();
 
 
+    spawnTimer =
+        setInterval(
+            createMeteor,
+            SPAWN_INTERVAL
+        );
+
+
     /* =================================================
-       SPAWN LOOP
+       HIDDEN TAB
     ================================================= */
 
-    setInterval(
+    document.addEventListener(
+        "visibilitychange",
         () => {
 
-            if (
-                !document.hidden
-            ) {
+            if (document.hidden) {
 
-                createMeteor();
+                container
+                    .querySelectorAll(
+                        ".meteor-hitbox"
+                    )
+                    .forEach(
+                        meteor =>
+                            meteor.remove()
+                    );
+
             }
 
-        },
-        1800
+        }
     );
 
+
+    /* =================================================
+       START
+    ================================================= */
+
+    console.log(
+        "Ralkerie lightweight meteors loaded."
+    );
 
 })();
