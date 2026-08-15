@@ -1,5 +1,6 @@
 /* =====================================================
-   RALKERIE STARS
+   RALKERIE BACKGROUND
+   PERFORMANCE OPTIMIZED
 ===================================================== */
 
 #stars {
@@ -19,147 +20,57 @@
     z-index: 0;
 
     background: transparent;
+
+    contain: strict;
 }
 
 
-/* =====================================================
-   STAR
-===================================================== */
-
-.star {
-
-    position: absolute;
+#stars canvas {
 
     display: block;
 
-    border-radius: 50%;
+    width: 100%;
 
-    background:
-        radial-gradient(
-            circle,
+    height: 100%;
 
-            #ffffff 0%,
+    pointer-events: none;
+}
 
-            #ffffff 20%,
 
-            #ffb5e9 45%,
+/* =====================================================
+   METEOR CONTAINER
+===================================================== */
 
-            #ff69d2 70%,
+#meteors {
 
-            #ff2db5 100%
-        );
+    position: fixed;
 
-    box-shadow:
+    inset: 0;
 
-        0 0 2px #ffffff,
+    width: 100vw;
 
-        0 0 4px #ffffff,
+    height: 100vh;
 
-        0 0 7px #ff8ddd,
-
-        0 0 11px
-        rgba(
-            255,
-            60,
-            195,
-            0.8
-        );
-
-    opacity: 0.85;
+    overflow: hidden;
 
     pointer-events: none;
 
-    will-change: transform;
+    z-index: 1;
 
-    contain:
-        layout
-        paint;
-
-    animation:
-        starSparkle
-        2.2s
-        ease-in-out
-        infinite;
+    contain: strict;
 }
 
 
 /* =====================================================
-   STAR SPARKLE
-
-   IMPORTANT:
-   This does NOT animate transform.
-   stars.js controls transform.
+   MOBILE
 ===================================================== */
 
-@keyframes starSparkle {
+@media (max-width: 700px) {
 
-    0%,
-    100% {
+    #stars {
 
-        opacity: 0.4;
-    }
+        contain: strict;
 
-
-    50% {
-
-        opacity: 1;
-    }
-
-}
-
-
-/* =====================================================
-   RANDOM STAR SPEEDS
-===================================================== */
-
-.star:nth-child(3n) {
-
-    animation-duration:
-        1.5s;
-}
-
-
-.star:nth-child(4n) {
-
-    animation-duration:
-        2.7s;
-}
-
-
-.star:nth-child(7n) {
-
-    animation-duration:
-        1.9s;
-}
-
-
-.star:nth-child(11n) {
-
-    animation-duration:
-        3.2s;
-}
-
-
-.star:nth-child(13n) {
-
-    animation-duration:
-        1.3s;
-}
-
-
-/* =====================================================
-   REDUCED MOTION
-===================================================== */
-
-@media (
-    prefers-reduced-motion: reduce
-) {
-
-    .star {
-
-        animation: none;
-
-        opacity: 0.8;
     }
 
 }
