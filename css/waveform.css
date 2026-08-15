@@ -1,28 +1,15 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   EXACT FOUR-SIDED BOX WRAP
-
-   The flat/base of every bar touches the
-   Discord card itself.
-
-   TOP    = bars grow UP
-   BOTTOM = bars grow DOWN
-   LEFT   = bars grow LEFT
-   RIGHT  = bars grow RIGHT
-===================================================== */
-
-
-/* =====================================================
-   WRAPPER
+   FOUR-SIDED BOX
 ===================================================== */
 
 .waveform-wrapper {
 
     position: relative;
 
-    width: 100%;
+    width: 700px;
 
-    height: auto;
+    max-width: 88vw;
 
     z-index: 20;
 
@@ -46,15 +33,11 @@
     pointer-events: none;
 
     z-index: 30;
-
 }
 
 
 /* =====================================================
-   INDIVIDUAL SIDES
-
-   These are extremely thin strips sitting
-   exactly on the card edges.
+   SIDES
 ===================================================== */
 
 .wave-side {
@@ -64,75 +47,54 @@
     pointer-events: none;
 
     overflow: visible;
-
 }
 
 
-/* =====================================================
-   TOP
-===================================================== */
+/* TOP */
 
 .wave-side-top {
 
     left: 0;
-
     right: 0;
-
     top: 0;
 
     height: 1px;
-
 }
 
 
-/* =====================================================
-   BOTTOM
-===================================================== */
+/* BOTTOM */
 
 .wave-side-bottom {
 
     left: 0;
-
     right: 0;
-
     bottom: 0;
 
     height: 1px;
-
 }
 
 
-/* =====================================================
-   LEFT
-===================================================== */
+/* LEFT */
 
 .wave-side-left {
 
     left: 0;
-
     top: 0;
-
     bottom: 0;
 
     width: 1px;
-
 }
 
 
-/* =====================================================
-   RIGHT
-===================================================== */
+/* RIGHT */
 
 .wave-side-right {
 
     right: 0;
-
     top: 0;
-
     bottom: 0;
 
     width: 1px;
-
 }
 
 
@@ -147,36 +109,24 @@
     display: block;
 
     margin: 0;
-
     padding: 0;
 
     background:
         linear-gradient(
             to bottom,
-
             #ffffff 0%,
-
             #ffffff 18%,
-
             #ffe0f5 38%,
-
             #ff9de0 60%,
-
             #ff63ca 82%,
-
             #ff2db5 100%
         );
 
     box-shadow:
-
         0 0 3px #ffffff,
-
         0 0 6px #ffb0e7,
-
         0 0 10px #ff5bc6,
-
-        0 0 15px
-        rgba(
+        0 0 15px rgba(
             255,
             45,
             181,
@@ -196,11 +146,7 @@
 
 
 /* =====================================================
-   TOP BARS
-
-   BASE = BOTTOM
-
-   They grow upward.
+   TOP
 ===================================================== */
 
 .wave-side-top .wave-bar {
@@ -209,7 +155,7 @@
 
     width: 3px;
 
-    height: 4px;
+    height: 3px;
 
     transform-origin:
         center bottom;
@@ -217,11 +163,7 @@
 
 
 /* =====================================================
-   BOTTOM BARS
-
-   BASE = TOP
-
-   They grow downward.
+   BOTTOM
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
@@ -230,7 +172,7 @@
 
     width: 3px;
 
-    height: 4px;
+    height: 3px;
 
     transform-origin:
         center top;
@@ -238,18 +180,14 @@
 
 
 /* =====================================================
-   LEFT BARS
-
-   BASE = RIGHT
-
-   They grow toward the LEFT.
+   LEFT
 ===================================================== */
 
 .wave-side-left .wave-bar {
 
     right: 0;
 
-    width: 4px;
+    width: 3px;
 
     height: 3px;
 
@@ -259,18 +197,14 @@
 
 
 /* =====================================================
-   RIGHT BARS
-
-   BASE = LEFT
-
-   They grow toward the RIGHT.
+   RIGHT
 ===================================================== */
 
 .wave-side-right .wave-bar {
 
     left: 0;
 
-    width: 4px;
+    width: 3px;
 
     height: 3px;
 
@@ -285,30 +219,17 @@
 
 @media (max-width: 700px) {
 
-    .wave-side-top,
-    .wave-side-bottom {
-
-        height: 1px;
+    .waveform-wrapper {
+        width: 92vw;
     }
-
-
-    .wave-side-left,
-    .wave-side-right {
-
-        width: 1px;
-    }
-
 
     .wave-side-top .wave-bar,
     .wave-side-bottom .wave-bar {
-
         width: 2px;
     }
 
-
     .wave-side-left .wave-bar,
     .wave-side-right .wave-bar {
-
         height: 2px;
     }
 
