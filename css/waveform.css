@@ -1,48 +1,34 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   ORIGINAL DISCORD CARD SIZE
+   CARD OVERLAY
 ===================================================== */
 
 
 /* =====================================================
-   WRAPPER
+   WAVEFORM OVERLAY
 ===================================================== */
 
-.waveform-wrapper {
+.discord-waveform-overlay {
 
-    position: relative;
+    position: absolute;
+
+    inset: 0;
 
     width: 100%;
 
-    height: auto;
+    height: 100%;
 
-    flex-shrink: 0;
+    pointer-events: none;
 
-    display: block;
+    z-index: 50;
+
+    overflow: visible;
 
 }
 
 
 /* =====================================================
-   DISCORD CARD
-   KEEP ORIGINAL SIZE
-===================================================== */
-
-.waveform-wrapper .discord-live-card {
-
-    position: relative;
-
-    width: 100%;
-
-    height: auto;
-
-    box-sizing: border-box;
-
-}
-
-
-/* =====================================================
-   WAVE SIDES
+   SIDES
 ===================================================== */
 
 .wave-side {
@@ -53,7 +39,6 @@
 
     overflow: visible;
 
-    z-index: 5;
 }
 
 
@@ -62,8 +47,6 @@
 ===================================================== */
 
 .wave-side-top {
-
-    position: absolute;
 
     left: 0;
 
@@ -82,8 +65,6 @@
 
 .wave-side-bottom {
 
-    position: absolute;
-
     left: 0;
 
     right: 0;
@@ -101,8 +82,6 @@
 
 .wave-side-left {
 
-    position: absolute;
-
     left: 0;
 
     top: 0;
@@ -119,8 +98,6 @@
 ===================================================== */
 
 .wave-side-right {
-
-    position: absolute;
 
     right: 0;
 
@@ -153,7 +130,9 @@
 
     background: #ff63ca;
 
-    opacity: 0.85;
+    border-radius: 2px;
+
+    opacity: 0.9;
 
     pointer-events: none;
 
@@ -165,9 +144,7 @@
 
 
 /* =====================================================
-   TOP BARS
-
-   Grow upward from the box.
+   TOP
 ===================================================== */
 
 .wave-side-top .wave-bar {
@@ -180,9 +157,7 @@
 
 
 /* =====================================================
-   BOTTOM BARS
-
-   Grow downward from the box.
+   BOTTOM
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
@@ -195,9 +170,7 @@
 
 
 /* =====================================================
-   LEFT BARS
-
-   Grow toward the left.
+   LEFT
 ===================================================== */
 
 .wave-side-left .wave-bar {
@@ -214,9 +187,7 @@
 
 
 /* =====================================================
-   RIGHT BARS
-
-   Grow toward the right.
+   RIGHT
 ===================================================== */
 
 .wave-side-right .wave-bar {
