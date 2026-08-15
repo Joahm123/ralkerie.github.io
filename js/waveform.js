@@ -1,16 +1,17 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   DIRECT SPOTIFY POSITION SYNC
+   ULTRA LOW CPU SPOTIFY SYNC
 
-   - Syncs directly with Lanyard
-   - ~20 visual updates/sec
-   - Only fetches Spotify data every 15 seconds
-   - Position advances locally between API updates
-   - Keeps four-sided wrapping
-   - Dense corners / no missing side sections
+   - Spotify position synced through Lanyard
+   - 15 visual updates/sec
+   - Local playback interpolation
+   - No per-bar CSS filters
+   - No per-frame layout work
+   - Four-sided wrap
+   - Dense corners
    - Pink + white glow
-   - Uses transform only
-   - Does not modify Discord card contents
+   - Pauses when hidden
+   - Pauses animation when Spotify isn't playing
 ===================================================== */
 
 (() => {
@@ -29,21 +30,38 @@
         "https://api.lanyard.rest/v1/users/" +
         USER_ID;
 
-    const UPDATE_INTERVAL = 50;
+    /*
+     * 15 updates/sec.
+     *
+     * Much cheaper than 20 while still
+     * looking smooth.
+     */
+    const UPDATE_INTERVAL = 66;
 
+    /*
+     * Lanyard only needs to be checked
+     * occasionally because we interpolate
+     * the position locally.
+     */
     const SPOTIFY_REFRESH = 15000;
 
+    /*
+     * Waveform density.
+     */
     const BAR_SIZE = 3;
 
     const GAP = 4;
 
+    /*
+     * Animation size.
+     */
     const MIN_SCALE = 0.35;
 
-    const MAX_SCALE = 7.5;
+    const MAX_SCALE = 7.0;
 
 
     /* =================================================
-       CONTAINER
+       FIND CONTAINER
     ================================================= */
 
     const container =
@@ -74,7 +92,16 @@
 
     let lastUpdate = 0;
 
-    let spotify = {
+    let finder = null;
+
+    let resizeTimer = null;
+
+    let spotifyTimer = null;
+
+    let spotifyLoading = false;
+
+
+    const spotify = {
 
         playing: false,
 
@@ -85,10 +112,8 @@
         receivedAt: 0,
 
         trackId: null
+
     };
-
-
-    let loadingSpotify = false;
 
 
     /* =================================================
@@ -125,6 +150,13 @@
             "wave-bar";
 
 
+        /*
+         * Position is set ONCE.
+         *
+         * We never change left/top
+         * during animation.
+         */
+
         if (
             side === "top" ||
             side === "bottom"
@@ -142,18 +174,13 @@
 
 
         /*
-         * Only set the expensive glow once.
-         *
-         * The animation itself only changes
-         * transform.
+         * Glow is handled by CSS instead
+         * of an expensive filter on every bar.
          */
 
-        bar.style.filter =
-            "drop-shadow(0 0 2px rgba(255,255,255,.95)) " +
-            "drop-shadow(0 0 5px rgba(255,99,202,.9))";
-
-
-        parent.appendChild(bar);
+        parent.appendChild(
+            bar
+        );
 
 
         return {
@@ -168,9 +195,9 @@
                 2,
 
             speed:
-                0.8 +
+                0.75 +
                 Math.random() *
-                0.7,
+                0.65,
 
             strength:
                 0.82 +
@@ -218,6 +245,10 @@
         }
 
 
+        /*
+         * Clear old bars.
+         */
+
         top.replaceChildren();
 
         bottom.replaceChildren();
@@ -248,9 +279,6 @@
 
         /* =================================================
            TOP + BOTTOM
-
-           Extra 2px overlap prevents gaps
-           at the corners.
         ================================================= */
 
         for (
@@ -319,12 +347,13 @@
     function attachWaveform(card) {
 
         if (!card) {
+
             return;
         }
 
 
         /*
-         * Already attached.
+         * Already wrapped.
          */
 
         if (
@@ -336,6 +365,30 @@
 
             currentWrapper =
                 card.parentElement;
+
+            /*
+             * Make sure bars exist.
+             */
+
+            if (
+                bars.length === 0
+            ) {
+
+                requestAnimationFrame(
+                    () => {
+
+                        if (
+                            currentWrapper
+                        ) {
+
+                            buildBars(
+                                currentWrapper
+                            );
+                        }
+
+                    }
+                );
+            }
 
             return;
         }
@@ -362,6 +415,10 @@
         wrapper.className =
             "waveform-wrapper";
 
+
+        /*
+         * Four sides.
+         */
 
         const top =
             createSide("top");
@@ -408,6 +465,10 @@
             wrapper;
 
 
+        /*
+         * Build after layout exists.
+         */
+
         requestAnimationFrame(
             () => {
 
@@ -418,7 +479,6 @@
                     buildBars(
                         wrapper
                     );
-
                 }
 
             }
@@ -440,27 +500,35 @@
 
         if (!card) {
 
-            return;
+            return false;
         }
 
 
-        attachWaveform(card);
+        attachWaveform(
+            card
+        );
+
+
+        return true;
     }
 
 
     /* =================================================
-       READ SPOTIFY FROM LANYARD
+       SPOTIFY DATA
     ================================================= */
 
     async function updateSpotify() {
 
-        if (loadingSpotify) {
+        if (
+            spotifyLoading
+        ) {
 
             return;
         }
 
 
-        loadingSpotify = true;
+        spotifyLoading =
+            true;
 
 
         try {
@@ -474,7 +542,9 @@
                 );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     "HTTP " +
@@ -494,7 +564,7 @@
             ) {
 
                 throw new Error(
-                    "Invalid Lanyard response"
+                    "Invalid Lanyard response."
                 );
             }
 
@@ -508,7 +578,7 @@
 
 
             /*
-             * No Spotify.
+             * Nothing playing.
              */
 
             if (
@@ -516,13 +586,17 @@
                 !spotifyData
             ) {
 
-                spotify.playing = false;
+                spotify.playing =
+                    false;
 
-                spotify.position = 0;
+                spotify.position =
+                    0;
 
-                spotify.duration = 0;
+                spotify.duration =
+                    0;
 
-                spotify.trackId = null;
+                spotify.trackId =
+                    null;
 
                 return;
             }
@@ -538,7 +612,8 @@
                 !timestamps.end
             ) {
 
-                spotify.playing = false;
+                spotify.playing =
+                    false;
 
                 return;
             }
@@ -548,7 +623,6 @@
                 Number(
                     timestamps.start
                 );
-
 
             const end =
                 Number(
@@ -563,10 +637,6 @@
                 );
 
 
-            /*
-             * Current Spotify position.
-             */
-
             const now =
                 Date.now();
 
@@ -575,21 +645,12 @@
                 now - start;
 
 
-            /*
-             * Don't allow negative
-             * positions.
-             */
-
             position =
                 Math.max(
                     0,
                     position
                 );
 
-
-            /*
-             * Don't exceed track duration.
-             */
 
             if (
                 duration > 0
@@ -602,6 +663,10 @@
                     );
             }
 
+
+            /*
+             * Track identifier.
+             */
 
             const trackId =
                 (
@@ -621,7 +686,7 @@
 
 
             /*
-             * Save synchronized state.
+             * Save state.
              */
 
             spotify.playing =
@@ -640,15 +705,6 @@
                 trackId;
 
 
-            console.log(
-                "Ralkerie waveform Spotify sync:",
-                spotifyData.song,
-                Math.floor(position / 1000) +
-                "s / " +
-                Math.floor(duration / 1000) +
-                "s"
-            );
-
         }
 
         catch (error) {
@@ -662,19 +718,20 @@
 
         finally {
 
-            loadingSpotify = false;
+            spotifyLoading =
+                false;
         }
     }
 
 
     /* =================================================
-       GET CURRENT POSITION
+       CURRENT POSITION
     ================================================= */
 
     function getCurrentPosition(time) {
 
         if (
-            !spotify.duration
+            spotify.duration <= 0
         ) {
 
             return 0;
@@ -686,8 +743,9 @@
 
 
         /*
-         * Advance locally between
-         * Lanyard requests.
+         * Locally advance playback.
+         *
+         * No API request needed.
          */
 
         if (
@@ -700,12 +758,8 @@
         }
 
 
-        /*
-         * Keep it inside the song.
-         */
-
         if (
-            position >=
+            position >
             spotify.duration
         ) {
 
@@ -728,6 +782,10 @@
             null;
 
 
+        /*
+         * Completely stop while hidden.
+         */
+
         if (
             document.hidden
         ) {
@@ -737,7 +795,7 @@
 
 
         /*
-         * Hard throttle to ~20 FPS.
+         * 15 FPS throttle.
          */
 
         if (
@@ -759,44 +817,63 @@
             time;
 
 
+        /*
+         * No bars yet.
+         */
+
+        if (
+            bars.length === 0
+        ) {
+
+            animationFrame =
+                requestAnimationFrame(
+                    animate
+                );
+
+            return;
+        }
+
+
         const position =
             getCurrentPosition(
                 time
             );
 
 
-        /*
-         * Convert milliseconds
-         * into seconds.
-         */
-
         const seconds =
             position / 1000;
 
-
-        /*
-         * If Spotify exists, use the
-         * playback clock.
-         *
-         * If not, use a very subtle
-         * idle animation.
-         */
 
         const hasSpotify =
             spotify.duration > 0;
 
 
+        /*
+         * Animate bars.
+         */
+
         for (
-            const data of bars
+            let i = 0;
+            i < bars.length;
+            i++
         ) {
+
+            const data =
+                bars[i];
+
 
             let wave;
 
 
-            if (hasSpotify) {
+            if (
+                hasSpotify
+            ) {
 
                 /*
-                 * Main synchronized wave.
+                 * Main wave.
+                 *
+                 * Spotify position controls
+                 * the exact phase.
                  */
 
                 const primary =
@@ -808,51 +885,49 @@
 
 
                 /*
-                 * Secondary movement.
+                 * Secondary wave.
                  */
 
                 const secondary =
                     Math.sin(
                         seconds *
-                        5.7 +
+                        5.4 +
                         data.phase *
-                        1.43
+                        1.35
                     );
 
 
                 /*
-                 * Slower movement keeps
-                 * the waveform from looking
-                 * mechanically repetitive.
+                 * Slow wave.
                  */
 
                 const slow =
                     Math.sin(
                         seconds *
-                        1.35 +
+                        1.25 +
                         data.phase *
-                        0.6
+                        0.55
                     );
 
 
                 wave =
-                    primary * 0.52 +
-                    secondary * 0.28 +
+                    primary * 0.50 +
+                    secondary * 0.30 +
                     slow * 0.20;
 
             } else {
 
                 /*
-                 * Tiny idle animation.
+                 * Very tiny idle movement.
                  */
 
                 wave =
                     Math.sin(
                         time *
-                        0.001 +
+                        0.0008 +
                         data.phase
                     ) *
-                    0.12;
+                    0.08;
             }
 
 
@@ -867,7 +942,7 @@
 
 
             /*
-             * Never completely disappear.
+             * Keep bars visible.
              */
 
             const value =
@@ -884,7 +959,7 @@
 
 
             /*
-             * GPU-only animation.
+             * GPU-only property.
              */
 
             if (
@@ -931,6 +1006,7 @@
                         animate
                     );
             }
+
         }
     );
 
@@ -938,9 +1014,6 @@
     /* =================================================
        RESIZE
     ================================================= */
-
-    let resizeTimer = null;
-
 
     window.addEventListener(
         "resize",
@@ -965,7 +1038,7 @@
                         }
 
                     },
-                    300
+                    500
                 );
 
         },
@@ -976,32 +1049,51 @@
 
 
     /* =================================================
-       MUTATION OBSERVER
+       LIGHTWEIGHT CARD OBSERVER
     ================================================= */
 
     const observer =
         new MutationObserver(
             () => {
 
-                clearTimeout(
-                    observer.timer
-                );
+                /*
+                 * Only check if the actual
+                 * Discord card disappeared.
+                 */
 
+                if (
+                    !container.querySelector(
+                        ".discord-live-card"
+                    )
+                ) {
 
-                observer.timer =
-                    setTimeout(
-                        findCard,
-                        200
+                    clearTimeout(
+                        observer.timer
                     );
+
+
+                    observer.timer =
+                        setTimeout(
+                            findCard,
+                            250
+                        );
+                }
+
             }
         );
 
 
+    /*
+     * Only watch direct child changes.
+     *
+     * We do NOT watch the entire Discord
+     * card subtree anymore.
+     */
+
     observer.observe(
         container,
         {
-            childList: true,
-            subtree: true
+            childList: true
         }
     );
 
@@ -1013,36 +1105,39 @@
     findCard();
 
 
+    /* =================================================
+       SHORT CARD FINDER
+    ================================================= */
+
     let attempts = 0;
 
 
-    const finder =
+    finder =
         setInterval(
             () => {
 
                 attempts++;
 
 
-                findCard();
-
-
                 if (
-                    currentWrapper ||
-                    attempts >= 80
+                    findCard() ||
+                    attempts >= 30
                 ) {
 
                     clearInterval(
                         finder
                     );
+
+                    finder = null;
                 }
 
             },
-            250
+            500
         );
 
 
     /* =================================================
-       INITIAL SPOTIFY FETCH
+       INITIAL SPOTIFY SYNC
     ================================================= */
 
     updateSpotify();
@@ -1052,10 +1147,11 @@
        SPOTIFY REFRESH
     ================================================= */
 
-    setInterval(
-        updateSpotify,
-        SPOTIFY_REFRESH
-    );
+    spotifyTimer =
+        setInterval(
+            updateSpotify,
+            SPOTIFY_REFRESH
+        );
 
 
     /* =================================================
@@ -1069,7 +1165,7 @@
 
 
     console.log(
-        "Ralkerie direct Spotify waveform ready."
+        "Ralkerie LOW CPU Spotify waveform ready."
     );
 
 })();
