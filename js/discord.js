@@ -2,12 +2,15 @@
 
     "use strict";
 
+
     var USER_ID =
         "1044800788817510460";
+
 
     var API_URL =
         "https://api.lanyard.rest/v1/users/" +
         USER_ID;
+
 
     var cardContainer =
         document.getElementById(
@@ -22,18 +25,12 @@
         );
 
         return;
-
     }
 
 
-    console.log(
-        "Ralkerie Discord loaded."
-    );
-
-
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
+    /* =================================================
+       ESCAPE
+    ================================================= */
 
     function escapeHTML(value) {
 
@@ -46,13 +43,12 @@
                 : String(value);
 
         return div.innerHTML;
-
     }
 
 
-    /* =====================================================
+    /* =================================================
        CLOCK
-    ===================================================== */
+    ================================================= */
 
     function getTime() {
 
@@ -64,13 +60,8 @@
                 second: "2-digit"
             }
         );
-
     }
 
-
-    /* =====================================================
-       UPDATE CLOCK
-    ===================================================== */
 
     function updateClock() {
 
@@ -86,13 +77,12 @@
                 getTime();
 
         }
-
     }
 
 
-    /* =====================================================
+    /* =================================================
        FIND GAME
-    ===================================================== */
+    ================================================= */
 
     function getGame(activities) {
 
@@ -119,18 +109,16 @@
                 return activity;
 
             }
-
         }
 
 
         return null;
-
     }
 
 
-    /* =====================================================
-       DISPLAY DISCORD
-    ===================================================== */
+    /* =================================================
+       SHOW DISCORD
+    ================================================= */
 
     function showDiscord(data) {
 
@@ -166,13 +154,10 @@
 
             avatar =
                 "https://cdn.discordapp.com/embed/avatars/0.png";
-
         }
 
 
-        /* =================================================
-           GAME
-        ================================================= */
+        /* GAME */
 
         var game =
             getGame(
@@ -194,21 +179,16 @@
                     </div>
 
                     <div class="discord-activity-text">
-                        ${escapeHTML(
-                            game.name
-                        )}
+                        ${escapeHTML(game.name)}
                     </div>
 
                 </div>
 
             `;
-
         }
 
 
-        /* =================================================
-           SPOTIFY
-        ================================================= */
+        /* SPOTIFY */
 
         var spotifyHTML = "";
 
@@ -257,13 +237,10 @@
                 </div>
 
             `;
-
         }
 
 
-        /* =================================================
-           CARD
-        ================================================= */
+        /* CARD */
 
         cardContainer.innerHTML = `
 
@@ -280,19 +257,13 @@
                     <div>
 
                         <div class="discord-name">
-                            ${escapeHTML(
-                                username
-                            )}
+                            ${escapeHTML(username)}
                         </div>
 
-                        <div
-                            class="
-                                discord-status
-                                status-${escapeHTML(
-                                    status
-                                )}
-                            "
-                        >
+                        <div class="
+                            discord-status
+                            status-${escapeHTML(status)}
+                        ">
                             ${escapeHTML(
                                 status.toUpperCase()
                             )}
@@ -330,13 +301,12 @@
 
 
         updateClock();
-
     }
 
 
-    /* =====================================================
+    /* =================================================
        LOAD DISCORD
-    ===================================================== */
+    ================================================= */
 
     function loadDiscord() {
 
@@ -347,78 +317,68 @@
             }
         )
 
-        .then(
-            function (response) {
+        .then(function (response) {
 
-                return response.json();
+            return response.json();
 
-            }
-        )
+        })
 
-        .then(
-            function (result) {
+        .then(function (result) {
 
-                if (
-                    !result.success ||
-                    !result.data
-                ) {
+            if (
+                !result.success ||
+                !result.data
+            ) {
 
-                    throw new Error(
-                        "Invalid Lanyard response"
-                    );
-
-                }
-
-
-                showDiscord(
-                    result.data
+                throw new Error(
+                    "Invalid Lanyard response"
                 );
-
             }
-        )
-
-        .catch(
-            function (error) {
-
-                console.error(
-                    "Discord error:",
-                    error
-                );
 
 
-                cardContainer.innerHTML = `
+            showDiscord(
+                result.data
+            );
 
-                    <div class="discord-live-card">
+        })
 
-                        <div class="discord-name">
-                            DISCORD
-                        </div>
+        .catch(function (error) {
 
-                        <div class="
-                            discord-status
-                            status-offline
-                        ">
-                            UNAVAILABLE
-                        </div>
+            console.error(
+                "Discord error:",
+                error
+            );
 
+
+            cardContainer.innerHTML = `
+
+                <div class="discord-live-card">
+
+                    <div class="discord-name">
+                        DISCORD
                     </div>
 
-                `;
+                    <div class="
+                        discord-status
+                        status-offline
+                    ">
+                        UNAVAILABLE
+                    </div>
 
-            }
-        );
+                </div>
 
+            `;
+
+        });
     }
 
 
-    /* =====================================================
+    /* =================================================
        START
-    ===================================================== */
+    ================================================= */
 
     loadDiscord();
 
-
-    /* Refresh Discord */
 
     setInterval(
         loadDiscord,
@@ -426,12 +386,9 @@
     );
 
 
-    /* Clock */
-
     setInterval(
         updateClock,
         1000
     );
-
 
 })();
