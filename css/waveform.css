@@ -1,38 +1,26 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED BOX
+   LOW CPU / LOW GPU VERSION
+
+   Four-sided equalizer attached directly
+   to the Discord card.
+===================================================== */
+
+
+/* =====================================================
+   WRAPPER
 ===================================================== */
 
 .waveform-wrapper {
 
     position: relative;
 
-    width: 700px;
+    width: 100%;
 
-    max-width: 88vw;
+    flex-shrink: 0;
 
     z-index: 20;
 
-}
-
-
-/* =====================================================
-   WAVE BORDER
-===================================================== */
-
-.wave-border {
-
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-
-    height: 100%;
-
-    pointer-events: none;
-
-    z-index: 30;
 }
 
 
@@ -47,54 +35,77 @@
     pointer-events: none;
 
     overflow: visible;
+
+    z-index: 30;
+
 }
 
 
-/* TOP */
+/* =====================================================
+   TOP
+===================================================== */
 
 .wave-side-top {
 
     left: 0;
+
     right: 0;
+
     top: 0;
 
     height: 1px;
+
 }
 
 
-/* BOTTOM */
+/* =====================================================
+   BOTTOM
+===================================================== */
 
 .wave-side-bottom {
 
     left: 0;
+
     right: 0;
+
     bottom: 0;
 
     height: 1px;
+
 }
 
 
-/* LEFT */
+/* =====================================================
+   LEFT
+===================================================== */
 
 .wave-side-left {
 
     left: 0;
+
     top: 0;
+
     bottom: 0;
 
     width: 1px;
+
 }
 
 
-/* RIGHT */
+/* =====================================================
+   RIGHT
+===================================================== */
 
 .wave-side-right {
 
     right: 0;
+
     top: 0;
+
     bottom: 0;
 
     width: 1px;
+
 }
 
 
@@ -108,108 +119,114 @@
 
     display: block;
 
+    width: 3px;
+
+    height: 1px;
+
     margin: 0;
+
     padding: 0;
 
-    background:
-        linear-gradient(
-            to bottom,
-            #ffffff 0%,
-            #ffffff 18%,
-            #ffe0f5 38%,
-            #ff9de0 60%,
-            #ff63ca 82%,
-            #ff2db5 100%
-        );
+    background: #ff63ca;
 
-    box-shadow:
-        0 0 3px #ffffff,
-        0 0 6px #ffb0e7,
-        0 0 10px #ff5bc6,
-        0 0 15px rgba(
-            255,
-            45,
-            181,
-            0.7
-        );
-
-    opacity: 0.95;
-
-    border-radius: 1px;
+    opacity: 0.85;
 
     pointer-events: none;
 
-    will-change:
-        width,
-        height;
+    /*
+     * GPU compositing.
+
+     * Animation uses ONLY transform.
+     */
+
+    will-change: transform;
+
+    contain: strict;
+
 }
 
 
 /* =====================================================
    TOP
+
+   BASE = BOTTOM
 ===================================================== */
 
 .wave-side-top .wave-bar {
 
     bottom: 0;
 
-    width: 3px;
+    transform-origin: center bottom;
 
-    height: 3px;
-
-    transform-origin:
-        center bottom;
 }
 
 
 /* =====================================================
    BOTTOM
+
+   BASE = TOP
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
 
     top: 0;
 
-    width: 3px;
+    transform-origin: center top;
 
-    height: 3px;
-
-    transform-origin:
-        center top;
 }
 
 
 /* =====================================================
    LEFT
+
+   BASE = RIGHT
 ===================================================== */
 
 .wave-side-left .wave-bar {
 
     right: 0;
 
-    width: 3px;
+    width: 1px;
 
     height: 3px;
 
-    transform-origin:
-        right center;
+    transform-origin: right center;
+
 }
 
 
 /* =====================================================
    RIGHT
+
+   BASE = LEFT
 ===================================================== */
 
 .wave-side-right .wave-bar {
 
     left: 0;
 
-    width: 3px;
+    width: 1px;
 
     height: 3px;
 
-    transform-origin:
-        left center;
+    transform-origin: left center;
+
+}
+
+
+/* =====================================================
+   DISCORD CARD
+
+   Keeps the waveform attached exactly
+   to the card.
+===================================================== */
+
+.discord-live-card {
+
+    position: relative;
+
+    width: 100%;
+
 }
 
 
@@ -219,18 +236,20 @@
 
 @media (max-width: 700px) {
 
-    .waveform-wrapper {
-        width: 92vw;
+    .wave-bar {
+
+        width: 2px;
+
     }
 
-    .wave-side-top .wave-bar,
-    .wave-side-bottom .wave-bar {
-        width: 2px;
-    }
 
     .wave-side-left .wave-bar,
     .wave-side-right .wave-bar {
+
+        width: 1px;
+
         height: 2px;
+
     }
 
 }
