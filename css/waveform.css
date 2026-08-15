@@ -1,475 +1,129 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED BAR FRAME
+   FOUR-SIDED WRAPPING BAR FRAME
 ===================================================== */
 
-(() => {
+.waveform-wrapper {
 
-    "use strict";
+    position: relative;
+
+    width: min(620px, 90vw);
+
+    z-index: 20;
+}
 
 
-    const wrapper =
-        document.getElementById(
-            "waveform-wrapper"
+/* =====================================================
+   WAVEFORM BORDER
+===================================================== */
+
+.wave-border {
+
+    position: absolute;
+
+    left: -30px;
+    right: -30px;
+
+    top: -30px;
+    bottom: -30px;
+
+    pointer-events: none;
+
+    z-index: 2;
+
+    overflow: visible;
+}
+
+
+/* =====================================================
+   WAVE BARS
+===================================================== */
+
+.wave-bar {
+
+    position: absolute;
+
+    display: block;
+
+    width: 3px;
+    height: 3px;
+
+    background:
+        linear-gradient(
+            to bottom,
+
+            #ffffff 0%,
+
+            #ffffff 20%,
+
+            #ffd5f3 45%,
+
+            #ff72cf 70%,
+
+            #ff2db5 100%
         );
 
+    box-shadow:
 
-    if (!wrapper) {
+        0 0 3px #ffffff,
 
-        console.error(
-            "Ralkerie waveform: wrapper not found."
+        0 0 6px #ff9bdd,
+
+        0 0 11px
+        rgba(
+            255,
+            45,
+            181,
+            0.85
         );
 
-        return;
+    border-radius: 1px;
+
+    opacity: 0.95;
+
+    pointer-events: none;
+
+    will-change:
+        width,
+        height;
+
+    transform-origin: center;
+}
+
+
+/* =====================================================
+   TOP + BOTTOM BARS
+
+   Bars extend UP/DOWN
+===================================================== */
+
+.wave-border .wave-bar:nth-child(
+    -n + 200
+) {
+
+    transform-origin: center;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .waveform-wrapper {
+
+        width: 92vw;
     }
 
 
-    /* =================================================
-       CREATE BORDER
-    ================================================= */
+    .wave-border {
 
-    const border =
-        document.createElement("div");
+        left: -22px;
+        right: -22px;
 
-
-    border.className =
-        "wave-border";
-
-
-    wrapper.insertBefore(
-        border,
-        wrapper.firstChild
-    );
-
-
-    /* =================================================
-       SETTINGS
-    ================================================= */
-
-    const BAR_WIDTH = 3;
-
-    const BAR_GAP = 5;
-
-    const MIN_SIZE = 3;
-
-    const MAX_SIZE = 27;
-
-    const OUTSIDE_GAP = 5;
-
-
-    let bars = [];
-
-
-    /* =================================================
-       CREATE BAR
-    ================================================= */
-
-    function createBar(
-        side,
-        position
-    ) {
-
-        const bar =
-            document.createElement("span");
-
-
-        bar.className =
-            "wave-bar";
-
-
-        border.appendChild(
-            bar
-        );
-
-
-        bars.push({
-
-            element: bar,
-
-            side: side,
-
-            position: position,
-
-            phase:
-                Math.random() *
-                Math.PI *
-                2,
-
-            speed:
-                1.5 +
-                Math.random() * 2.5,
-
-            strength:
-                0.65 +
-                Math.random() * 0.35
-        });
+        top: -22px;
+        bottom: -22px;
     }
 
-
-    /* =================================================
-       BUILD FRAME
-    ================================================= */
-
-    function build() {
-
-        border.innerHTML = "";
-
-        bars = [];
-
-
-        const width =
-            wrapper.clientWidth;
-
-
-        const height =
-            wrapper.clientHeight;
-
-
-        /* =================================================
-           TOP
-        ================================================= */
-
-        const topCount =
-            Math.ceil(
-                width /
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-
-
-        for (
-            let i = 0;
-            i < topCount;
-            i++
-        ) {
-
-            createBar(
-                "top",
-                i *
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-        }
-
-
-        /* =================================================
-           BOTTOM
-        ================================================= */
-
-        const bottomCount =
-            Math.ceil(
-                width /
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-
-
-        for (
-            let i = 0;
-            i < bottomCount;
-            i++
-        ) {
-
-            createBar(
-                "bottom",
-                i *
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-        }
-
-
-        /* =================================================
-           LEFT
-        ================================================= */
-
-        const leftCount =
-            Math.ceil(
-                height /
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-
-
-        for (
-            let i = 0;
-            i < leftCount;
-            i++
-        ) {
-
-            createBar(
-                "left",
-                i *
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-        }
-
-
-        /* =================================================
-           RIGHT
-        ================================================= */
-
-        const rightCount =
-            Math.ceil(
-                height /
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-
-
-        for (
-            let i = 0;
-            i < rightCount;
-            i++
-        ) {
-
-            createBar(
-                "right",
-                i *
-                (
-                    BAR_WIDTH +
-                    BAR_GAP
-                )
-            );
-        }
-
-
-        /* =================================================
-           POSITION
-        ================================================= */
-
-        for (
-            const data of bars
-        ) {
-
-            const bar =
-                data.element;
-
-
-            if (
-                data.side === "top"
-            ) {
-
-                bar.style.left =
-                    `${data.position}px`;
-
-                bar.style.bottom =
-                    `${OUTSIDE_GAP}px`;
-
-                bar.style.width =
-                    `${BAR_WIDTH}px`;
-
-                bar.style.height =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            else if (
-                data.side === "bottom"
-            ) {
-
-                bar.style.left =
-                    `${data.position}px`;
-
-                bar.style.top =
-                    `${OUTSIDE_GAP}px`;
-
-                bar.style.width =
-                    `${BAR_WIDTH}px`;
-
-                bar.style.height =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            else if (
-                data.side === "left"
-            ) {
-
-                bar.style.top =
-                    `${data.position}px`;
-
-                bar.style.right =
-                    `${OUTSIDE_GAP}px`;
-
-                bar.style.height =
-                    `${BAR_WIDTH}px`;
-
-                bar.style.width =
-                    `${MIN_SIZE}px`;
-            }
-
-
-            else if (
-                data.side === "right"
-            ) {
-
-                bar.style.top =
-                    `${data.position}px`;
-
-                bar.style.left =
-                    `${OUTSIDE_GAP}px`;
-
-                bar.style.height =
-                    `${BAR_WIDTH}px`;
-
-                bar.style.width =
-                    `${MIN_SIZE}px`;
-            }
-        }
-    }
-
-
-    /* =================================================
-       ANIMATION
-    ================================================= */
-
-    const start =
-        performance.now();
-
-
-    function animate(time) {
-
-        const elapsed =
-            (
-                time -
-                start
-            ) / 1000;
-
-
-        for (
-            const data of bars
-        ) {
-
-            const primary =
-                (
-                    Math.sin(
-                        elapsed *
-                        data.speed +
-                        data.phase
-                    ) +
-                    1
-                ) / 2;
-
-
-            const secondary =
-                (
-                    Math.sin(
-                        elapsed *
-                        3.1 +
-                        data.phase *
-                        1.7
-                    ) +
-                    1
-                ) / 2;
-
-
-            const value =
-                (
-                    primary *
-                    0.75
-                ) +
-                (
-                    secondary *
-                    0.25
-                );
-
-
-            const size =
-                MIN_SIZE +
-                (
-                    MAX_SIZE -
-                    MIN_SIZE
-                ) *
-                value *
-                data.strength;
-
-
-            const bar =
-                data.element;
-
-
-            if (
-                data.side === "top" ||
-                data.side === "bottom"
-            ) {
-
-                bar.style.height =
-                    `${size}px`;
-            }
-
-
-            else {
-
-                bar.style.width =
-                    `${size}px`;
-            }
-        }
-
-
-        requestAnimationFrame(
-            animate
-        );
-    }
-
-
-    /* =================================================
-       RESIZE
-    ================================================= */
-
-    let resizeTimer;
-
-
-    window.addEventListener(
-        "resize",
-        () => {
-
-            clearTimeout(
-                resizeTimer
-            );
-
-
-            resizeTimer =
-                setTimeout(
-                    build,
-                    150
-                );
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    /* =================================================
-       START
-    ================================================= */
-
-    build();
-
-    requestAnimationFrame(
-        animate
-    );
-
-
-    console.log(
-        "Ralkerie waveform loaded."
-    );
-
-})();
+}
