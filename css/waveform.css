@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   LOW CPU + FULL VISUAL QUALITY
+   ORIGINAL DISCORD CARD SIZE
 ===================================================== */
 
 
@@ -14,15 +14,35 @@
 
     width: 100%;
 
+    height: auto;
+
     flex-shrink: 0;
 
-    z-index: 20;
+    display: block;
 
 }
 
 
 /* =====================================================
-   SIDES
+   DISCORD CARD
+   KEEP ORIGINAL SIZE
+===================================================== */
+
+.waveform-wrapper .discord-live-card {
+
+    position: relative;
+
+    width: 100%;
+
+    height: auto;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =====================================================
+   WAVE SIDES
 ===================================================== */
 
 .wave-side {
@@ -33,8 +53,7 @@
 
     overflow: visible;
 
-    z-index: 30;
-
+    z-index: 5;
 }
 
 
@@ -43,6 +62,8 @@
 ===================================================== */
 
 .wave-side-top {
+
+    position: absolute;
 
     left: 0;
 
@@ -61,6 +82,8 @@
 
 .wave-side-bottom {
 
+    position: absolute;
+
     left: 0;
 
     right: 0;
@@ -78,6 +101,8 @@
 
 .wave-side-left {
 
+    position: absolute;
+
     left: 0;
 
     top: 0;
@@ -94,6 +119,8 @@
 ===================================================== */
 
 .wave-side-right {
+
+    position: absolute;
 
     right: 0;
 
@@ -118,61 +145,17 @@
 
     width: 3px;
 
-    height: 3px;
+    height: 1px;
 
     margin: 0;
 
     padding: 0;
 
+    background: #ff63ca;
+
+    opacity: 0.85;
+
     pointer-events: none;
-
-    opacity: 0.95;
-
-
-    background:
-        linear-gradient(
-            to bottom,
-
-            #ffffff 0%,
-
-            #ffffff 18%,
-
-            #ffe0f5 35%,
-
-            #ff9de0 55%,
-
-            #ff63ca 78%,
-
-            #ff2db5 100%
-        );
-
-
-    box-shadow:
-
-        0 0 2px #ffffff,
-
-        0 0 5px #ffffff,
-
-        0 0 8px #ffb0e7,
-
-        0 0 12px #ff5bc6,
-
-        0 0 16px
-        rgba(
-            255,
-            45,
-            181,
-            0.55
-        );
-
-
-    border-radius: 1px;
-
-
-    /*
-     * Only transform changes during
-     * animation.
-     */
 
     will-change: transform;
 
@@ -184,16 +167,14 @@
 /* =====================================================
    TOP BARS
 
-   BASE = CARD
-   GROW UP
+   Grow upward from the box.
 ===================================================== */
 
 .wave-side-top .wave-bar {
 
     bottom: 0;
 
-    transform-origin:
-        center bottom;
+    transform-origin: center bottom;
 
 }
 
@@ -201,16 +182,14 @@
 /* =====================================================
    BOTTOM BARS
 
-   BASE = CARD
-   GROW DOWN
+   Grow downward from the box.
 ===================================================== */
 
 .wave-side-bottom .wave-bar {
 
     top: 0;
 
-    transform-origin:
-        center top;
+    transform-origin: center top;
 
 }
 
@@ -218,20 +197,18 @@
 /* =====================================================
    LEFT BARS
 
-   BASE = CARD
-   GROW LEFT
+   Grow toward the left.
 ===================================================== */
 
 .wave-side-left .wave-bar {
 
     right: 0;
 
-    width: 3px;
+    width: 1px;
 
     height: 3px;
 
-    transform-origin:
-        right center;
+    transform-origin: right center;
 
 }
 
@@ -239,33 +216,18 @@
 /* =====================================================
    RIGHT BARS
 
-   BASE = CARD
-   GROW RIGHT
+   Grow toward the right.
 ===================================================== */
 
 .wave-side-right .wave-bar {
 
     left: 0;
 
-    width: 3px;
+    width: 1px;
 
     height: 3px;
 
-    transform-origin:
-        left center;
-
-}
-
-
-/* =====================================================
-   DISCORD CARD
-===================================================== */
-
-.discord-live-card {
-
-    position: relative;
-
-    width: 100%;
+    transform-origin: left center;
 
 }
 
@@ -280,15 +242,12 @@
 
         width: 2px;
 
-        height: 2px;
-
     }
-
 
     .wave-side-left .wave-bar,
     .wave-side-right .wave-bar {
 
-        width: 2px;
+        width: 1px;
 
         height: 2px;
 
