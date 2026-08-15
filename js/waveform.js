@@ -1,6 +1,6 @@
 /* =====================================================
    RALKERIE WAVEFORM
-   FOUR-SIDED PULSING BAR FRAME
+   FOUR-SIDED BAR FRAME
 ===================================================== */
 
 (() => {
@@ -25,7 +25,7 @@
 
 
     /* =================================================
-       CREATE FRAME
+       CREATE BORDER
     ================================================= */
 
     const border =
@@ -50,9 +50,9 @@
 
     const BAR_GAP = 5;
 
-    const MIN_HEIGHT = 3;
+    const MIN_SIZE = 3;
 
-    const MAX_HEIGHT = 25;
+    const MAX_SIZE = 27;
 
     const OUTSIDE_GAP = 5;
 
@@ -250,10 +250,7 @@
 
 
         /* =================================================
-           POSITION BARS
-
-           Every side is positioned relative to
-           the ACTUAL waveform frame.
+           POSITION
         ================================================= */
 
         for (
@@ -278,7 +275,7 @@
                     `${BAR_WIDTH}px`;
 
                 bar.style.height =
-                    `${MIN_HEIGHT}px`;
+                    `${MIN_SIZE}px`;
             }
 
 
@@ -296,7 +293,7 @@
                     `${BAR_WIDTH}px`;
 
                 bar.style.height =
-                    `${MIN_HEIGHT}px`;
+                    `${MIN_SIZE}px`;
             }
 
 
@@ -314,7 +311,7 @@
                     `${BAR_WIDTH}px`;
 
                 bar.style.width =
-                    `${MIN_HEIGHT}px`;
+                    `${MIN_SIZE}px`;
             }
 
 
@@ -332,7 +329,7 @@
                     `${BAR_WIDTH}px`;
 
                 bar.style.width =
-                    `${MIN_HEIGHT}px`;
+                    `${MIN_SIZE}px`;
             }
         }
     }
@@ -394,10 +391,10 @@
 
 
             const size =
-                MIN_HEIGHT +
+                MIN_SIZE +
                 (
-                    MAX_HEIGHT -
-                    MIN_HEIGHT
+                    MAX_SIZE -
+                    MIN_SIZE
                 ) *
                 value *
                 data.strength;
@@ -407,24 +404,8 @@
                 data.element;
 
 
-            /* =================================================
-               TOP
-            ================================================== */
-
             if (
-                data.side === "top"
-            ) {
-
-                bar.style.height =
-                    `${size}px`;
-            }
-
-
-            /* =================================================
-               BOTTOM
-            ================================================== */
-
-            else if (
+                data.side === "top" ||
                 data.side === "bottom"
             ) {
 
@@ -433,26 +414,7 @@
             }
 
 
-            /* =================================================
-               LEFT
-            ================================================== */
-
-            else if (
-                data.side === "left"
-            ) {
-
-                bar.style.width =
-                    `${size}px`;
-            }
-
-
-            /* =================================================
-               RIGHT
-            ================================================== */
-
-            else if (
-                data.side === "right"
-            ) {
+            else {
 
                 bar.style.width =
                     `${size}px`;
